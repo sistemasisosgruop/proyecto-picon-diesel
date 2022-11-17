@@ -19,14 +19,17 @@ a {
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
+  color: "#171A2B";
 }
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+  ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
   }
-  body {
-    color: white;
-    background: black;
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
   }
-}
+  ::-webkit-scrollbar-thumb {
+    background: #B5B8C4;
+    border-radius: 10px;
+  }

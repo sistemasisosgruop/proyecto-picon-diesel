@@ -115,7 +115,7 @@ export const Sidebar = () => {
 
 	return (
 		<div
-			className="flex flex-col h-screen bg-primary py-5 px-[30px] gap-8 shadow-lg items-center w-[100px] overflow-x-visible z-40"
+			className="flex flex-col h-screen bg-primary py-5 px-[30px] gap-8 shadow-lg items-center w-[100px] overflow-x-visible z-40 text-white"
 			onMouseEnter={() => {
 				setShowSubMenu(showSubMenu ? true : false);
 			}}

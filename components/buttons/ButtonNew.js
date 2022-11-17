@@ -1,6 +1,6 @@
 import { Add } from "iconsax-react";
 
-export const NewButton = ({ text, onClick }) => {
+export const ButtonNew = ({ text, onClick }) => {
 	return (
 		<button
 			type="button"
