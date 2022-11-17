@@ -1,7 +1,7 @@
-import { Header } from "./header/Header";
-import { Sidebar } from "./sidebar/Sidebar";
+import { Header } from "../modules/header/Header";
+import { Sidebar } from "../modules/sidebar/Sidebar";
 
-export const Layout = ({ children }) => {
+export default function LayoutDefault({ children }) {
   return (
     <div className="flex h-screen">
       <Sidebar />
@@ -13,4 +13,4 @@ export const Layout = ({ children }) => {
       </div>
     </div>
   );
-};
+}

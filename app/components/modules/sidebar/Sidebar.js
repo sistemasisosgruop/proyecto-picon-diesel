@@ -7,7 +7,7 @@ import {
   TransmitSqaure2,
 } from "iconsax-react";
 import { useRef, useState } from "react";
-import SubMenuLayout from "../../submenus/SubMenuLayout";
+import LayoutSubMenu from "../../layouts/LayoutSubMenu";
 
 export const Sidebar = () => {
   const refMantenimiento = useRef(null);
@@ -155,7 +155,7 @@ export const Sidebar = () => {
           </button>
         ))}
         {showSubMenu && (
-          <SubMenuLayout item={subMenu} setShowSubMenu={setShowSubMenu} />
+          <LayoutSubMenu item={subMenu} setShowSubMenu={setShowSubMenu} />
         )}
       </div>
     </div>

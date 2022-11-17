@@ -1,13 +1,13 @@
-import { Layout } from "../components/layout/Layout";
 import "../styles/globals.css";
 import { ThemeProvider } from "@material-tailwind/react";
+import LayoutDefault from "../app/components/layouts/LayoutDefault";
 
 function MyApp({ Component, pageProps }) {
   return (
     <ThemeProvider>
-      <Layout>
+      <LayoutDefault>
         <Component {...pageProps} />
-      </Layout>
+      </LayoutDefault>
     </ThemeProvider>
   );
 }

@@ -1,7 +1,6 @@
-import { Setting3 } from "iconsax-react";
 import Link from "next/link";
 
-export default function SubMenuLayout({ item }) {
+export default function LayoutSubMenu({ item }) {
   const { modulo, icon, submenu } = item;
   return (
     <div className="absolute top-0 left-[100px] w-[250px] bg-primary-800 h-screen z-40 p-[23px]">
