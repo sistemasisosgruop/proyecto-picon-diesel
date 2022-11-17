@@ -1,4 +1,5 @@
 import { Setting3 } from "iconsax-react";
+import Link from "next/link";
 
 export default function SubMenuLayout({ item }) {
 	const { modulo, icon, submenu } = item;
@@ -11,13 +12,14 @@ export default function SubMenuLayout({ item }) {
 				</div>
 				<div className="h-0 w-full border border-primary flex-none" />
 				<div className="flex flex-col w-full items-start gap-[15px]">
-					{submenu.map((item, index) => (
-						<div
+					{submenu.map(({subItem, href}, index) => (
+						<Link
+							href={href}
 							key={index}
-							className="w-full flex items-start p-[10px] bg-primary rounded-lg text-xs"
+							className="w-full font-normal flex items-start p-[10px] bg-primary rounded-lg text-xs hover:bg-secundary hover:text-primary"
 						>
-							{item.name}
-						</div>
+							{subItem}
+						</Link>
 					))}
 				</div>
 			</div>

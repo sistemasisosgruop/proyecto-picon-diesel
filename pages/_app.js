@@ -1,4 +1,4 @@
-import Layout from '../components/layout/layout'
+import Layout from '../components/layout/Layout';
 import '../styles/globals.css'
 import { ThemeProvider } from "@material-tailwind/react";
 

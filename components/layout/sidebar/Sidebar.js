@@ -6,7 +6,6 @@ import {
 	Shop,
 	TransmitSqaure2,
 } from "iconsax-react";
-import Link from "next/link";
 import { useRef, useState } from "react";
 import SubMenuLayout from "../../submenus/SubMenuLayout";
 
@@ -24,7 +23,36 @@ export default function Sidebar() {
 			ref: refMantenimiento,
 			submenu: [
 				{
-					name: "Mantenimiento 1",
+					subItem: "Datos de la empresa",
+					href: "/mantenimiento/datos-empresa",
+				},
+				{
+					subItem: "Maestro de códigos",
+					href: "/mantenimiento/maestro-codigos",
+				},
+				{
+					subItem: "General",
+					href: "/mantenimiento/general",
+				},
+				{
+					subItem: "Administrativos",
+					href: "/mantenimiento/administrativos",
+				},
+				{
+					subItem: "Importación",
+					href: "/mantenimiento/importacion",
+				},
+				{
+					subItem: "Inventario",
+					href: "/mantenimiento/inventario",
+				},
+				{
+					subItem: "Comercial",
+					href: "/mantenimiento/comercial",
+				},
+				{
+					subItem: "Presupuesto",
+					href: "/mantenimiento/presupuesto",
 				},
 			],
 		},
@@ -34,7 +62,7 @@ export default function Sidebar() {
 			ref: refVMostrador,
 			submenu: [
 				{
-					name: "Mostrador 1",
+					subItem: "Mostrador 1",
 				},
 			],
 		},
@@ -44,7 +72,7 @@ export default function Sidebar() {
 			ref: refVServicio,
 			submenu: [
 				{
-					name: "Servicio 1",
+					subItem: "Servicio 1",
 				},
 			],
 		},
@@ -54,7 +82,7 @@ export default function Sidebar() {
 			ref: refCompras,
 			submenu: [
 				{
-					name: "Comprar 1",
+					subItem: "Comprar 1",
 				},
 			],
 		},
@@ -64,7 +92,7 @@ export default function Sidebar() {
 			ref: refInventario,
 			submenu: [
 				{
-					name: "Inventario 1",
+					subItem: "Inventario 1",
 				},
 			],
 		},
