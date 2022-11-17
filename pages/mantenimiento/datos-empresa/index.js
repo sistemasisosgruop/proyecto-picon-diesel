@@ -1,10 +1,13 @@
 import { Dialog, Transition } from "@headlessui/react";
+import { CloseSquare, SearchNormal1 } from "iconsax-react";
 import Image from "next/image";
 import { Fragment, useState } from "react";
+import { ButtonDelete } from "../../../components/buttons/ButtonDelete";
 import { ButtonEdit } from "../../../components/buttons/ButtonEdit";
 import { ButtonNew } from "../../../components/buttons/ButtonNew";
 import { Container } from "../../../components/container/Container";
 import { Title } from "../../../components/title/Title";
+import { Empresas } from "../../../data/empresas";
 
 export default function DatosEmpresa() {
 	const [isOpenModal, setIsOpenModal] = useState(false);
@@ -15,95 +18,115 @@ export default function DatosEmpresa() {
 
 	const openModal = () => {
 		setIsOpenModal(true);
-		console.log(
-			"🚀 ~ file: index.js ~ line 10 ~ DatosEmpresa ~ isOpenModal",
-			isOpenModal
-		);
 	};
+	
+	const empresas = Empresas;
+	console.log("🚀 ~ file: index.js ~ line 21 ~ Empresas", Empresas);
+	
 
 	return (
 		<>
-			<Container bg={"bg-white"}>
+			<Container bg={"bg-primary-50"}>
 				<Title>
 					<h1 className="text-2xl font-semibold">Empresas</h1>
 					<ButtonNew text={"Nueva empresa"} onClick={openModal} />
 				</Title>
+				{/* Search */}
+				<div className="w-full pt-2 relative mx-auto text-gray-600">
+					<input
+						className="w-full bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
+						type="search"
+						name="search"
+						placeholder="Search"
+					/>
+					<button
+						type="submit"
+						className="absolute right-0 top-0 mt-5 mr-4"
+					>
+						<SearchNormal1 size={15} />
+					</button>
+				</div>
 				{/* Table */}
-				<div className="overflow-x-auto w-full">
+				<div className="overflow-x-auto w-full rounded-xl bg-white">
 					<table className="w-full whitespace-nowrap">
-						<thead className="border-b border-t border-primary-400">
-							<tr className="text-primary">
-								<th className="px-5 py-3 text-left text-xs font-semibold tracking-wider">
+						<thead>
+							<tr className="border-b-2 border-b-primary-50">
+								<th className="p-5 text-left text-xs font-semibold">
 									#
 								</th>
-								<th className="px-5 py-3 text-left text-xs font-semibold tracking-wider">
+								<th className="p-5 text-left text-xs font-semibold">
 									Logo
 								</th>
-								<th className="px-5 py-3 text-left text-xs font-semibold tracking-wider">
+								<th className="p-5 text-left text-xs font-semibold">
 									Nombre
 								</th>
-								<th className="px-5 py-3 text-left text-xs font-semibold tracking-wider">
+								<th className="p-5 text-left text-xs font-semibold">
 									RUC
 								</th>
-								<th className="px-5 py-3 text-left text-xs font-semibold tracking-wider">
+								<th className="p-5 text-left text-xs font-semibold">
 									Dirección
 								</th>
-								<th className="px-5 py-3 text-left text-xs font-semibold tracking-wider">
+								<th className="p-5 text-left text-xs font-semibold">
 									Teléfono
 								</th>
-								<th className="px-5 py-3 text-left text-xs font-semibold tracking-wider">
+								<th className="p-5 text-left text-xs font-semibold">
 									Correo
 								</th>
-								<th className="px-5 py-3 text-left text-xs font-semibold tracking-wider" />
+								<th className="p-5 text-left text-xs font-semibold" />
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-									<p className="text-gray-900 whitespace-no-wrap">
-										1
-									</p>
-								</td>
-								<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-									<div className="flex-shrink-0 w-10 h-10">
-										<Image
-											className="w-full h-full rounded-full"
-											src=""
-											alt=""
-											width={40}
-											height={40}
-										/>
-									</div>
-								</td>
-								<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-									<p className="text-gray-900 whitespace-no-wrap">
-										Admin
-									</p>
-								</td>
-								<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-									<p className="text-gray-900 whitespace-no-wrap">
-										Jan 21, 2020
-									</p>
-								</td>
-								<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-									<p className="text-gray-900 whitespace-no-wrap">
-										Jan 21, 2020
-									</p>
-								</td>
-								<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-									<p className="text-gray-900 whitespace-no-wrap">
-										Jan 21, 2020
-									</p>
-								</td>
-								<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-									<p className="text-gray-900 whitespace-no-wrap">
-										Jan 21, 2020
-									</p>
-								</td>
-								<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-									<ButtonEdit onClick={"hola"} />
-								</td>
-							</tr>
+						
+							{empresas.forEach(({id,logo,nombre,ruc,direccion,telefono,email}, index) => {
+								<p>hola</p>
+								{/* <tr key={index}>
+									<td className="p-5">
+										<p className="text-gray-900 whitespace-no-wrap">
+											{id}
+										</p>
+									</td>
+									<td className="p-5">
+										<div className="flex-shrink-0 w-10 h-10">
+											<Image
+												className="w-full h-full rounded-full"
+												src={logo}
+												alt=""
+												width={40}
+												height={40}
+											/>
+										</div>
+									</td>
+									<td className="p-5">
+										<p className="text-gray-900 whitespace-no-wrap">
+											{nombre}
+										</p>
+									</td>
+									<td className="p-5">
+										<p className="text-gray-900 whitespace-no-wrap">
+											{ruc}
+										</p>
+									</td>
+									<td className="p-5">
+										<p className="text-gray-900 whitespace-no-wrap">
+											{direccion}
+										</p>
+									</td>
+									<td className="p-5">
+										<p className="text-gray-900 whitespace-no-wrap">
+											{telefono}
+										</p>
+									</td>
+									<td className="p-5">
+										<p className="text-gray-900 whitespace-no-wrap">
+											{email}
+										</p>
+									</td>
+									<td className="p-5 flex gap-2">
+										<ButtonEdit onClick={"hola"} />
+										<ButtonDelete onClick={"hola"} />
+									</td>
+								</tr>; */}
+							})}
 						</tbody>
 					</table>
 				</div>
@@ -167,4 +190,4 @@ export default function DatosEmpresa() {
 			</Transition>
 		</>
 	);
-}
+};
