@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { CloseSquare, SearchNormal1 } from "iconsax-react";
+import { SearchNormal1 } from "iconsax-react";
 import Image from "next/image";
 import { Fragment, useState } from "react";
 import { ButtonDelete } from "../../../components/buttons/ButtonDelete";
@@ -19,10 +19,9 @@ export default function DatosEmpresa() {
 	const openModal = () => {
 		setIsOpenModal(true);
 	};
-	
+
 	const empresas = Empresas;
 	console.log("🚀 ~ file: index.js ~ line 21 ~ Empresas", Empresas);
-	
 
 	return (
 		<>
@@ -76,57 +75,68 @@ export default function DatosEmpresa() {
 							</tr>
 						</thead>
 						<tbody>
-						
-							{empresas.forEach(({id,logo,nombre,ruc,direccion,telefono,email}, index) => {
-								<p>hola</p>
-								{/* <tr key={index}>
-									<td className="p-5">
-										<p className="text-gray-900 whitespace-no-wrap">
-											{id}
-										</p>
-									</td>
-									<td className="p-5">
-										<div className="flex-shrink-0 w-10 h-10">
-											<Image
-												className="w-full h-full rounded-full"
-												src={logo}
-												alt=""
-												width={40}
-												height={40}
-											/>
-										</div>
-									</td>
-									<td className="p-5">
-										<p className="text-gray-900 whitespace-no-wrap">
-											{nombre}
-										</p>
-									</td>
-									<td className="p-5">
-										<p className="text-gray-900 whitespace-no-wrap">
-											{ruc}
-										</p>
-									</td>
-									<td className="p-5">
-										<p className="text-gray-900 whitespace-no-wrap">
-											{direccion}
-										</p>
-									</td>
-									<td className="p-5">
-										<p className="text-gray-900 whitespace-no-wrap">
-											{telefono}
-										</p>
-									</td>
-									<td className="p-5">
-										<p className="text-gray-900 whitespace-no-wrap">
-											{email}
-										</p>
-									</td>
-									<td className="p-5 flex gap-2">
-										<ButtonEdit onClick={"hola"} />
-										<ButtonDelete onClick={"hola"} />
-									</td>
-								</tr>; */}
-							})}
+							{empresas.forEach(
+								(
+									{
+										id,
+										logo,
+										nombre,
+										ruc,
+										direccion,
+										telefono,
+										email,
+									},
+									index
+								) => {
+									<tr key={index}>
+										<td className="p-5">
+											<p className="text-gray-900 whitespace-no-wrap">
+												{id}
+											</p>
+										</td>
+										<td className="p-5">
+											<div className="flex-shrink-0 w-10 h-10">
+												<Image
+													className="w-full h-full rounded-full"
+													src={logo}
+													alt=""
+													width={40}
+													height={40}
+												/>
+											</div>
+										</td>
+										<td className="p-5">
+											<p className="text-gray-900 whitespace-no-wrap">
+												{nombre}
+											</p>
+										</td>
+										<td className="p-5">
+											<p className="text-gray-900 whitespace-no-wrap">
+												{ruc}
+											</p>
+										</td>
+										<td className="p-5">
+											<p className="text-gray-900 whitespace-no-wrap">
+												{direccion}
+											</p>
+										</td>
+										<td className="p-5">
+											<p className="text-gray-900 whitespace-no-wrap">
+												{telefono}
+											</p>
+										</td>
+										<td className="p-5">
+											<p className="text-gray-900 whitespace-no-wrap">
+												{email}
+											</p>
+										</td>
+										<td className="p-5 flex gap-2">
+											<ButtonEdit onClick={"hola"} />
+											<ButtonDelete onClick={"hola"} />
+										</td>
+									</tr>;
+								}
+							)}
 						</tbody>
 					</table>
 				</div>
@@ -190,4 +200,4 @@ export default function DatosEmpresa() {
 			</Transition>
 		</>
 	);
-};
+}
