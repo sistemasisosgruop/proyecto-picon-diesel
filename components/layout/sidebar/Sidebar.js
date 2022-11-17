@@ -9,7 +9,7 @@ import {
 import { useRef, useState } from "react";
 import SubMenuLayout from "../../submenus/SubMenuLayout";
 
-export default function Sidebar() {
+export const Sidebar = () => {
 	const refMantenimiento = useRef(null);
 	const refVMostrador = useRef(null);
 	const refVServicio = useRef(null);

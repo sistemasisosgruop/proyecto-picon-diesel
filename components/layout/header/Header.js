@@ -6,14 +6,13 @@ function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
 }
 
-export default function Header(){
-
+export const Header = () => {
 	const itemsDropdown = [
 		{ name: "Profile", href: "#", icon: <User /> },
-		{ name: "Settings", href: "#", icon: <Setting/> },
+		{ name: "Settings", href: "#", icon: <Setting /> },
 		{ name: "Sign out", href: "#", icon: <LogoutCurve /> },
 	];
-  return (
+	return (
 		<header className="flex items-center justify-end px-8 py-3 bg-white shadow-lg">
 			<Menu as="div" className="relative select-none">
 				<Menu.Button className="flex items-center text-primary gap-4">
@@ -43,5 +42,5 @@ export default function Header(){
 				</Menu.Items>
 			</Menu>
 		</header>
-  );
-}
+	);
+};
