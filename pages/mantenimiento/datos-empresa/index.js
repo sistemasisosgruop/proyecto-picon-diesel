@@ -1,4 +1,3 @@
-import { SearchNormal1 } from "iconsax-react";
 import Image from "next/image";
 import { useState } from "react";
 import {
@@ -18,21 +17,18 @@ import {
 	TableH,
 	TableRH,
 } from "../../../app/components/elements/Table";
-import { ModalLg } from "../../../app/components/modules/Modal";
+import {
+	ModalConfirmDelete,
+	ModalLg,
+} from "../../../app/components/modules/Modal";
 import { Group, GroupInputs } from "../../../app/components/elements/Form";
 import { Input } from "@material-tailwind/react";
 
 export default function DatosEmpresa() {
 	const [isOpenModal, setIsOpenModal] = useState(false);
+	const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
 
-	const closeModal = () => {
-		setIsOpenModal(false);
-	};
-
-	const openModal = () => {
-		setIsOpenModal(true);
-	};
-
+	// Datos de la empresa
 	const empresas = Empresas;
 
 	return (
@@ -40,23 +36,11 @@ export default function DatosEmpresa() {
 			<Container>
 				<Title>
 					<h1 className="text-2xl font-semibold">Empresas</h1>
-					<ButtonAdd text={"Nueva empresa"} onClick={openModal} />
-				</Title>
-				{/* Search */}
-				<div className="w-full pt-2 relative mx-auto text-gray-600">
-					<input
-						className="w-full bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
-						type="search"
-						name="search"
-						placeholder="Search"
+					<ButtonAdd
+						text={"Nueva empresa"}
+						onClick={() => setIsOpenModal(true)}
 					/>
-					<button
-						type="submit"
-						className="absolute right-0 top-0 mt-5 mr-4"
-					>
-						<SearchNormal1 size={15} />
-					</button>
-				</div>
+				</Title>
 				{/* Table */}
 				<Table>
 					<thead>
@@ -118,7 +102,11 @@ export default function DatosEmpresa() {
 										</TableD>
 										<TableDOptions>
 											<ButtonEdit onClick={"hola"} />
-											<ButtonDelete onClick={"hola"} />
+											<ButtonDelete
+												onClick={() =>
+													setIsOpenModalDelete(true)
+												}
+											/>
 										</TableDOptions>
 									</tr>
 								);
@@ -131,7 +119,7 @@ export default function DatosEmpresa() {
 			<ModalLg
 				title={"Nueva Empresa"}
 				isOpen={isOpenModal}
-				closeModal={closeModal}
+				closeModal={() => setIsOpenModal(false)}
 			>
 				<Group title={"Logo de la empresa"}></Group>
 				<Group title={"Datos de la empresa"}>
@@ -149,10 +137,16 @@ export default function DatosEmpresa() {
 					</GroupInputs>
 				</Group>
 				<div className="w-full flex justify-end gap-5">
-					<ButtonCancel onClick={closeModal} />
-					<ButtonSave onClick={closeModal} />
+					<ButtonCancel onClick={"hola"} />
+					<ButtonSave onClick={"hola"} />
 				</div>
 			</ModalLg>
+			{/* Modal Eliminar Empresa */}
+			<ModalConfirmDelete
+				title={"Eliminar Empresa"}
+				isOpen={isOpenModalDelete}
+				closeModal={() => setIsOpenModalDelete(false)}
+			/>
 		</>
 	);
 }
