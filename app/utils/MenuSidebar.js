@@ -19,7 +19,7 @@ export const menuSidebar = [
 			},
 			{
 				subItem: "Administrativos",
-				href: "/mantenimiento/administrativos",
+				href: "/mantenimiento/administrativo/personal",
 			},
 			{
 				subItem: "Importación",
