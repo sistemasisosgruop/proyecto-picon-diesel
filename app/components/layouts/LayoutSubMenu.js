@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 export default function LayoutSubMenu({ item, setShowSubMenu }) {
 	const { modulo, icon, submenu } = item;
   const router = useRouter()
-  console.log("🚀 ~ file: LayoutSubMenu.js ~ line 7 ~ LayoutSubMenu ~ router", router)
 
 	return (
 		<div className="absolute top-0 left-[100px] w-[250px] bg-primary-800 h-screen z-40 p-[23px]">

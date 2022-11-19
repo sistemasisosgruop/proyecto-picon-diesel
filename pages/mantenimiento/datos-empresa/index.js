@@ -25,25 +25,20 @@ import {
 import { Group, GroupInputs } from "../../../app/components/elements/Form";
 import { Input } from "@material-tailwind/react";
 import { FileUploader } from "react-drag-drop-files";
+import { useModal } from "../../../app/hooks/useModal";
 
 const fileTypes = ["JPEG", "PNG"];
 
 export default function DatosEmpresa() {
 
-	const [isOpenModal, setIsOpenModal] = useState(false);
-	const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
-	const [isEdit, setIsEdit] = useState(false)
-
-	// Modal Agregar empresa
-	const closeModal = () => {
-		setIsOpenModal(false);
-		setFile(null);
-	};
-
-	const openModal = (isEdit) => {
-		setIsOpenModal(true);
-		setIsEdit(isEdit);
-	};
+	const {
+		isOpenModal,
+		isOpenModalDelete,
+		isEdit,
+		setIsOpenModalDelete,
+		closeModal,
+		openModal,
+	} = useModal();
 
 	// Datos de la empresa
 	const empresas = Empresas;
@@ -60,8 +55,7 @@ export default function DatosEmpresa() {
 	return (
 		<>
 			<Container>
-				<Title>
-					<h1 className="text-2xl font-semibold">Empresas</h1>
+				<Title text={"Empresas"}>
 					<ButtonAdd
 						text={"Nueva empresa"}
 						onClick={() => openModal(false)}
@@ -149,7 +143,7 @@ export default function DatosEmpresa() {
 				</Table>
 			</Container>
 
-			{/* Modal */}
+			{/* Modal agregar */}
 			<ModalLg
 				title={isEdit ? "Editar Empresa" : "Nueva Empresa"}
 				isOpen={isOpenModal}
@@ -211,7 +205,7 @@ export default function DatosEmpresa() {
 					<ButtonSave onClick={"hola"} />
 				</div>
 			</ModalLg>
-			{/* Modal Eliminar Empresa */}
+			{/* Modal Eliminar */}
 			<ModalConfirmDelete
 				title={"Eliminar Empresa"}
 				isOpen={isOpenModalDelete}

@@ -16,6 +16,6 @@ export const TableD = ({children}) => {
 }
 export const TableDOptions = ({children}) => {
   return (
-    <td className="p-5 flex gap-2">{children}</td>
+    <td className="p-5 flex gap-2 justify-end">{children}</td>
   )
 }
