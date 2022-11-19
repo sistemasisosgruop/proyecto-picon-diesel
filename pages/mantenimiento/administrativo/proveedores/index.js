@@ -42,11 +42,11 @@ export default function Vendedores() {
 	return (
 		<>
 			<TemplateAdministrativo>
-				<Title text={"Lista Vendedores"}>
+				<Title text={"Lista Proveedores"}>
 					<div className="flex gap-4">
 						<ButtonImportData />
 						<ButtonAdd
-							text={"Nuevo vendedor"}
+							text={"Nuevo proveedor"}
 							onClick={() => openModal(false)}
 						/>
 					</div>

@@ -4,6 +4,7 @@ import {
 	ButtonCancel,
 	ButtonDelete,
 	ButtonEdit,
+	ButtonImportData,
 	ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Search } from "../../../../app/components/elements/Search";
@@ -41,10 +42,13 @@ export default function Personal() {
 		<>
 			<TemplateAdministrativo>
 				<Title text={"Lista Personal"}>
-					<ButtonAdd
-						text={"Nuevo personal"}
-						onClick={() => openModal(false)}
-					/>
+					<div className="flex gap-4">
+						<ButtonImportData />
+						<ButtonAdd
+							text={"Nuevo personal"}
+							onClick={() => openModal(false)}
+						/>
+					</div>
 				</Title>
 				<Search />
 				{/* Table list paises */}

@@ -1,5 +1,7 @@
 import { Tooltip } from "@material-tailwind/react";
 import { Add, Edit, TrushSquare } from "iconsax-react";
+import { useState } from "react";
+import { Excel } from "./icons/Excel";
 
 export const ButtonAdd = ({ text, onClick }) => {
   return (
@@ -65,5 +67,35 @@ export const ButtonCancel = ({onClick}) => {
 		>
 			Cancelar
 		</button>
+	);
+}
+
+export const ButtonImportData = ({onClick}) => {
+
+	const [fileExcel, setfileExcel] = useState(null);
+
+	const handleFile = (e) => {
+		setfileExcel(e.target.files[0]);
+	}
+
+	return (
+		<>
+			<input
+				type="file"
+				name="excel"
+				id="excel"
+				className="w-0 h-0 opacity-0 overflow-hidden absolute z-[-1]"
+				onChange={(e) => handleFile(e)}
+			/>
+			<label
+				htmlFor="excel"
+				className=" flex justify-center items-center p-[10px] gap-1 bg-primary-50 shadow-md text-primary rounded-lg cursor-pointer hover:bg-primary-100"
+			>
+				<Excel />
+				<p className="max-w-xs text-ellipsis whitespace-nowrap overflow-hidden">
+					{fileExcel ? fileExcel.name : "Importar data"}
+				</p>
+			</label>
+		</>
 	);
 }
