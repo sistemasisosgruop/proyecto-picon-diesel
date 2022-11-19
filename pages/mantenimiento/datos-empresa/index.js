@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Image as Logo } from "iconsax-react";
 import { useState } from "react";
 import {
 	ButtonAdd,
@@ -23,13 +24,38 @@ import {
 } from "../../../app/components/modules/Modal";
 import { Group, GroupInputs } from "../../../app/components/elements/Form";
 import { Input } from "@material-tailwind/react";
+import { FileUploader } from "react-drag-drop-files";
+
+const fileTypes = ["JPEG", "PNG"];
 
 export default function DatosEmpresa() {
+
 	const [isOpenModal, setIsOpenModal] = useState(false);
 	const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
+	const [isEdit, setIsEdit] = useState(false)
+
+	// Modal Agregar empresa
+	const closeModal = () => {
+		setIsOpenModal(false);
+		setFile(null);
+	};
+
+	const openModal = (isEdit) => {
+		setIsOpenModal(true);
+		setIsEdit(isEdit);
+	};
 
 	// Datos de la empresa
 	const empresas = Empresas;
+
+	// Logo de la empresa
+	const [file, setFile] = useState(null);
+	const [logoPreview, setLogoPreview] = useState(null);
+
+	const handleChange = (file) => {
+		setFile(file);
+		setLogoPreview(URL.createObjectURL(file));
+	};
 
 	return (
 		<>
@@ -38,7 +64,7 @@ export default function DatosEmpresa() {
 					<h1 className="text-2xl font-semibold">Empresas</h1>
 					<ButtonAdd
 						text={"Nueva empresa"}
-						onClick={() => setIsOpenModal(true)}
+						onClick={() => openModal(false)}
 					/>
 				</Title>
 				{/* Table */}
@@ -78,7 +104,11 @@ export default function DatosEmpresa() {
 											<div className="flex-shrink-0 w-10 h-10">
 												<Image
 													className="w-full h-full rounded-full"
-													src={logo}
+													src={
+														logo === ""
+															? "/images/imagePlaceholder.svg"
+															: logo
+													}
 													alt=""
 													width={40}
 													height={40}
@@ -101,7 +131,9 @@ export default function DatosEmpresa() {
 											<p>{email}</p>
 										</TableD>
 										<TableDOptions>
-											<ButtonEdit onClick={"hola"} />
+											<ButtonEdit
+												onClick={() => openModal(true)}
+											/>
 											<ButtonDelete
 												onClick={() =>
 													setIsOpenModalDelete(true)
@@ -115,13 +147,50 @@ export default function DatosEmpresa() {
 					</tbody>
 				</Table>
 			</Container>
+
 			{/* Modal */}
 			<ModalLg
-				title={"Nueva Empresa"}
+				title={isEdit ? "Editar Empresa" : "Nueva Empresa"}
 				isOpen={isOpenModal}
-				closeModal={() => setIsOpenModal(false)}
+				closeModal={closeModal}
 			>
-				<Group title={"Logo de la empresa"}></Group>
+				<Group title={"Logo de la empresa"}>
+					<FileUploader
+						multiple={false}
+						handleChange={handleChange}
+						name="file"
+						types={fileTypes}
+						accept={fileTypes}
+					>
+						<div className="flex justify-center items-center rounded-md border-2 border-dashed border-primary-200 py-10 bg-primary-50">
+							<div className="space-y-1 text-center flex flex-col items-center">
+								<Logo className="text-primary-200" />
+								<div className="flex text-sm text-primary-600">
+									<p className="pl-1">
+										Arrastre y suelte su imagen aqui, o{" "}
+										<span className="cursor-pointer font-semibold">
+											Seleccione un archivo
+										</span>{" "}
+									</p>
+								</div>
+							</div>
+						</div>
+					</FileUploader>
+					<p>
+						{file ? (
+							<div className=" w-full flex gap-2 text-xs items-center">
+								<Image
+									src={logoPreview}
+									width={100}
+									height={20}
+								/>{" "}
+								{`Nombre del archivo: ${file.name}`}
+							</div>
+						) : (
+							""
+						)}
+					</p>
+				</Group>
 				<Group title={"Datos de la empresa"}>
 					<GroupInputs>
 						<Input label="RUC" />
@@ -137,7 +206,7 @@ export default function DatosEmpresa() {
 					</GroupInputs>
 				</Group>
 				<div className="w-full flex justify-end gap-5">
-					<ButtonCancel onClick={"hola"} />
+					<ButtonCancel onClick={closeModal} />
 					<ButtonSave onClick={"hola"} />
 				</div>
 			</ModalLg>

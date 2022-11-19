@@ -12,7 +12,7 @@ export const TableH = ({ children }) => {
 	return <th className="p-5 text-left text-xs font-semibold">{children}</th>;
 };
 export const TableD = ({children}) => {
-  return <td className="p-5 text-gray-900 whitespace-no-wrap">{children}</td>;
+  return <td className="p-5 text-gray-900 whitespace-no-wrap text-sm">{children}</td>;
 }
 export const TableDOptions = ({children}) => {
   return (
