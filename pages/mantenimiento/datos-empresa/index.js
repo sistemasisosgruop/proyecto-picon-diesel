@@ -106,12 +106,13 @@ export default function DatosEmpresa() {
 													className="w-full h-full rounded-full"
 													src={
 														logo === ""
-															? "/images/imagePlaceholder.svg"
+															? "/images/placeholder.jpg"
 															: logo
 													}
 													alt=""
 													width={40}
 													height={40}
+													objectFit="cover"
 												/>
 											</div>
 										</TableD>
