@@ -1,29 +1,20 @@
 import { Checkbox, Input } from "@material-tailwind/react";
+import { useMemo } from "react";
 import {
 	ButtonAdd,
 	ButtonCancel,
-	ButtonDelete,
-	ButtonEdit,
 	ButtonImportData,
 	ButtonSave,
 } from "../../../../app/components/elements/Buttons";
-import { Search } from "../../../../app/components/elements/Search";
-import {
-	Table,
-	TableD,
-	TableDOptions,
-	TableH,
-	TableHOptions,
-	TableRH,
-} from "../../../../app/components/elements/Table";
 import { Title } from "../../../../app/components/elements/Title";
 import {
 	Modal,
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
+import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateAdministrativo from "../../../../app/components/templates/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
-import { vendedores } from "../../../../data/vendedores";
+import { proveedores } from "../../../../data/proveedores";
 
 export default function Vendedores() {
 	const {
@@ -39,6 +30,22 @@ export default function Vendedores() {
 		closeModal();
 	};
 
+	const columns = useMemo(
+		() => [
+			{ Header: "#", accessor: "id" },
+			{ Header: "Codigo", accessor: "codigo" },
+			{ Header: "Nombre", accessor: "nombre" },
+			{ Header: "Correo", accessor: "correo" },
+			{ Header: "Teléfono", accessor: "telefono" },
+			{ Header: "Tipo Documento", accessor: "tipoDocumento" },
+			{ Header: "N° Documento", accessor: "numeroDocumento" },
+			{ Header: "Estado", accessor: "estado" },
+		],
+		[]
+	);
+
+	const data = useMemo(() => proveedores, []);
+
 	return (
 		<>
 			<TemplateAdministrativo>
@@ -51,79 +58,8 @@ export default function Vendedores() {
 						/>
 					</div>
 				</Title>
-				<Search />
-				{/* Table list paises */}
-				<Table>
-					<thead>
-						<TableRH>
-							<TableH>#</TableH>
-							<TableH>Codigo</TableH>
-							<TableH>Nombre</TableH>
-							<TableH>Correo</TableH>
-							<TableH>Teléfono</TableH>
-							<TableH>Dirección</TableH>
-							<TableH>% Comisión</TableH>
-							<TableH>Aprobar Cotización</TableH>
-							<TableHOptions />
-						</TableRH>
-					</thead>
-					<tbody>
-						{vendedores.map(
-							(
-								{
-									id,
-									codigo,
-									nombre,
-									correo,
-									telefono,
-									direccion,
-									comision,
-									aproCotizacion,
-								},
-								index
-							) => {
-								return (
-									<tr key={index}>
-										<TableD>
-											<p>{id}</p>
-										</TableD>
-										<TableD>
-											<p>{codigo}</p>
-										</TableD>
-										<TableD>
-											<p>{nombre}</p>
-										</TableD>
-										<TableD>
-											<p>{correo}</p>
-										</TableD>
-										<TableD>
-											<p>{telefono}</p>
-										</TableD>
-										<TableD>
-											<p>{direccion}</p>
-										</TableD>
-										<TableD>
-											<p>{comision}%</p>
-										</TableD>
-										<TableD>
-											<p>{aproCotizacion}</p>
-										</TableD>
-										<TableDOptions>
-											<ButtonEdit
-												onClick={() => openModal(true)}
-											/>
-											<ButtonDelete
-												onClick={() =>
-													setIsOpenModalDelete(true)
-												}
-											/>
-										</TableDOptions>
-									</tr>
-								);
-							}
-						)}
-					</tbody>
-				</Table>
+				{/* Table list */}
+				<TableComplete columns={columns} data={data} openModal={openModal} setIsOpenModalDelete={setIsOpenModalDelete} />
 			</TemplateAdministrativo>
 			{/* Modal agregar */}
 			<Modal

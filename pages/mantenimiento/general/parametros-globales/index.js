@@ -7,7 +7,6 @@ import {
 	ButtonEdit,
 	ButtonSave,
 } from "../../../../app/components/elements/Buttons";
-import { Search } from "../../../../app/components/elements/Search";
 import {
 	Table,
 	TableD,
@@ -47,7 +46,6 @@ export default function ParametrosGlobales() {
 						onClick={() => openModal(false)}
 					/>
 				</Title>
-				<Search />
 				{/* Table list parametros glabales */}
 				<Table>
 					<thead>

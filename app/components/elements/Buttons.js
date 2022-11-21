@@ -85,6 +85,7 @@ export const ButtonImportData = ({onClick}) => {
 				name="excel"
 				id="excel"
 				className="w-0 h-0 opacity-0 overflow-hidden absolute z-[-1]"
+				accept=".xlsx, .xls, .csv"
 				onChange={(e) => handleFile(e)}
 			/>
 			<label

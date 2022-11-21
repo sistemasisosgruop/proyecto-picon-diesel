@@ -10,8 +10,8 @@ export const TableRH = ({ children }) => {
 };
 export const TableH = ({ children }) => {
 	return (
-		<th className="p-5 text-left text-xs font-semibold">
-			<p className="flex">{children}</p>
+		<th className="p-5 text-left">
+			<p className="flex text-xs font-semibold">{children}</p>
 		</th>
 	);
 };

@@ -1,25 +1,17 @@
 import { Input } from "@material-tailwind/react";
+import { useMemo } from "react";
 import {
 	ButtonAdd,
 	ButtonCancel,
-	ButtonDelete,
-	ButtonEdit,
 	ButtonImportData,
 	ButtonSave,
 } from "../../../../app/components/elements/Buttons";
-import { Search } from "../../../../app/components/elements/Search";
-import {
-	Table,
-	TableD,
-	TableDOptions,
-	TableH,
-	TableRH,
-} from "../../../../app/components/elements/Table";
 import { Title } from "../../../../app/components/elements/Title";
 import {
 	Modal,
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
+import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateAdministrativo from "../../../../app/components/templates/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
 import { personal } from "../../../../data/personal";
@@ -38,6 +30,23 @@ export default function Personal() {
 		closeModal();
 	};
 
+	const columns = useMemo(
+		() => [
+			{ Header: "#", accessor: "id" },
+			{ Header: "Codigo", accessor: "codigo" },
+			{ Header: "Nombre", accessor: "nombre" },
+			{ Header: "Correo", accessor: "correo" },
+			{ Header: "Teléfono", accessor: "telefono" },
+			{ Header: "Cargo", accessor: "cargo" },
+			{ Header: "Area", accessor: "area" },
+			{ Header: "Estado", accessor: "estado" },
+
+		],
+		[]
+	);
+
+	const data = useMemo(() => personal, []);
+
 	return (
 		<>
 			<TemplateAdministrativo>
@@ -50,62 +59,8 @@ export default function Personal() {
 						/>
 					</div>
 				</Title>
-				<Search />
-				{/* Table list paises */}
-				<Table>
-					<thead>
-						<TableRH>
-							<TableH>#</TableH>
-							<TableH>Codigo</TableH>
-							<TableH>Nombre</TableH>
-							<TableH>Correo</TableH>
-							<TableH>Teléfono</TableH>
-							<TableH>Cargo</TableH>
-							<TableH />
-						</TableRH>
-					</thead>
-					<tbody>
-						{personal.map(
-							(
-								{ id, codigo, nombre, correo, telefono, cargo },
-								index
-							) => {
-								return (
-									<tr key={index}>
-										<TableD>
-											<p>{id}</p>
-										</TableD>
-										<TableD>
-											<p>{codigo}</p>
-										</TableD>
-										<TableD>
-											<p>{nombre}</p>
-										</TableD>
-										<TableD>
-											<p>{correo}</p>
-										</TableD>
-										<TableD>
-											<p>{telefono}</p>
-										</TableD>
-										<TableD>
-											<p>{cargo}</p>
-										</TableD>
-										<TableDOptions>
-											<ButtonEdit
-												onClick={() => openModal(true)}
-											/>
-											<ButtonDelete
-												onClick={() =>
-													setIsOpenModalDelete(true)
-												}
-											/>
-										</TableDOptions>
-									</tr>
-								);
-							}
-						)}
-					</tbody>
-				</Table>
+				{/* Table list */}
+				<TableComplete columns={columns} data={data} openModal={openModal} setIsOpenModalDelete={setIsOpenModalDelete} />
 			</TemplateAdministrativo>
 			{/* Modal agregar */}
 			<Modal
