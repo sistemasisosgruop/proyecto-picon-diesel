@@ -1,0 +1,32 @@
+export const clientes = [
+  {
+    id: 1,
+    codigo: "CLIE001",
+    nombre: "Juan Perez",
+    correo: "cliente01@mail.com",
+    telefono: "123456789",
+    tipoDocumento: "DNI",
+    numeroDocumento: "12345678",
+    estado: "Activo",
+  },
+  {
+    id: 2,
+    codigo: "CLIE002",
+    nombre: "Maria Perez",
+    correo: "cliente02@mail.com",
+    telefono: "123456789",
+    tipoDocumento: "DNI",
+    numeroDocumento: "12345678",
+    estado: "Activo",
+  },
+  {
+    id: 3,
+    codigo: "CLIE003",
+    nombre: "Pedro Perez",
+    correo: "cliente03@mail.com",
+    telefono: "123456789",
+    tipoDocumento: "RUC",
+    numeroDocumento: "12345678",
+    estado: "Activo",
+  },
+];
