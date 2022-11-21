@@ -27,7 +27,7 @@ export const menuSidebar = [
 			},
 			{
 				subItem: "Inventario",
-				href: "/mantenimiento/inventario",
+				href: "/mantenimiento/inventario/almacenes",
 			},
 			{
 				subItem: "Comercial",
