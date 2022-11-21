@@ -65,7 +65,7 @@ export default function Vendedores() {
 			</TemplateAdministrativo>
 			{/* Modal agregar */}
 			<Modal
-				title={isEdit ? "Editar Personal" : "Nuevo Personal"}
+				title={isEdit ? "Editar Vendedor" : "Nuevo Vendedor"}
 				isOpen={isOpenModal}
 				closeModal={closeModal}
 			>
@@ -73,7 +73,7 @@ export default function Vendedores() {
 				<form className="flex flex-col gap-5">
 					<Input label="Nombre" />
 					<div className="flex gap-5">
-						<Input label="Correo" />
+						<Input label="Correo" type="email"/>
 						<Input label="Contraseña" />
 					</div>
 					<div className="flex gap-5">

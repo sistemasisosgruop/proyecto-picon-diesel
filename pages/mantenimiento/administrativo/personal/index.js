@@ -72,7 +72,7 @@ export default function Personal() {
 				<form className="flex flex-col gap-5">
 					<Input label="Nombre" />
 					<div className="flex gap-5">
-						<Input label="Correo" />
+						<Input label="Correo" type="email"/>
 						<Input label="Contraseña" />
 					</div>
 					<div className="flex gap-5">

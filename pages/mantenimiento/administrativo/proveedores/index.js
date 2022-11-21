@@ -1,4 +1,4 @@
-import { Checkbox, Input } from "@material-tailwind/react";
+import { Input, Option, Select } from "@material-tailwind/react";
 import { useMemo } from "react";
 import {
 	ButtonAdd,
@@ -63,7 +63,7 @@ export default function Vendedores() {
 			</TemplateAdministrativo>
 			{/* Modal agregar */}
 			<Modal
-				title={isEdit ? "Editar Personal" : "Nuevo Personal"}
+				title={isEdit ? "Editar Proveedor" : "Nuevo Proveedor"}
 				isOpen={isOpenModal}
 				closeModal={closeModal}
 			>
@@ -71,15 +71,17 @@ export default function Vendedores() {
 				<form className="flex flex-col gap-5">
 					<Input label="Nombre" />
 					<div className="flex gap-5">
-						<Input label="Correo" />
-						<Input label="Contraseña" />
+						<Select label="Tipo Documento">
+							<Option value="dni">DNI</Option>
+							<Option value="ruc">RUC</Option>
+						</Select>
+						<Input label="N° de documento" type="number" />
 					</div>
 					<div className="flex gap-5">
 						<Input label="Teléfono" />
-						<Input label="Dirección" />
+						<Input label="Correo" type="email"/>
 					</div>
-					<Input label="% Comision" type="number" />
-					<Checkbox label="Aprobación de cotización" />
+					
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
 						<ButtonSave onClick={saveData} />
@@ -88,7 +90,7 @@ export default function Vendedores() {
 			</Modal>
 			{/* Modal Eliminar */}
 			<ModalConfirmDelete
-				title={"Eliminar Personal"}
+				title={"Eliminar Proveedor"}
 				isOpen={isOpenModalDelete}
 				closeModal={() => setIsOpenModalDelete(false)}
 			/>
