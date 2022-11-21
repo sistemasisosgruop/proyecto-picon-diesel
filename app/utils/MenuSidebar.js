@@ -23,7 +23,7 @@ export const menuSidebar = [
 			},
 			{
 				subItem: "Importación",
-				href: "/mantenimiento/importacion",
+				href: "/mantenimiento/importacion/agente-de-aduanas",
 			},
 			{
 				subItem: "Inventario",
