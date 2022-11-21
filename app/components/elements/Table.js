@@ -9,7 +9,11 @@ export const TableRH = ({ children }) => {
 	return <tr className="border-b-2 border-b-primary-50">{children}</tr>;
 };
 export const TableH = ({ children }) => {
-	return <th className="p-5 text-left text-xs font-semibold">{children}</th>;
+	return (
+		<th className="p-5 text-left text-xs font-semibold">
+			<p className="flex">{children}</p>
+		</th>
+	);
 };
 export const TableHOptions = ({ children }) => {
 	return (

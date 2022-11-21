@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Image as Logo } from "iconsax-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
 	ButtonAdd,
 	ButtonEdit,
@@ -26,11 +26,11 @@ import { Group, GroupInputs } from "../../../app/components/elements/Form";
 import { Input } from "@material-tailwind/react";
 import { FileUploader } from "react-drag-drop-files";
 import { useModal } from "../../../app/hooks/useModal";
+import { useTable } from "react-table";
 
 const fileTypes = ["JPEG", "PNG"];
 
 export default function DatosEmpresa() {
-
 	const {
 		isOpenModal,
 		isOpenModalDelete,
@@ -39,9 +39,6 @@ export default function DatosEmpresa() {
 		closeModal,
 		openModal,
 	} = useModal();
-
-	// Datos de la empresa
-	const empresas = Empresas;
 
 	// Logo de la empresa
 	const [file, setFile] = useState(null);
@@ -52,6 +49,26 @@ export default function DatosEmpresa() {
 		setLogoPreview(URL.createObjectURL(file));
 	};
 
+	// Datos de la empresa
+	const columns = useMemo(
+		() => [
+			{ Header: "#", accessor: "id" },
+			{ Header: "Codigo", accessor: "codigo" },
+			{ Header: "Logo", accessor: "logo" },
+			{ Header: "Nombre", accessor: "nombre" },
+			{ Header: "RUC", accessor: "ruc" },
+			{ Header: "Direccion", accessor: "direccion" },
+			{ Header: "Telefono", accessor: "telefono" },
+			{ Header: "Email", accessor: "email" },
+		],
+		[]
+	);
+
+	const data = useMemo(() => Empresas, []);
+
+	const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+		useTable({ columns, data });
+
 	return (
 		<>
 			<Container>
@@ -61,84 +78,75 @@ export default function DatosEmpresa() {
 						onClick={() => openModal(false)}
 					/>
 				</Title>
-				{/* Table */}
-				<Table>
+
+				{/* Table List */}
+				<Table
+					{...getTableProps()}
+				>
 					<thead>
-						<TableRH>
-							<TableH>#</TableH>
-							<TableH>Logo</TableH>
-							<TableH>Nombre</TableH>
-							<TableH>RUC</TableH>
-							<TableH>Dirección</TableH>
-							<TableH>Teléfono</TableH>
-							<TableH>Correo</TableH>
-							<TableH />
-						</TableRH>
+						{headerGroups.map((headerGroup,index) => (
+							<TableRH
+								key={index}
+								{...headerGroup.getHeaderGroupProps()}
+							>
+								{headerGroup.headers.map((column, indexCol) => (
+									<TableH
+										key={indexCol}
+										{...column.getHeaderProps()}
+									>
+										{column.render("Header")}
+									</TableH>
+								))}
+							</TableRH>
+						))}
 					</thead>
-					<tbody>
-						{empresas.map(
-							(
-								{
-									id,
-									logo,
-									nombre,
-									ruc,
-									direccion,
-									telefono,
-									email,
-								},
-								index
-							) => {
-								return (
-									<tr key={index}>
-										<TableD>
-											<p>{id}</p>
-										</TableD>
-										<TableD>
-											<div className="flex-shrink-0 w-10 h-10">
-												<Image
-													className="w-full h-full rounded-full"
-													src={
-														logo === ""
-															? "/images/placeholder.jpg"
-															: logo
-													}
-													alt=""
-													width={40}
-													height={40}
-													objectFit="cover"
-												/>
-											</div>
-										</TableD>
-										<TableD>
-											<p>{nombre}</p>
-										</TableD>
-										<TableD>
-											<p>{ruc}</p>
-										</TableD>
-										<TableD>
-											<p>{direccion}</p>
-										</TableD>
-										<TableD>
-											<p>{telefono}</p>
-										</TableD>
-										<TableD>
-											<p>{email}</p>
-										</TableD>
-										<TableDOptions>
-											<ButtonEdit
-												onClick={() => openModal(true)}
-											/>
-											<ButtonDelete
-												onClick={() =>
-													setIsOpenModalDelete(true)
-												}
-											/>
-										</TableDOptions>
-									</tr>
-								);
-							}
-						)}
+					<tbody {...getTableBodyProps()}>
+						{rows.map((row, index) => {
+							prepareRow(row);
+							return (
+								<tr key={index} {...row.getRowProps()}>
+									{row.cells.map((cell, indexCell) => {
+										return (
+											<TableD
+												key={indexCell}
+												{...cell.getCellProps()}
+											>
+												{cell.column.Header ===
+												"Logo" ? (
+													<div className="flex-shrink-0 w-10 h-10">
+														<Image
+															className="w-full h-full rounded-full"
+															src={
+																cell.value ===
+																""
+																	? "/images/placeholder.jpg"
+																	: cell.value
+															}
+															alt=""
+															width={40}
+															height={40}
+															objectFit="cover"
+														/>
+													</div>
+												) : (
+													<p>{cell.render("Cell")}</p>
+												)}
+											</TableD>
+										);
+									})}
+									<TableDOptions>
+										<ButtonEdit
+											onClick={() => openModal(true)}
+										/>
+										<ButtonDelete
+											onClick={() =>
+												setIsOpenModalDelete(true)
+											}
+										/>
+									</TableDOptions>
+								</tr>
+							);
+						})}
 					</tbody>
 				</Table>
 			</Container>
