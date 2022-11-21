@@ -23,8 +23,8 @@ export default function TemplateImportacion({ children }) {
 		},
 		{
 			icon: <Ship />,
-			modulo: "Tipos de vía",
-			href: "/mantenimiento/importacion/tipos-de-via",
+			modulo: "Tipos de vías",
+			href: "/mantenimiento/importacion/tipos-de-vias",
 		},
 		{
 			icon: <Coin />,

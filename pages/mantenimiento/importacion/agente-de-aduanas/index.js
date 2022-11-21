@@ -16,7 +16,7 @@ import TemplateImportacion from "../../../../app/components/templates/TemplateIm
 import { useModal } from "../../../../app/hooks/useModal";
 import { agenteDeAduanas } from "../../../../data/agente-de-aduanas";
 
-export default function TiposClientes() {
+export default function AgenteAduanas() {
 	const {
 		isOpenModal,
 		isOpenModalDelete,

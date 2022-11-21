@@ -14,9 +14,9 @@ import {
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateImportacion from "../../../../app/components/templates/TemplateImportacion";
 import { useModal } from "../../../../app/hooks/useModal";
-import { incoterms } from "../../../../data/incoterms";
+import { tiposDeVias } from "../../../../data/tipos-de-vias";
 
-export default function Incoterms() {
+export default function TiposVias() {
 	const {
 		isOpenModal,
 		isOpenModalDelete,
@@ -40,16 +40,16 @@ export default function Incoterms() {
 		[]
 	);
 
-	const data = useMemo(() => incoterms, []);
+	const data = useMemo(() => tiposDeVias, []);
 
 	return (
 		<>
 			<TemplateImportacion>
-				<Title text={"Lista Incoterms"}>
+				<Title text={"Lista Tipos de vías"}>
 					<div className="flex gap-4">
 						<ButtonImportData />
 						<ButtonAdd
-							text={"Nuevo item"}
+							text={"Nuevo tipo"}
 							onClick={() => openModal(false)}
 						/>
 					</div>
@@ -64,17 +64,12 @@ export default function Incoterms() {
 			</TemplateImportacion>
 			{/* Modal agregar */}
 			<Modal
-				title={
-					isEdit
-						? "Editar Incoterms"
-						: "Nuevo Incoterms"
-				}
+				title={isEdit ? "Editar Tipo de vía" : "Nuevo Tipo de vía"}
 				isOpen={isOpenModal}
 				closeModal={closeModal}
 			>
 				{/* Form */}
 				<form className="flex flex-col gap-5">
-					<Input label="Código" />
 					<Input label="Nombre" />
 					<Textarea label="Descripción" />
 					<div className="w-full flex justify-end gap-5">
@@ -85,7 +80,7 @@ export default function Incoterms() {
 			</Modal>
 			{/* Modal Eliminar */}
 			<ModalConfirmDelete
-				title={"Eliminar Item de Incoterms"}
+				title={"Eliminar Tipo de vía"}
 				isOpen={isOpenModalDelete}
 				closeModal={() => setIsOpenModalDelete(false)}
 			/>
