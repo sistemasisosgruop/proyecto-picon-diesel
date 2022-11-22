@@ -23,7 +23,11 @@ export const TableHOptions = ({ children }) => {
 	);
 };
 export const TableD = ({children}) => {
-  return <td className="p-5 text-gray-600 text-sm whitespace-no-wrap">{children}</td>;
+  return (
+		<td className="p-5 text-gray-600 text-sm max-w-xs h-auto">
+			{children}
+		</td>
+  );
 }
 export const TableDOptions = ({children}) => {
   return (
