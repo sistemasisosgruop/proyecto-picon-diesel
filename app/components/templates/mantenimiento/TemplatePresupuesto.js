@@ -27,7 +27,7 @@ export default function TemplatePresupuesto({ children }) {
 		},
 		{
 			icon: <Receive />,
-			modulo: "Trabajo tercerso",
+			modulo: "Trabajo terceros",
 			href: "/mantenimiento/presupuesto/trabajo-terceros",
 		},
 	];

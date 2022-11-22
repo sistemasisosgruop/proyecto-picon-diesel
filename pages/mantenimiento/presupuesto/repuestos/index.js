@@ -13,9 +13,9 @@ import {
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplatePresupuesto from "../../../../app/components/templates/mantenimiento/TemplatePresupuesto";
 import { useModal } from "../../../../app/hooks/useModal";
-import { servicios } from "../../../../data/servicios";
+import { repuestos } from "../../../../data/repuestos";
 
-export default function Servicios() {
+export default function Repuestos() {
 	const {
 		isOpenModal,
 		isOpenModalDelete,
@@ -33,21 +33,21 @@ export default function Servicios() {
 		() => [
 			{ Header: "#", accessor: "id" },
 			{ Header: "Codigo", accessor: "codigo" },
-			{ Header: "Definición", accessor: "definicion" },
+			{ Header: "Nombre", accessor: "nombre" },
 			{ Header: "Precio", accessor: "precio" },
 		],
 		[]
 	);
 
-	const data = useMemo(() => servicios, []);
+	const data = useMemo(() => repuestos, []);
 
 	return (
 		<>
 			<TemplatePresupuesto>
-				<Title text={"Lista Servicios"}>
+				<Title text={"Lista Repuestos"}>
 					<div className="flex gap-4">
 						<ButtonAdd
-							text={"Nuevo servicio"}
+							text={"Nuevo repuesto"}
 							onClick={() => openModal(false)}
 						/>
 					</div>
@@ -62,14 +62,14 @@ export default function Servicios() {
 			</TemplatePresupuesto>
 			{/* Modal agregar */}
 			<Modal
-				title={isEdit ? "Editar Servicio" : "Nuevo Servicio"}
+				title={isEdit ? "Editar Repuesto" : "Nuevo Repuesto"}
 				isOpen={isOpenModal}
 				closeModal={closeModal}
 			>
 				{/* Form */}
 				<form className="flex flex-col gap-5">
 					<Input label="Código" />
-					<Input label="Definición" />
+					<Input label="Nombre" />
 					<Input label="Precio" type={"number"} />
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
@@ -79,7 +79,7 @@ export default function Servicios() {
 			</Modal>
 			{/* Modal Eliminar */}
 			<ModalConfirmDelete
-				title={"Eliminar Servicio"}
+				title={"Eliminar Repuesto"}
 				isOpen={isOpenModalDelete}
 				closeModal={() => setIsOpenModalDelete(false)}
 			/>
