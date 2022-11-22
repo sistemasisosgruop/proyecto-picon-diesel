@@ -13,9 +13,9 @@ import {
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateComercial from "../../../../app/components/templates/mantenimiento/TemplateComercial";
 import { useModal } from "../../../../app/hooks/useModal";
-import { tipoDeCambios } from "../../../../data/tipo-de-cambios";
+import { documentosAdministrativos } from "../../../../data/documentos-administrativos";
 
-export default function TipoDeCambio() {
+export default function DocumentosAdministrativos() {
 	const {
 		isOpenModal,
 		isOpenModalDelete,
@@ -33,23 +33,21 @@ export default function TipoDeCambio() {
 		() => [
 			{ Header: "#", accessor: "id" },
 			{ Header: "Codigo", accessor: "codigo" },
-      { Header: "De", accessor: "de" },
-      { Header: "A", accessor: "a" },
-      { Header: "Valor", accessor: "valor" },
-      { Header: "Fecha", accessor: "fecha" },
+			{ Header: "Nombre", accessor: "nombre" },
+			{ Header: "Abreviatura", accessor: "abreviatura" },
 		],
 		[]
 	);
 
-	const data = useMemo(() => tipoDeCambios, []);
+	const data = useMemo(() => documentosAdministrativos, []);
 
 	return (
 		<>
 			<TemplateComercial>
-				<Title text={"Lista Tipo de Cambio"}>
+				<Title text={"Lista Documentos Administrativos"}>
 					<div className="flex gap-4">
 						<ButtonAdd
-							text={"Nuevo tipo de cambio"}
+							text={"Nuevo documento"}
 							onClick={() => openModal(false)}
 						/>
 					</div>
@@ -66,21 +64,18 @@ export default function TipoDeCambio() {
 			<Modal
 				title={
 					isEdit
-						? "Editar Tipo de cambio"
-						: "Nuevo Tipo de cambio"
+						? "Editar Documento administrativo"
+						: "Nuevo Documento administrativo"
 				}
 				isOpen={isOpenModal}
 				closeModal={closeModal}
 			>
 				{/* Form */}
 				<form className="flex flex-col gap-5">
+					<Input label="Código" />
 					<div className="flex gap-5">
-						<Input label="De" />
-						<Input label="A" />
-					</div>
-					<div className="flex gap-5">
-						<Input label="Valor" type="number"/>
-						<Input label="Fecha" type="date"/>
+						<Input label="Nombre" />
+						<Input label="Abreviatura" />
 					</div>
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
@@ -90,7 +85,7 @@ export default function TipoDeCambio() {
 			</Modal>
 			{/* Modal Eliminar */}
 			<ModalConfirmDelete
-				title={"Eliminar Tipo de cambio"}
+				title={"Eliminar Documento administrativo"}
 				isOpen={isOpenModalDelete}
 				closeModal={() => setIsOpenModalDelete(false)}
 			/>

@@ -3,7 +3,6 @@ import { useMemo } from "react";
 import {
 	ButtonAdd,
 	ButtonCancel,
-	ButtonImportData,
 	ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
@@ -48,7 +47,6 @@ export default function DocumentosContables() {
 			<TemplateComercial>
 				<Title text={"Lista Documentos Contables"}>
 					<div className="flex gap-4">
-						<ButtonImportData />
 						<ButtonAdd
 							text={"Nuevo documento"}
 							onClick={() => openModal(false)}
