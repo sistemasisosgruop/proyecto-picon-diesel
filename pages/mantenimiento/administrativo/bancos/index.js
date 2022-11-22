@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateAdministrativo from "../../../../app/components/templates/TemplateAdministrativo";
+import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
 import { bancos } from "../../../../data/bancos";
 
@@ -63,17 +63,13 @@ export default function Bancos() {
 			</TemplateAdministrativo>
 			{/* Modal agregar */}
 			<Modal
-				title={
-					isEdit
-						? "Editar Banco"
-						: "Nuevo Banco"
-				}
+				title={isEdit ? "Editar Banco" : "Nuevo Banco"}
 				isOpen={isOpenModal}
 				closeModal={closeModal}
 			>
 				{/* Form */}
 				<form className="flex flex-col gap-5">
-						<Input label="Nombre" />
+					<Input label="Nombre" />
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
 						<ButtonSave onClick={saveData} />

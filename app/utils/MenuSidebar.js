@@ -31,7 +31,7 @@ export const menuSidebar = [
 			},
 			{
 				subItem: "Comercial",
-				href: "/mantenimiento/comercial",
+				href: "/mantenimiento/comercial/tipo-de-cambio",
 			},
 			{
 				subItem: "Presupuesto",

@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateImportacion from "../../../../app/components/templates/TemplateImportacion";
+import TemplateImportacion from "../../../../app/components/templates/mantenimiento/TemplateImportacion";
 import { useModal } from "../../../../app/hooks/useModal";
 import { tiposDeVias } from "../../../../data/tipos-de-vias";
 

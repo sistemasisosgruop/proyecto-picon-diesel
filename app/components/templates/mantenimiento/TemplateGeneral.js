@@ -1,7 +1,7 @@
 import { ColorsSquare, Global } from "iconsax-react";
-import { Container, ContainerMenu, Content } from "../elements/Containers";
-import { Title } from "../elements/Title";
-import LayoutSubSubMenu from "../layouts/LayoutSubSubMenu";
+import { Container, ContainerMenu, Content } from "../../elements/Containers";
+import { Title } from "../../elements/Title";
+import LayoutSubSubMenu from "../../layouts/LayoutSubSubMenu";
 
 export default function TemplateGeneral({children}) {
 

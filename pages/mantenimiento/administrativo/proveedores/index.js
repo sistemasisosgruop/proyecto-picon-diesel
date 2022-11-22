@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateAdministrativo from "../../../../app/components/templates/TemplateAdministrativo";
+import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
 import { proveedores } from "../../../../data/proveedores";
 
@@ -59,7 +59,12 @@ export default function Vendedores() {
 					</div>
 				</Title>
 				{/* Table list */}
-				<TableComplete columns={columns} data={data} openModal={openModal} setIsOpenModalDelete={setIsOpenModalDelete} />
+				<TableComplete
+					columns={columns}
+					data={data}
+					openModal={openModal}
+					setIsOpenModalDelete={setIsOpenModalDelete}
+				/>
 			</TemplateAdministrativo>
 			{/* Modal agregar */}
 			<Modal
@@ -79,9 +84,9 @@ export default function Vendedores() {
 					</div>
 					<div className="flex gap-5">
 						<Input label="Teléfono" />
-						<Input label="Correo" type="email"/>
+						<Input label="Correo" type="email" />
 					</div>
-					
+
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
 						<ButtonSave onClick={saveData} />

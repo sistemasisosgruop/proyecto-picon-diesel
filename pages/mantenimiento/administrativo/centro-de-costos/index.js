@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateAdministrativo from "../../../../app/components/templates/TemplateAdministrativo";
+import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
 import { centroCostos } from "../../../../data/centro-costos";
 
@@ -65,16 +65,20 @@ export default function CentroCostos() {
 			</TemplateAdministrativo>
 			{/* Modal agregar */}
 			<Modal
-				title={isEdit ? "Editar Centro de costos" : "Nuevo Centro de costos"}
+				title={
+					isEdit
+						? "Editar Centro de costos"
+						: "Nuevo Centro de costos"
+				}
 				isOpen={isOpenModal}
 				closeModal={closeModal}
 			>
 				{/* Form */}
 				<form className="flex flex-col gap-5">
 					<div className="flex gap-5">
-					  <Input label="Nombre" />
-						<Input label="Responsable"/>
-					</div>					
+						<Input label="Nombre" />
+						<Input label="Responsable" />
+					</div>
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
 						<ButtonSave onClick={saveData} />

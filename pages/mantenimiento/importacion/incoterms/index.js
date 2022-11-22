@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateImportacion from "../../../../app/components/templates/TemplateImportacion";
+import TemplateImportacion from "../../../../app/components/templates/mantenimiento/TemplateImportacion";
 import { useModal } from "../../../../app/hooks/useModal";
 import { incoterms } from "../../../../data/incoterms";
 
@@ -64,11 +64,7 @@ export default function Incoterms() {
 			</TemplateImportacion>
 			{/* Modal agregar */}
 			<Modal
-				title={
-					isEdit
-						? "Editar Incoterms"
-						: "Nuevo Incoterms"
-				}
+				title={isEdit ? "Editar Incoterms" : "Nuevo Incoterms"}
 				isOpen={isOpenModal}
 				closeModal={closeModal}
 			>

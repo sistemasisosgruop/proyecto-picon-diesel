@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateAdministrativo from "../../../../app/components/templates/TemplateAdministrativo";
+import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
 import { cuentasBancarias } from "../../../../data/cuentas-bancarias";
 
@@ -75,8 +75,8 @@ export default function CuentasBancarias() {
 			>
 				{/* Form */}
 				<form className="flex flex-col gap-5">
-						<Input label="N° de cuenta" />
-						<Input label="Tipo" />
+					<Input label="N° de cuenta" />
+					<Input label="Tipo" />
 					<div className="flex gap-5">
 						<Input label="Banco" />
 						<Input label="Moneda" />

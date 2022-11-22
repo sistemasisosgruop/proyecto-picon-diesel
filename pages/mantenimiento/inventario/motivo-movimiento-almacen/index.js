@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateInventario from "../../../../app/components/templates/TemplateInventario";
+import TemplateInventario from "../../../../app/components/templates/mantenimiento/TemplateInventario";
 import { useModal } from "../../../../app/hooks/useModal";
 import { motivoMovimientoAlmacen } from "../../../../data/motivo-movimiento-almacen";
 

@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateAdministrativo from "../../../../app/components/templates/TemplateAdministrativo";
+import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
 import { vendedores } from "../../../../data/vendedores";
 
@@ -41,7 +41,6 @@ export default function Vendedores() {
 			{ Header: "% Comision", accessor: "comision" },
 			{ Header: "Aprobar Cotización", accessor: "aproCotizacion" },
 			{ Header: "Estado", accessor: "estado" },
-
 		],
 		[]
 	);
@@ -61,7 +60,12 @@ export default function Vendedores() {
 					</div>
 				</Title>
 				{/* Table list */}
-				<TableComplete columns={columns} data={data} openModal={openModal} setIsOpenModalDelete={setIsOpenModalDelete} />
+				<TableComplete
+					columns={columns}
+					data={data}
+					openModal={openModal}
+					setIsOpenModalDelete={setIsOpenModalDelete}
+				/>
 			</TemplateAdministrativo>
 			{/* Modal agregar */}
 			<Modal
@@ -73,7 +77,7 @@ export default function Vendedores() {
 				<form className="flex flex-col gap-5">
 					<Input label="Nombre" />
 					<div className="flex gap-5">
-						<Input label="Correo" type="email"/>
+						<Input label="Correo" type="email" />
 						<Input label="Contraseña" />
 					</div>
 					<div className="flex gap-5">

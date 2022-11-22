@@ -11,7 +11,7 @@ import {
 	Modal,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateGeneral from "../../../../app/components/templates/TemplateGeneral";
+import TemplateGeneral from "../../../../app/components/templates/mantenimiento/TemplateGeneral";
 import { useModal } from "../../../../app/hooks/useModal";
 import { paises } from "../../../../data/paises";
 
@@ -40,7 +40,6 @@ export default function Paises() {
 	);
 
 	const data = useMemo(() => paises, []);
-	
 
 	return (
 		<>
@@ -51,11 +50,14 @@ export default function Paises() {
 						onClick={() => openModal(false)}
 					/>
 				</Title>
-				
-				{/* Table List */}
-				<TableComplete columns={columns} data={data} openModal={openModal} setIsOpenModalDelete={setIsOpenModalDelete} />
 
-				
+				{/* Table List */}
+				<TableComplete
+					columns={columns}
+					data={data}
+					openModal={openModal}
+					setIsOpenModalDelete={setIsOpenModalDelete}
+				/>
 			</TemplateGeneral>
 			{/* Modal agregar */}
 			<Modal

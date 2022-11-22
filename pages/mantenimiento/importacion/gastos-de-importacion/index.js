@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateImportacion from "../../../../app/components/templates/TemplateImportacion";
+import TemplateImportacion from "../../../../app/components/templates/mantenimiento/TemplateImportacion";
 import { useModal } from "../../../../app/hooks/useModal";
 import { gastosDeImportacion } from "../../../../data/gasto-de-importacion";
 
@@ -64,7 +64,11 @@ export default function GastosImportacion() {
 			</TemplateImportacion>
 			{/* Modal agregar */}
 			<Modal
-				title={isEdit ? "Editar gasto de importación" : "Nuevo gasto de importación"}
+				title={
+					isEdit
+						? "Editar gasto de importación"
+						: "Nuevo gasto de importación"
+				}
 				isOpen={isOpenModal}
 				closeModal={closeModal}
 			>

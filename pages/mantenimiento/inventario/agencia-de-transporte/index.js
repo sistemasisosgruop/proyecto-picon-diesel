@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateInventario from "../../../../app/components/templates/TemplateInventario";
+import TemplateInventario from "../../../../app/components/templates/mantenimiento/TemplateInventario";
 import { useModal } from "../../../../app/hooks/useModal";
 import { agenciaDeTransporte } from "../../../../data/agencia-de-transporte";
 
@@ -79,18 +79,18 @@ export default function AgenciaTransporte() {
 				{/* Form */}
 				<form className="flex flex-col gap-5">
 					<Input label="Nombre / Razon Social" />
-          <div className="flex gap-5">
-            <Select label="Tipo de documento">
-              <Option value="DNI">DNI</Option>
-              <Option value="RUC">RUC</Option>
-            </Select>
-            <Input label="N° de documento" />
-          </div>
-          <div className="flex gap-5">
-            <Input label="Teléfono" />
-            <Input label="Correo" type="email"/>
-          </div>
-          <Input label="Dirección" />
+					<div className="flex gap-5">
+						<Select label="Tipo de documento">
+							<Option value="DNI">DNI</Option>
+							<Option value="RUC">RUC</Option>
+						</Select>
+						<Input label="N° de documento" />
+					</div>
+					<div className="flex gap-5">
+						<Input label="Teléfono" />
+						<Input label="Correo" type="email" />
+					</div>
+					<Input label="Dirección" />
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
 						<ButtonSave onClick={saveData} />

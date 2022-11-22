@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateAdministrativo from "../../../../app/components/templates/TemplateAdministrativo";
+import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
 import { tiposDeClientes } from "../../../../data/tipos-de-clientes";
 
@@ -73,7 +73,7 @@ export default function TiposClientes() {
 				{/* Form */}
 				<form className="flex flex-col gap-5">
 					<Input label="Tipo de cliente" />
-					
+
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
 						<ButtonSave onClick={saveData} />

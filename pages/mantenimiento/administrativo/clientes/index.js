@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateAdministrativo from "../../../../app/components/templates/TemplateAdministrativo";
+import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
 import { clientes } from "../../../../data/clientes";
 
@@ -77,10 +77,10 @@ export default function Clientes() {
 					<Input label="Nombre o Razon Social" />
 					<div className="flex gap-5">
 						<Select label="Tipo de documento">
-              <Option value="dni">DNI</Option>
-              <Option value="ruc">RUC</Option>
-            </Select>
-						<Input label="N° de documento" type="number"/>
+							<Option value="dni">DNI</Option>
+							<Option value="ruc">RUC</Option>
+						</Select>
+						<Input label="N° de documento" type="number" />
 					</div>
 					<div className="flex gap-5">
 						<Input label="Correo" type="email" />

@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateImportacion from "../../../../app/components/templates/TemplateImportacion";
+import TemplateImportacion from "../../../../app/components/templates/mantenimiento/TemplateImportacion";
 import { useModal } from "../../../../app/hooks/useModal";
 import { agenteDeAduanas } from "../../../../data/agente-de-aduanas";
 
@@ -81,7 +81,7 @@ export default function AgenteAduanas() {
 						<Input label="Correo" type="email" />
 						<Input label="Teléfono" />
 					</div>
-          <Textarea label="Observaciones" />
+					<Textarea label="Observaciones" />
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
 						<ButtonSave onClick={saveData} />

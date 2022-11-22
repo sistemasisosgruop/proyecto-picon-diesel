@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateInventario from "../../../../app/components/templates/TemplateInventario";
+import TemplateInventario from "../../../../app/components/templates/mantenimiento/TemplateInventario";
 import { useModal } from "../../../../app/hooks/useModal";
 import { vehiculos } from "../../../../data/vehiculos";
 
@@ -34,12 +34,12 @@ export default function Vehiculos() {
 		() => [
 			{ Header: "#", accessor: "id" },
 			{ Header: "Codigo", accessor: "codigo" },
-      { Header: "Placa", accessor: "placa" },
-      { Header: "Marca", accessor: "marca" },
-      { Header: "Modelo", accessor: "modelo" },
-      { Header: "Color", accessor: "color" },
-      { Header: "Tarjeta de propiedad", accessor: "tarjetaPropiedad" },
-      { Header: "Descripción", accessor: "descripcion" },
+			{ Header: "Placa", accessor: "placa" },
+			{ Header: "Marca", accessor: "marca" },
+			{ Header: "Modelo", accessor: "modelo" },
+			{ Header: "Color", accessor: "color" },
+			{ Header: "Tarjeta de propiedad", accessor: "tarjetaPropiedad" },
+			{ Header: "Descripción", accessor: "descripcion" },
 		],
 		[]
 	);
@@ -68,11 +68,7 @@ export default function Vehiculos() {
 			</TemplateInventario>
 			{/* Modal agregar */}
 			<Modal
-				title={
-					isEdit
-						? "Editar Vehículo"
-						: "Nuevo Vehículo"
-				}
+				title={isEdit ? "Editar Vehículo" : "Nuevo Vehículo"}
 				isOpen={isOpenModal}
 				closeModal={closeModal}
 			>

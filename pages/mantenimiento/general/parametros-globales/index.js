@@ -19,7 +19,7 @@ import {
 	Modal,
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
-import TemplateGeneral from "../../../../app/components/templates/TemplateGeneral";
+import TemplateGeneral from "../../../../app/components/templates/mantenimiento/TemplateGeneral";
 import { useModal } from "../../../../app/hooks/useModal";
 import { parametros } from "../../../../data/parametros";
 
@@ -72,7 +72,9 @@ export default function ParametrosGlobales() {
 										onClick={() => openModal(true)}
 									/>
 									<ButtonDelete
-										onClick={() => setIsOpenModalDelete(true)}
+										onClick={() =>
+											setIsOpenModalDelete(true)
+										}
 									/>
 								</TableDOptions>
 							</tr>

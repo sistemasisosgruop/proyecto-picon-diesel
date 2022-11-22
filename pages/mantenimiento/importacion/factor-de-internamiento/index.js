@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateImportacion from "../../../../app/components/templates/TemplateImportacion";
+import TemplateImportacion from "../../../../app/components/templates/mantenimiento/TemplateImportacion";
 import { useModal } from "../../../../app/hooks/useModal";
 import { factorDeInternamiento } from "../../../../data/factor-de-internamiento";
 
@@ -73,7 +73,7 @@ export default function FactorInternamiento() {
 			>
 				{/* Form */}
 				<form className="flex flex-col gap-5">
-					<Input label="Valor" type="number"/>
+					<Input label="Valor" type="number" />
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
 						<ButtonSave onClick={saveData} />

@@ -1,7 +1,7 @@
 import { ArrangeHorizontalSquare, Bank, Box, Card, Profile2User, Shop, UserOctagon, UserSquare } from "iconsax-react";
-import { Container, ContainerMenu, Content } from "../elements/Containers";
-import { Title } from "../elements/Title";
-import LayoutSubSubMenu from "../layouts/LayoutSubSubMenu";
+import { Container, ContainerMenu, Content } from "../../elements/Containers";
+import { Title } from "../../elements/Title";
+import LayoutSubSubMenu from "../../layouts/LayoutSubSubMenu";
 
 export default function TemplateAdministrativo({children}) {
 

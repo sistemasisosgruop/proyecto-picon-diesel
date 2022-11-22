@@ -12,11 +12,11 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
+import TemplateComercial from "../../../../app/components/templates/mantenimiento/TemplateComercial";
 import { useModal } from "../../../../app/hooks/useModal";
-import { personal } from "../../../../data/personal";
+import { tipoDeCambios } from "../../../../data/tipo-de-cambios";
 
-export default function Personal() {
+export default function TipoDeCambio() {
 	const {
 		isOpenModal,
 		isOpenModalDelete,
@@ -34,26 +34,24 @@ export default function Personal() {
 		() => [
 			{ Header: "#", accessor: "id" },
 			{ Header: "Codigo", accessor: "codigo" },
-			{ Header: "Nombre", accessor: "nombre" },
-			{ Header: "Correo", accessor: "correo" },
-			{ Header: "Teléfono", accessor: "telefono" },
-			{ Header: "Cargo", accessor: "cargo" },
-			{ Header: "Area", accessor: "area" },
-			{ Header: "Estado", accessor: "estado" },
+      { Header: "De", accessor: "de" },
+      { Header: "A", accessor: "a" },
+      { Header: "Valor", accessor: "valor" },
+      { Header: "Fecha", accessor: "fecha" },
 		],
 		[]
 	);
 
-	const data = useMemo(() => personal, []);
+	const data = useMemo(() => tipoDeCambios, []);
 
 	return (
 		<>
-			<TemplateAdministrativo>
-				<Title text={"Lista Personal"}>
+			<TemplateComercial>
+				<Title text={"Lista Tipo de Cambio"}>
 					<div className="flex gap-4">
 						<ButtonImportData />
 						<ButtonAdd
-							text={"Nuevo personal"}
+							text={"Nuevo tipo de cambio"}
 							onClick={() => openModal(false)}
 						/>
 					</div>
@@ -65,25 +63,27 @@ export default function Personal() {
 					openModal={openModal}
 					setIsOpenModalDelete={setIsOpenModalDelete}
 				/>
-			</TemplateAdministrativo>
+			</TemplateComercial>
 			{/* Modal agregar */}
 			<Modal
-				title={isEdit ? "Editar Personal" : "Nuevo Personal"}
+				title={
+					isEdit
+						? "Editar Tipo de cambio"
+						: "Nuevo Tipo de cambio"
+				}
 				isOpen={isOpenModal}
 				closeModal={closeModal}
 			>
 				{/* Form */}
 				<form className="flex flex-col gap-5">
-					<Input label="Nombre" />
 					<div className="flex gap-5">
-						<Input label="Correo" type="email" />
-						<Input label="Contraseña" />
+						<Input label="De" />
+						<Input label="A" />
 					</div>
 					<div className="flex gap-5">
-						<Input label="Teléfono" />
-						<Input label="Dirección" />
+						<Input label="Valor" type="number"/>
+						<Input label="Fecha" type="date"/>
 					</div>
-					<Input label="Puesto" />
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
 						<ButtonSave onClick={saveData} />
@@ -92,7 +92,7 @@ export default function Personal() {
 			</Modal>
 			{/* Modal Eliminar */}
 			<ModalConfirmDelete
-				title={"Eliminar Personal"}
+				title={"Eliminar Tipo de cambio"}
 				isOpen={isOpenModalDelete}
 				closeModal={() => setIsOpenModalDelete(false)}
 			/>

@@ -12,7 +12,7 @@ import {
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateInventario from "../../../../app/components/templates/TemplateInventario";
+import TemplateInventario from "../../../../app/components/templates/mantenimiento/TemplateInventario";
 import { useModal } from "../../../../app/hooks/useModal";
 import { almacenes } from "../../../../data/almacenes";
 
@@ -65,19 +65,15 @@ export default function FactorInternamiento() {
 			</TemplateInventario>
 			{/* Modal agregar */}
 			<Modal
-				title={
-					isEdit
-						? "Editar almacen"
-						: "Nuevo almacen"
-				}
+				title={isEdit ? "Editar almacen" : "Nuevo almacen"}
 				isOpen={isOpenModal}
 				closeModal={closeModal}
 			>
 				{/* Form */}
 				<form className="flex flex-col gap-5">
 					<Input label="Nombre" />
-					<Input label="Dirección"/>
-					<Input label="Teléfono"/>
+					<Input label="Dirección" />
+					<Input label="Teléfono" />
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
 						<ButtonSave onClick={saveData} />
