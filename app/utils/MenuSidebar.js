@@ -1,4 +1,10 @@
-import { Bag, ClipboardText, Setting3, Shop, TransmitSqaure2 } from "iconsax-react";
+import {
+	Bag,
+	ClipboardText,
+	Setting3,
+	Shop,
+	TransmitSqaure2,
+} from "iconsax-react";
 
 export const menuSidebar = [
 	{
@@ -35,7 +41,7 @@ export const menuSidebar = [
 			},
 			{
 				subItem: "Presupuesto",
-				href: "/mantenimiento/presupuesto",
+				href: "/mantenimiento/presupuesto/servicios",
 			},
 		],
 	},
