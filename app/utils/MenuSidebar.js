@@ -17,7 +17,7 @@ export const menuSidebar = [
 			},
 			{
 				subItem: "Maestro de códigos",
-				href: "/mantenimiento/",
+				href: "/mantenimiento/maestro-de-codigos/familias",
 			},
 			{
 				subItem: "General",

@@ -1,5 +1,6 @@
 import { Tooltip } from "@material-tailwind/react";
 import { Add, Edit, TrushSquare } from "iconsax-react";
+import Link from "next/link";
 import { useState } from "react";
 import { Excel } from "./icons/Excel";
 
@@ -70,7 +71,7 @@ export const ButtonCancel = ({onClick}) => {
 	);
 }
 
-export const ButtonImportData = ({onClick}) => {
+export const ButtonImportData = () => {
 
 	const [fileExcel, setfileExcel] = useState(null);
 
@@ -98,5 +99,17 @@ export const ButtonImportData = ({onClick}) => {
 				</p>
 			</label>
 		</>
+	);
+}
+
+export const ButtonSubfamilia = ({link}) => {
+	return (
+		<Link
+			href={link}
+			type="button"
+			className="flex justify-center items-center p-[10px] gap-1 bg-primary-300 shadow-md text-primary-700 rounded-lg cursor-pointer hover:bg-primary hover:text-white transition-colors"
+		>
+			Subfamilia
+		</Link>
 	);
 }
