@@ -1,24 +1,24 @@
 import { Tooltip } from "@material-tailwind/react";
-import { Add, Edit, TrushSquare } from "iconsax-react";
+import { Add, Edit, Note, TrushSquare } from "iconsax-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Excel } from "./icons/Excel";
 
 export const ButtonAdd = ({ text, onClick }) => {
-  return (
-    <button
-      type="button"
-      className="flex justify-center items-center p-[10px] gap-1 bg-secundary text-primary rounded-lg cursor-pointer hover:bg-secundary-800"
-      onClick={onClick}
-    >
-      <Add />
-      {text}
-    </button>
-  );
+	return (
+		<button
+			type="button"
+			className="flex justify-center items-center p-[10px] gap-1 bg-secundary text-primary rounded-lg cursor-pointer hover:bg-secundary-800"
+			onClick={onClick}
+		>
+			<Add />
+			{text}
+		</button>
+	);
 };
 
 export const ButtonEdit = ({ onClick }) => {
-  return (
+	return (
 		<Tooltip content="Editar" className="bg-white text-primary-800 shadow">
 			<button
 				type="button"
@@ -28,11 +28,11 @@ export const ButtonEdit = ({ onClick }) => {
 				<Edit />
 			</button>
 		</Tooltip>
-  );
+	);
 };
 
 export const ButtonDelete = ({ onClick }) => {
-  return (
+	return (
 		<Tooltip
 			content="Eliminar"
 			className="bg-white text-primary-600 shadow"
@@ -45,10 +45,10 @@ export const ButtonDelete = ({ onClick }) => {
 				<TrushSquare />
 			</button>
 		</Tooltip>
-  );
+	);
 };
 
-export const ButtonSave = ({onClick}) => {
+export const ButtonSave = ({ onClick }) => {
 	return (
 		<button
 			type="button"
@@ -58,8 +58,8 @@ export const ButtonSave = ({onClick}) => {
 			Guardar
 		</button>
 	);
-}
-export const ButtonCancel = ({onClick}) => {
+};
+export const ButtonCancel = ({ onClick }) => {
 	return (
 		<button
 			type="button"
@@ -69,15 +69,14 @@ export const ButtonCancel = ({onClick}) => {
 			Cancelar
 		</button>
 	);
-}
+};
 
 export const ButtonImportData = () => {
-
 	const [fileExcel, setfileExcel] = useState(null);
 
 	const handleFile = (e) => {
 		setfileExcel(e.target.files[0]);
-	}
+	};
 
 	return (
 		<>
@@ -100,9 +99,9 @@ export const ButtonImportData = () => {
 			</label>
 		</>
 	);
-}
+};
 
-export const ButtonSubfamilia = ({link}) => {
+export const ButtonSubfamilia = ({ link }) => {
 	return (
 		<Link
 			href={link}
@@ -112,4 +111,18 @@ export const ButtonSubfamilia = ({link}) => {
 			Subfamilia
 		</Link>
 	);
-}
+};
+
+export const ButtonCodigos = ({ text, onClick }) => {
+	return (
+		<Tooltip content={text} className="bg-white text-primary-800 shadow">
+			<button
+				type="button"
+				className="flex justify-center items-center p-[10px] gap-1 bg-primary-50 shadow-md text-primary rounded-lg cursor-pointer hover:bg-primary-100"
+				onClick={onClick}
+			>
+				<Note />
+			</button>
+		</Tooltip>
+	);
+};

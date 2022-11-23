@@ -118,6 +118,7 @@ export default function Maquinas() {
 			>
 				{/* Form */}
 				<form className="flex flex-col gap-5">
+				{/* Datos de la maquina */}
 					<Group title={"Datos de la Máquina"}>
 						<GroupInputs>
 							<Select label={"Fábrica Máquina"}>
