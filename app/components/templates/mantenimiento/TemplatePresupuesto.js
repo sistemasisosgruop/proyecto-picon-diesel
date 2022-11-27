@@ -1,6 +1,5 @@
 import {
 	BackwardItem,
-	BoxTick,
 	Category2,
 	Receive,
 } from "iconsax-react";
@@ -15,11 +14,11 @@ export default function TemplatePresupuesto({ children }) {
 			modulo: "Servicios",
 			href: "/mantenimiento/presupuesto/servicios",
 		},
-		{
-			icon: <BoxTick />,
-			modulo: "Repuestos",
-			href: "/mantenimiento/presupuesto/repuestos",
-		},
+		// {
+		// 	icon: <BoxTick />,
+		// 	modulo: "Repuestos",
+		// 	href: "/mantenimiento/presupuesto/repuestos",
+		// },
 		{
 			icon: <Category2 />,
 			modulo: "Materiales",

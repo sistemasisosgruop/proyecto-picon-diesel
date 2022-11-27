@@ -33,7 +33,7 @@ export const Modal = ({ title, isOpen, closeModal, children }) => {
 							<Dialog.Panel className="transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all flex flex-col gap-5">
 								<Dialog.Title
 									as="h3"
-									className="text-lg font-medium leading-6 flex justify-between items-center"
+									className="text-lg font-medium leading-6 flex gap-5 justify-between items-center"
 								>
 									{title}
 									<CloseCircle

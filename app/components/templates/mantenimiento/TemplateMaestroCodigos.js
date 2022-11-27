@@ -34,7 +34,7 @@ export default function TemplateMaestroCodigos({ children }) {
 		{
 			icon: <Setting2 />,
 			modulo: "Configuración de máquinas",
-			href: "/mantenimiento/maestro-de-codigos/configuracion-de-maquinas",
+			href: "/mantenimiento/maestro-de-codigos/configuracion/maquinas/modelos",
 		},
 		{
 			icon: <Setting2 />,
