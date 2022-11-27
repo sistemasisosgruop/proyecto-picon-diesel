@@ -12,7 +12,7 @@ export const LayoutConfiguracion = ({items}) => {
 			{items.map(({ icon, modulo, href }, index) => (
 				<Link
 					key={index}
-					className={`w-full flex items-center p-3 gap-[10px] bg-white text-sm font-normal shadow-md rounded-lg text-primary border ${
+					className={`w-[250px] flex items-center p-3 gap-[10px] bg-white text-sm font-normal shadow-md rounded-lg text-primary border ${
 						route.pathname === href ? "bg-primary-200" : "bg-white"
 					}`}
 					href={href}

@@ -39,7 +39,7 @@ export default function TemplateMaestroCodigos({ children }) {
 		{
 			icon: <Setting2 />,
 			modulo: "Configuración de motor",
-			href: "/mantenimiento/maestro-de-codigos/configuracion-de-motor",
+			href: "/mantenimiento/maestro-de-codigos/configuracion/motor/marcas",
 		},
 		{
 			icon: <Setting2 />,
