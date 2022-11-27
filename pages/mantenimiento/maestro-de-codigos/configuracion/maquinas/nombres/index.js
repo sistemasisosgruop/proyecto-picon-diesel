@@ -17,7 +17,7 @@ import TemplateMaestroCodigos from "../../../../../../app/components/templates/m
 import { useModal } from "../../../../../../app/hooks/useModal";
 import { modelosMaquinas } from "../../../../../../data/configuracion-maquinas-modelos";
 
-export default function FabricasMaquina() {
+export default function NombresMaquina() {
 	const {
 		isOpenModal,
 		isOpenModalDelete,
@@ -35,7 +35,7 @@ export default function FabricasMaquina() {
 		() => [
 			{ Header: "#", accessor: "id" },
 			{ Header: "Codigo", accessor: "codigo" },
-			{ Header: "Fábrica", accessor: "modelo" },
+			{ Header: "Nombre", accessor: "modelo" },
 		],
 		[]
 	);
@@ -46,11 +46,11 @@ export default function FabricasMaquina() {
 		<>
 			<TemplateMaestroCodigos>
 				<TemplateConfiguracionMaquinas>
-					<Title text={"Fabricas de Máquinas"}>
+					<Title text={"Nombres de Máquinas"}>
 						<div className="flex gap-4">
 							<ButtonImportData />
 							<ButtonAdd
-								text={"Nueva fabrica"}
+								text={"Nuevo nombre"}
 								onClick={() => openModal(false)}
 							/>
 						</div>
@@ -67,7 +67,7 @@ export default function FabricasMaquina() {
 			{/* Modal agregar */}
 			<Modal
 				title={
-					isEdit ? "Editar Fabrica Máquina" : "Nueva Fabrica Máquina"
+					isEdit ? "Editar Nombre Máquina" : "Nueva Nombre Máquina"
 				}
 				isOpen={isOpenModal}
 				closeModal={closeModal}
@@ -75,7 +75,7 @@ export default function FabricasMaquina() {
 				{/* Form */}
 				<form className="flex flex-col gap-5">
 					<Input label="Código" />
-					<Input label="Fabrica" />
+					<Input label="Nombre" />
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
 						<ButtonSave onClick={saveData} />
@@ -84,7 +84,7 @@ export default function FabricasMaquina() {
 			</Modal>
 			{/* Modal Eliminar */}
 			<ModalConfirmDelete
-				title={"Eliminar Fabrica"}
+				title={"Eliminar Nombre"}
 				isOpen={isOpenModalDelete}
 				closeModal={() => setIsOpenModalDelete(false)}
 			/>
