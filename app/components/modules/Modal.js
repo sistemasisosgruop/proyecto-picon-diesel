@@ -178,7 +178,7 @@ export const ModalConfirmDelete = ({ title, isOpen, closeModal, onClick }) => {
 			<Transition appear show={openConfirmDelete} as={Fragment}>
 				<Dialog
 					as="div"
-					className="relative z-10"
+					className="relative z-50"
 					onClose={() => setOpenConfirmDelete(false)}
 				>
 					<Transition.Child
