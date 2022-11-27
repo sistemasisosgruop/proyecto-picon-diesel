@@ -44,12 +44,12 @@ export default function TemplateMaestroCodigos({ children }) {
 		{
 			icon: <Setting2 />,
 			modulo: "Configuración de Bomba de inyección",
-			href: "/mantenimiento/maestro-de-codigos/configuracion-de-bomba-de-inyeccion",
+			href: "/mantenimiento/maestro-de-codigos/configuracion/bomba-inyeccion/marca",
 		},
 		{
 			icon: <Setting2 />,
 			modulo: "Configuración de Inyector",
-			href: "/mantenimiento/maestro-de-codigos/configuracion-de-inyector",
+			href: "/mantenimiento/maestro-de-codigos/configuracion/inyector/marca",
 		},
 	];
 

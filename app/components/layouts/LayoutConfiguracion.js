@@ -7,7 +7,7 @@ export const LayoutConfiguracion = ({items}) => {
 
   return (
 		<div
-			className="flex w-full overflow-y-auto sticky -top-8 gap-3 h-auto py-4 z-50 bg-white" 
+			className="flex w-full overflow-y-auto sticky -top-8 gap-3 h-auto py-4 z-30 bg-white" 
 		>
 			{items.map(({ icon, modulo, href }, index) => (
 				<Link
