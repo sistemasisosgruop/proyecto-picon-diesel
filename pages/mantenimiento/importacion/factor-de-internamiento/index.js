@@ -35,6 +35,7 @@ export default function FactorInternamiento() {
 			{ Header: "#", accessor: "id" },
 			{ Header: "Codigo", accessor: "codigo" },
 			{ Header: "Valor", accessor: "valor" },
+			{ Header: "Fecha", accessor: "fecha" },
 		],
 		[]
 	);
@@ -74,6 +75,7 @@ export default function FactorInternamiento() {
 				{/* Form */}
 				<form className="flex flex-col gap-5">
 					<Input label="Valor" type="number" />
+					<Input label="Fecha" type="date" />
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
 						<ButtonSave onClick={saveData} />

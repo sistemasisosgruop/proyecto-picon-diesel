@@ -1,10 +1,12 @@
-import { Tooltip } from "@material-tailwind/react";
+import {Tooltip } from "@material-tailwind/react";
 import {
   Image,
 } from "iconsax-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { menuSidebar } from "../../../utils/MenuSidebar";
+import { SelectEmpresas } from "../../elements/SelectEmpresas";
+// import { Empresas } from "../../elements/icons/Empresas";
 import LayoutSubMenu from "../../layouts/LayoutSubMenu";
 
 export const Sidebar = () => {
@@ -34,6 +36,7 @@ export const Sidebar = () => {
 			</div>
 			<div className="h-0 w-full border border-primary-800 flex-none" />
 			<div className="flex flex-col items-start w-full gap-10 overflow-x-visible">
+				<SelectEmpresas />
 				{menuSidebar.map((item, index) => (
 					<Tooltip
 						key={index}

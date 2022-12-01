@@ -41,6 +41,7 @@ export default function Maquinas() {
 			{ Header: "SubFamilia", accessor: "subfamilia" },
 			{ Header: "Correlativo", accessor: "correlativo" },
 			{ Header: "Denominación", accessor: "denominacion" },
+			{ Header: "Stock", accessor: "stock" },
 			{ Header: "Código de Fabricante", accessor: "codigoFabricante" },
 			{ Header: "Tipo de Fabricante", accessor: "tipoFabricante" },
 			{
@@ -89,10 +90,10 @@ export default function Maquinas() {
 					<Group title={"Datos del Material"}>
 						<GroupInputs>
 							<Select label={"Familia"}>
-								<Option value={1}>Fábrica 1</Option>
+								<Option value={"1"}>Fábrica 1</Option>
 							</Select>
 							<Select label={"SubFamilia"}>
-								<Option value={1}>Fábrica 1</Option>
+								<Option value={"1"}>Fábrica 1</Option>
 							</Select>
 							<Input label={"Correlativo"} />
 						</GroupInputs>
@@ -105,21 +106,21 @@ export default function Maquinas() {
 					{/* Codigos de reemplazo */}
 					<Group title={"Codigos de reemplazo"}>
 						<Select label={"SubFamilia"}>
-							<Option value={1}>Fábrica 1</Option>
+							<Option value={"1"}>Fábrica 1</Option>
 						</Select>
 						<TableCodigos columns={columns} data={data} />
 					</Group>
 					{/* Codigos similitud */}
 					<Group title={"Codigos de similitud"}>
 						<Select label={"SubFamilia"}>
-							<Option value={1}>Fábrica 1</Option>
+							<Option value={"1"}>Fábrica 1</Option>
 						</Select>
 						<TableCodigos columns={columns} data={data} />
 					</Group>
 					{/* Codigos equivalencia */}
 					<Group title={"Codigos de equivalencia"}>
 						<Select label={"SubFamilia"}>
-							<Option value={1}>Fábrica 1</Option>
+							<Option value={"1"}>Fábrica 1</Option>
 						</Select>
 						<TableCodigos columns={columns} data={data} />
 					</Group>
@@ -143,7 +144,7 @@ export default function Maquinas() {
 					{/* Aplicación de la maquina */}
 					<Group title={"Aplicación de la máquina"}>
 						<Select label={"Máquinas"}>
-							<Option value={1}>Fábrica 1</Option>
+							<Option value={"1"}>Fábrica 1</Option>
 						</Select>
 						<TableCodigos columns={columns} data={data} />
 					</Group>

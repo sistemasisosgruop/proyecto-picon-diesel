@@ -10,7 +10,7 @@ export const materialesData = [
     tipoFabricante: "001",
     codigoMotorOriginal: "0001",
     codigoBombaInyeccion: "0001",
-    // TODO stock: 10
+    stock: 10
   },
   {
     id: 2,
@@ -23,6 +23,7 @@ export const materialesData = [
     tipoFabricante: "001",
     codigoMotorOriginal: "0002",
     codigoBombaInyeccion: "0002",
+    stock: 20
   },
   {
     id: 3,
@@ -35,6 +36,7 @@ export const materialesData = [
     tipoFabricante: "001",
     codigoMotorOriginal: "0003",
     codigoBombaInyeccion: "0003",
+    stock: 30
   },
 ]
 

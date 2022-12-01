@@ -1,12 +1,12 @@
 export const Table = ({ children }) => {
 	return (
-		<div className="overflow-x-auto min-w-full whitespace-nowrap relative rounded-xl bg-white">
+		<div className="overflow-x-auto min-w-full relative rounded-xl bg-white">
 			<table className="min-w-full">{children}</table>
 		</div>
 	);
 };
 export const TableRH = ({ children }) => {
-	return <tr className="border-b-2 border-b-primary-50">{children}</tr>;
+	return (<tr className="border-b-2 border-b-primary-50">{children}</tr>);
 };
 export const TableH = ({ children }) => {
 	return (
@@ -24,7 +24,7 @@ export const TableHOptions = ({ children }) => {
 };
 export const TableD = ({children}) => {
   return (
-		<td className="p-5 text-gray-600 text-sm max-w-xs h-auto">
+		<td className="p-5 text-gray-600 text-sm max-w-md h-auto whitespace-wrap">
 			{children}
 		</td>
   );

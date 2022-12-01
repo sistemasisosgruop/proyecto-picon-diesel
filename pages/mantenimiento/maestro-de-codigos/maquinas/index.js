@@ -10,7 +10,7 @@ import { Group, GroupInputs } from "../../../../app/components/elements/Form";
 import { Title } from "../../../../app/components/elements/Title";
 import {
 	ModalConfirmDelete,
-  ModalLg,
+	ModalLg,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateMaestroCodigos from "../../../../app/components/templates/mantenimiento/TemplateMaestroCodigos";
@@ -51,7 +51,10 @@ export default function Maquinas() {
 				Header: "Código fábrica Bomba de Inyeccion",
 				accessor: "codigofábricaBombaInyeccion",
 			},
-			{ Header: "Tipo de Bomba de Inyeccion", accessor: "tipoBombaInyeccion" },
+			{
+				Header: "Tipo de Bomba de Inyeccion",
+				accessor: "tipoBombaInyeccion",
+			},
 			{
 				Header: "Marca fábrica de Sistema deInyeccion",
 				accessor: "marcafábricaSistemaInyeccion",
@@ -72,7 +75,10 @@ export default function Maquinas() {
 				Header: "Código fábrica de Inyector",
 				accessor: "codigofábricaInyector",
 			},
-			{ Header: "Tipo fábrica de Inyector", accessor: "tipofábricaInyector" },
+			{
+				Header: "Tipo fábrica de Inyector",
+				accessor: "tipofábricaInyector",
+			},
 			{
 				Header: "Marca fábrica de Inyector",
 				accessor: "marcafábricaInyector",
@@ -118,22 +124,22 @@ export default function Maquinas() {
 			>
 				{/* Form */}
 				<form className="flex flex-col gap-5">
-				{/* Datos de la maquina */}
+					{/* Datos de la maquina */}
 					<Group title={"Datos de la Máquina"}>
 						<GroupInputs>
 							<Select label={"Fábrica Máquina"}>
-								<Option value={1}>Fábrica 1</Option>
+								<Option value={"1"}>Fábrica 1</Option>
 							</Select>
 							<Select label={"Modelo de la Máquina"}>
-								<Option value={1}>Fábrica 1</Option>
+								<Option value={"1"}>Fábrica 1</Option>
 							</Select>
 						</GroupInputs>
 						<GroupInputs>
 							<Select label={"Nombre de Máquina"}>
-								<Option value={1}>Fábrica 1</Option>
+								<Option value={"1"}>Fábrica 1</Option>
 							</Select>
 							<Select label={"Procedencia"}>
-								<Option value={1}>Fábrica 1</Option>
+								<Option value={"1"}>Fábrica 1</Option>
 							</Select>
 						</GroupInputs>
 					</Group>
@@ -145,10 +151,10 @@ export default function Maquinas() {
 						</GroupInputs>
 						<GroupInputs>
 							<Select label={"Marca del Motor"}>
-								<Option value={1}>Fábrica 1</Option>
+								<Option value={"1"}>Fábrica 1</Option>
 							</Select>
 							<Select label={"Procedencia"}>
-								<Option value={1}>Fábrica 1</Option>
+								<Option value={"1"}>Fábrica 1</Option>
 							</Select>
 							<Input label={"N° de cilindros"} />
 						</GroupInputs>
@@ -159,19 +165,19 @@ export default function Maquinas() {
 							<Input label={"Código fábrica"} />
 							<Input label={"Tipo de bomba de inyeccion"} />
 						</GroupInputs>
-            <GroupInputs>
+						<GroupInputs>
 							<Select
 								label={"Marca fábrica de Sistema de Inyección"}
 							>
-								<Option value={1}>Fábrica 1</Option>
+								<Option value={"1"}>Fábrica 1</Option>
 							</Select>
 							<Select label={"Descripción de Bomba de Inyección"}>
-								<Option value={1}>Fábrica 1</Option>
+								<Option value={"1"}>Fábrica 1</Option>
 							</Select>
-            </GroupInputs>
+						</GroupInputs>
 						<GroupInputs>
 							<Select label={"Procedencia"}>
-								<Option value={1}>Fábrica 1</Option>
+								<Option value={"1"}>Fábrica 1</Option>
 							</Select>
 							<Input
 								label={"Código original de Bomba de Inyección"}
@@ -186,27 +192,21 @@ export default function Maquinas() {
 						</GroupInputs>
 						<GroupInputs>
 							<Select label={"Marca fábrica del Inyector"}>
-								<Option value={1}>Fábrica 1</Option>
+								<Option value={"1"}>Fábrica 1</Option>
 							</Select>
 							<Select label={"Descripción del Inyector"}>
-								<Option value={1}>Fábrica 1</Option>
+								<Option value={"1"}>Fábrica 1</Option>
 							</Select>
 						</GroupInputs>
-            <GroupInputs>
-							<Select label={"Procedencia"}>
-								<Option value={1}>Fábrica 1</Option>
-							</Select>
-							<Input
-								label={"Código original del Inyector"}
-							/>
-            </GroupInputs>
 						<GroupInputs>
-							<Input
-								label={"Código Tobera"}
-							/>
-							<Input
-								label={"Tipo Tobera"}
-							/>
+							<Select label={"Procedencia"}>
+								<Option value={"1"}>Fábrica 1</Option>
+							</Select>
+							<Input label={"Código original del Inyector"} />
+						</GroupInputs>
+						<GroupInputs>
+							<Input label={"Código Tobera"} />
+							<Input label={"Tipo Tobera"} />
 						</GroupInputs>
 					</Group>
 					<div className="w-full flex justify-end gap-5">

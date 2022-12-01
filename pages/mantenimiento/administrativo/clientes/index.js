@@ -37,6 +37,7 @@ export default function Clientes() {
 			{ Header: "Nombre", accessor: "nombre" },
 			{ Header: "Tipo Documento", accessor: "tipoDocumento" },
 			{ Header: "N° de documento", accessor: "numeroDocumento" },
+			{ Header: "Tipo", accessor: "tipo" },
 			{ Header: "Teléfono", accessor: "telefono" },
 			{ Header: "Correo", accessor: "correo" },
 			{ Header: "Estado", accessor: "estado" },
@@ -49,11 +50,11 @@ export default function Clientes() {
 	return (
 		<>
 			<TemplateAdministrativo>
-				<Title text={"Lista Clientes"}>
+				<Title text={"Lista Clientes / Proveedores"}>
 					<div className="flex gap-4">
 						<ButtonImportData />
 						<ButtonAdd
-							text={"Nuevo cliente"}
+							text={"Nuevo cliente / proveedor"}
 							onClick={() => openModal(false)}
 						/>
 					</div>
@@ -86,6 +87,11 @@ export default function Clientes() {
 						<Input label="Correo" type="email" />
 						<Input label="Teléfono" />
 					</div>
+					<Select label="Tipo">
+						<Option value="dni">Cliente</Option>
+						<Option value="ruc">Proveedor</Option>
+						<Option value="ruc">Cliente / Proveedor</Option>
+					</Select>
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
 						<ButtonSave onClick={saveData} />
