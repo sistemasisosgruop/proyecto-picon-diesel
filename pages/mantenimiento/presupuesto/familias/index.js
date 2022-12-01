@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import {
 	ButtonAdd,
 	ButtonCancel,
+	ButtonImportData,
 	ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
@@ -10,12 +11,12 @@ import {
 	Modal,
 	ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
-import TableComplete from "../../../../app/components/modules/TableComplete";
+import TablePresupuesto from "../../../../app/components/modules/TablePresupuesto";
 import TemplatePresupuesto from "../../../../app/components/templates/mantenimiento/TemplatePresupuesto";
 import { useModal } from "../../../../app/hooks/useModal";
-import { repuestos } from "../../../../data/repuestos";
+import { familias } from "../../../../data/familias";
 
-export default function Repuestos() {
+export default function Familias() {
 	const {
 		isOpenModal,
 		isOpenModalDelete,
@@ -33,27 +34,27 @@ export default function Repuestos() {
 		() => [
 			{ Header: "#", accessor: "id" },
 			{ Header: "Codigo", accessor: "codigo" },
-			{ Header: "Nombre", accessor: "nombre" },
-			{ Header: "Precio", accessor: "precio" },
+			{ Header: "Descripción", accessor: "descripcion" },
 		],
 		[]
 	);
 
-	const data = useMemo(() => repuestos, []);
+	const data = useMemo(() => familias, []);
 
 	return (
 		<>
 			<TemplatePresupuesto>
-				<Title text={"Lista Repuestos"}>
+				<Title text={"Lista Familias"}>
 					<div className="flex gap-4">
+						<ButtonImportData />
 						<ButtonAdd
-							text={"Nuevo repuesto"}
+							text={"Nueva familia"}
 							onClick={() => openModal(false)}
 						/>
 					</div>
 				</Title>
 				{/* Table list */}
-				<TableComplete
+				<TablePresupuesto
 					columns={columns}
 					data={data}
 					openModal={openModal}
@@ -62,15 +63,14 @@ export default function Repuestos() {
 			</TemplatePresupuesto>
 			{/* Modal agregar */}
 			<Modal
-				title={isEdit ? "Editar Repuesto" : "Nuevo Repuesto"}
+				title={isEdit ? "Editar familia" : "Nuevo familia"}
 				isOpen={isOpenModal}
 				closeModal={closeModal}
 			>
 				{/* Form */}
 				<form className="flex flex-col gap-5">
 					<Input label="Código" />
-					<Input label="Nombre" />
-					<Input label="Precio" type={"number"} />
+					<Input label="Descripción" />
 					<div className="w-full flex justify-end gap-5">
 						<ButtonCancel onClick={closeModal} />
 						<ButtonSave onClick={saveData} />
@@ -79,7 +79,7 @@ export default function Repuestos() {
 			</Modal>
 			{/* Modal Eliminar */}
 			<ModalConfirmDelete
-				title={"Eliminar Repuesto"}
+				title={"Eliminar familia"}
 				isOpen={isOpenModalDelete}
 				closeModal={() => setIsOpenModalDelete(false)}
 			/>

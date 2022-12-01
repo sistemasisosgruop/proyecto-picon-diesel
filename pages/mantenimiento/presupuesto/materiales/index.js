@@ -5,6 +5,7 @@ import {
 	ButtonCancel,
 	ButtonSave,
 } from "../../../../app/components/elements/Buttons";
+import { GroupInputs } from "../../../../app/components/elements/Form";
 import { Title } from "../../../../app/components/elements/Title";
 import {
 	Modal,
@@ -33,6 +34,9 @@ export default function Materiales() {
 		() => [
 			{ Header: "#", accessor: "id" },
 			{ Header: "Codigo", accessor: "codigo" },
+			{ Header: "Familia", accessor: "familia" },
+			{ Header: "SubFamilia", accessor: "subfamilia" },
+			{ Header: "Correlativo", accessor: "correlativo" },
 			{ Header: "Nombre", accessor: "nombre" },
 			{ Header: "Precio", accessor: "precio" },
 		],
@@ -68,7 +72,11 @@ export default function Materiales() {
 			>
 				{/* Form */}
 				<form className="flex flex-col gap-5">
-					<Input label="Código" />
+					<GroupInputs>
+						<Input label="Familia" />
+						<Input label="SubFamilia" />
+						<Input label="Correlativo" />
+					</GroupInputs>
 					<Input label="Nombre" />
 					<Input label="Precio" type={"number"} />
 					<div className="w-full flex justify-end gap-5">

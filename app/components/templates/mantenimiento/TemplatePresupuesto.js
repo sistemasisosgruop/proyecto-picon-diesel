@@ -1,5 +1,6 @@
 import {
 	BackwardItem,
+	BoxTick,
 	Category2,
 	Receive,
 } from "iconsax-react";
@@ -10,19 +11,19 @@ import LayoutSubSubMenu from "../../layouts/LayoutSubSubMenu";
 export default function TemplatePresupuesto({ children }) {
 	const items = [
 		{
-			icon: <BackwardItem />,
-			modulo: "Servicios",
-			href: "/mantenimiento/presupuesto/servicios",
+			icon: <BoxTick />,
+			modulo: "Familias",
+			href: "/mantenimiento/presupuesto/familias",
 		},
-		// {
-		// 	icon: <BoxTick />,
-		// 	modulo: "Repuestos",
-		// 	href: "/mantenimiento/presupuesto/repuestos",
-		// },
 		{
 			icon: <Category2 />,
 			modulo: "Materiales",
 			href: "/mantenimiento/presupuesto/materiales",
+		},
+		{
+			icon: <BackwardItem />,
+			modulo: "Servicios",
+			href: "/mantenimiento/presupuesto/servicios",
 		},
 		{
 			icon: <Receive />,
