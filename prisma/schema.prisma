@@ -1,0 +1,177 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// AREA GENERAL
+
+model Pais {
+  id     Int    @id @default(autoincrement())
+  codigo String @unique
+  nombre String
+
+  @@map("pais")
+}
+
+model ParametroGeneral {
+  id     Int    @id @default(autoincrement())
+  nombre String
+  valor  String
+
+  @@map("parametro_general")
+}
+
+// AREA DE IMPORTACION
+
+model AgenteAduanas {
+  id            Int     @id @default(autoincrement())
+  codigo        String? @unique
+  nombre        String
+  email         String
+  telefono      String
+  observaciones String?
+
+  @@map("agente_aduanas")
+}
+
+model Incoterms {
+  id          Int     @id @default(autoincrement())
+  codigo      String? @unique
+  nombre      String
+  descripcion String?
+
+  @@map("incoterms")
+}
+
+model TipoVia {
+  id          Int     @id @default(autoincrement())
+  codigo      String? @unique
+  nombre      String
+  descripcion String?
+
+  @@map("tipo_via")
+}
+
+model GastoImportacion {
+  id            Int     @id @default(autoincrement())
+  codigo        String? @unique
+  nombre        String
+  descripcion   String?
+  observaciones String?
+
+  @@map("gasto_importacion")
+}
+
+// AREA ADMINISTRATIVA
+
+model Personal {
+  id        Int                  @id @default(autoincrement())
+  codigo    String?              @unique
+  nombre    String
+  email     String
+  password  String
+  telefono  String
+  area      String
+  estado    EstadoAdministrativo
+  direccion String
+  Cargo     Cargo[]
+
+  @@map("personal")
+}
+
+model Vendedor {
+  id                   Int                  @id @default(autoincrement())
+  codigo               String?              @unique
+  nombre               String
+  email                String
+  password             String
+  telefono             String
+  direccion            String
+  comision             Decimal
+  aprovacionCotizacion Boolean
+  estado               EstadoAdministrativo
+
+  @@map("vendedor")
+}
+
+model Cliente {
+  id              Int                  @id @default(autoincrement())
+  codigo          String?              @unique
+  tipoDocumento   TipoDocumento        @map("tipo_documento")
+  numeroDocumento String               @map("numero_documento")
+  nombre          String
+  email           String
+  telefono        String
+  estado          EstadoAdministrativo
+  TipoCliente     TipoCliente?         @relation(fields: [tipoClienteId], references: [id])
+  tipoClienteId   Int?
+
+  @@map("cliente")
+}
+
+model Costo {
+  id          Int                  @id @default(autoincrement())
+  codigo      String?              @unique
+  nombre      String
+  responsable String
+  estado      EstadoAdministrativo
+
+  @@map("costo")
+}
+
+model Banco {
+  id               Int              @id @default(autoincrement())
+  codigo           String?          @unique
+  nombre           String
+  cuentasBancarias CuentaBancaria[]
+
+  @@map("banco")
+}
+
+model CuentaBancaria {
+  id           Int                  @id @default(autoincrement())
+  codigo       String?              @unique
+  numeroCuenta String               @map("numero_cuenta")
+  tipoCuenta   String               @map("tipo_cuenta")
+  moneda       String
+  estado       EstadoAdministrativo
+  banco        Banco?               @relation(fields: [bancoId], references: [id])
+  bancoId      Int?
+
+  @@map("cuenta_bancaria")
+}
+
+model TipoCliente {
+  id          Int       @id @default(autoincrement())
+  codigo      String?   @unique
+  clientes    Cliente[]
+  nombre      String
+  descripcion String?
+
+  @@map("tipo_cliente")
+}
+
+model Cargo {
+  id       Int        @id @default(autoincrement())
+  name     String?    @unique
+  personal Personal[]
+
+  @@map("cargo")
+}
+
+enum EstadoAdministrativo {
+  Activo
+  Inactivo
+}
+
+enum TipoDocumento {
+  DNI
+  RUC
+}
