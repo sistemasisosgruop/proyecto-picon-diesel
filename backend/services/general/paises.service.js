@@ -1,8 +1,8 @@
 import prisma from "../../prisma";
 
 export class PaisesService {
-  static async createCountry(req) {
-    const { nombre, codigo } = req.body;
+  static async createCountry(data) {
+    const { nombre, codigo } = data;
     const country = prisma.pais.create({
       data: {
         nombre,
@@ -12,8 +12,8 @@ export class PaisesService {
     return country;
   }
 
-  static async updateCountry(id, body) {
-    const { nombre, codigo } = body;
+  static async updateCountry(id, data) {
+    const { nombre, codigo } = data;
     const country = prisma.pais.update({
       where: {
         id,

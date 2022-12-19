@@ -2,7 +2,7 @@ import { PaisesService } from "../../../../backend/services/general/paises.servi
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
-    const country = await PaisesService.createCountry(req, res);
+    const country = await PaisesService.createCountry(req.body);
     return res.status(200).json({ pais: country });
   }
 

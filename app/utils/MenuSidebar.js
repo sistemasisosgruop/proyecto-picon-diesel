@@ -50,8 +50,28 @@ export const menuSidebar = [
 		icon: <Shop />,
 		submenu: [
 			{
-				subItem: "Mostrador 1",
-				href: "/venta-mostrador/mostrador-1",
+				subItem: "Cotizaciones",
+				href: "/venta-mostrador/cotizaciones",
+			},
+			{
+				subItem: "Aprobación de cotizaciones",
+				href: "/venta-mostrador/aprobacion-de-cotizaciones",
+			},
+			{
+				subItem: "Aprobación de pedidos",
+				href: "/venta-mostrador/aprobacion-de-pedidos",
+			},
+			{
+				subItem: "Guia de remision",
+				href: "/venta-mostrador/guia-de-remision",
+			},
+			{
+				subItem: "Venta - Facturación",
+				href: "/venta-mostrador/venta-facturacion",
+			},
+			{
+				subItem: "Reportes y estadistica",
+				href: "/venta-mostrador/reportes-estadistica/margen-de-venta",
 			},
 		],
 	},
