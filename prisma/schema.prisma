@@ -10,85 +10,150 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// CONFIGURACION DE EMPRESA
+
+model Empresa {
+  id                  Int                   @id @default(autoincrement())
+  codigo              String?               @unique
+  nombre              String
+  ruc                 String
+  direccion           String
+  telefono            String
+  email               String
+  web                 String
+  logo                String?
+  sucursales          Sucursal[]
+  paises              Pais[]
+  parametrosGlobales  ParametroGlobal[]
+  personal            Personal[]
+  vendedores          Vendedor[]
+  clientes            Cliente[]
+  costos              Costo[]
+  banco               Banco[]
+  cuentasBancarias    CuentaBancaria[]
+  TipoCliente         TipoCliente[]
+  AgenteAduanas       AgenteAduanas[]
+  Incoterms           Incoterms[]
+  TipoVia             TipoVia[]
+  GastoImportacion    GastoImportacion[]
+  FactorInternamiento FactorInternamiento[]
+
+  @@map("empresa")
+}
+
+model Sucursal {
+  id        Int      @id @default(autoincrement())
+  codigo    String?  @unique
+  nombre    String
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId Int?
+
+  @@map("sucursal")
+}
+
+// MANTENIMIENTO
 // AREA GENERAL
 
 model Pais {
-  id     Int    @id @default(autoincrement())
-  codigo String @unique
-  nombre String
+  id        Int      @id @default(autoincrement())
+  codigo    String   @unique
+  nombre    String
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId Int?
 
   @@map("pais")
 }
 
-model ParametroGeneral {
-  id     Int    @id @default(autoincrement())
-  nombre String
-  valor  String
+model ParametroGlobal {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  valor     String
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId Int?
 
-  @@map("parametro_general")
+  @@map("parametro_global")
 }
 
 // AREA DE IMPORTACION
 
 model AgenteAduanas {
-  id            Int     @id @default(autoincrement())
-  codigo        String? @unique
+  id            Int      @id @default(autoincrement())
+  codigo        String?  @unique
   nombre        String
   email         String
   telefono      String
   observaciones String?
+  empresa       Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId     Int?
 
   @@map("agente_aduanas")
 }
 
 model Incoterms {
-  id          Int     @id @default(autoincrement())
-  codigo      String? @unique
+  id          Int      @id @default(autoincrement())
+  codigo      String?  @unique
   nombre      String
   descripcion String?
+  empresa     Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId   Int?
 
   @@map("incoterms")
 }
 
 model TipoVia {
-  id          Int     @id @default(autoincrement())
-  codigo      String? @unique
+  id          Int      @id @default(autoincrement())
+  codigo      String?  @unique
   nombre      String
   descripcion String?
+  empresa     Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId   Int?
 
   @@map("tipo_via")
 }
 
 model GastoImportacion {
-  id            Int     @id @default(autoincrement())
-  codigo        String? @unique
+  id            Int      @id @default(autoincrement())
+  codigo        String?  @unique
   nombre        String
   descripcion   String?
   observaciones String?
+  empresa       Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId     Int?
 
   @@map("gasto_importacion")
 }
 
-// AREA ADMINISTRATIVA
+model FactorInternamiento {
+  id        Int      @id @default(autoincrement())
+  codigo    String?  @unique
+  valor     String
+  fecha     DateTime
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId Int?
 
+  @@map("factor_internamiento")
+}
+
+// AREA ADMINISTRATIVA
 model Personal {
-  id        Int                  @id @default(autoincrement())
-  codigo    String?              @unique
+  id        Int        @id @default(autoincrement())
+  codigo    String?    @unique
   nombre    String
   email     String
   password  String
   telefono  String
   area      String
-  estado    EstadoAdministrativo
+  estado    EstadoEnum
   direccion String
-  Cargo     Cargo[]
+  role      Role[]
+  empresa   Empresa[]
 
   @@map("personal")
 }
 
 model Vendedor {
-  id                   Int                  @id @default(autoincrement())
-  codigo               String?              @unique
+  id                   Int        @id @default(autoincrement())
+  codigo               String?    @unique
   nombre               String
   email                String
   password             String
@@ -96,32 +161,39 @@ model Vendedor {
   direccion            String
   comision             Decimal
   aprovacionCotizacion Boolean
-  estado               EstadoAdministrativo
+  estado               EstadoEnum
+  empresa              Empresa?   @relation(fields: [empresaId], references: [id])
+  empresaId            Int?
+  role                 Role[]
 
   @@map("vendedor")
 }
 
 model Cliente {
-  id              Int                  @id @default(autoincrement())
-  codigo          String?              @unique
-  tipoDocumento   TipoDocumento        @map("tipo_documento")
-  numeroDocumento String               @map("numero_documento")
+  id              Int               @id @default(autoincrement())
+  codigo          String?           @unique
+  tipoDocumento   TipoDocumentoEnum @map("tipo_documento")
+  numeroDocumento String            @map("numero_documento")
   nombre          String
   email           String
   telefono        String
-  estado          EstadoAdministrativo
-  TipoCliente     TipoCliente?         @relation(fields: [tipoClienteId], references: [id])
+  estado          EstadoEnum
+  TipoCliente     TipoCliente?      @relation(fields: [tipoClienteId], references: [id])
   tipoClienteId   Int?
+  empresa         Empresa?          @relation(fields: [empresaId], references: [id])
+  empresaId       Int?
 
   @@map("cliente")
 }
 
 model Costo {
-  id          Int                  @id @default(autoincrement())
-  codigo      String?              @unique
+  id          Int        @id @default(autoincrement())
+  codigo      String?    @unique
   nombre      String
   responsable String
-  estado      EstadoAdministrativo
+  estado      EstadoEnum
+  empresa     Empresa?   @relation(fields: [empresaId], references: [id])
+  empresaId   Int?
 
   @@map("costo")
 }
@@ -131,47 +203,60 @@ model Banco {
   codigo           String?          @unique
   nombre           String
   cuentasBancarias CuentaBancaria[]
+  empresa          Empresa?         @relation(fields: [empresaId], references: [id])
+  empresaId        Int?
 
   @@map("banco")
 }
 
 model CuentaBancaria {
-  id           Int                  @id @default(autoincrement())
-  codigo       String?              @unique
-  numeroCuenta String               @map("numero_cuenta")
-  tipoCuenta   String               @map("tipo_cuenta")
+  id           Int        @id @default(autoincrement())
+  codigo       String?    @unique
+  numeroCuenta String     @map("numero_cuenta")
+  tipoCuenta   String     @map("tipo_cuenta")
   moneda       String
-  estado       EstadoAdministrativo
-  banco        Banco?               @relation(fields: [bancoId], references: [id])
+  estado       EstadoEnum
+  banco        Banco?     @relation(fields: [bancoId], references: [id])
   bancoId      Int?
+  empresa      Empresa?   @relation(fields: [empresaId], references: [id])
+  empresaId    Int?
 
   @@map("cuenta_bancaria")
 }
 
 model TipoCliente {
-  id          Int       @id @default(autoincrement())
-  codigo      String?   @unique
-  clientes    Cliente[]
-  nombre      String
-  descripcion String?
+  id        Int        @id @default(autoincrement())
+  codigo    String?    @unique
+  clientes  Cliente[]
+  tipo      String
+  estado    EstadoEnum @default(Activo)
+  empresa   Empresa?   @relation(fields: [empresaId], references: [id])
+  empresaId Int?
 
   @@map("tipo_cliente")
 }
 
-model Cargo {
+model Role {
   id       Int        @id @default(autoincrement())
-  name     String?    @unique
+  name     RolesEnum  @unique
   personal Personal[]
+  vendor   Vendedor[]
 
-  @@map("cargo")
+  @@map("role")
 }
 
-enum EstadoAdministrativo {
+enum EstadoEnum {
   Activo
   Inactivo
 }
 
-enum TipoDocumento {
+enum TipoDocumentoEnum {
   DNI
   RUC
+}
+
+enum RolesEnum {
+  Administrador
+  Vendedor
+  Tecnico
 }
