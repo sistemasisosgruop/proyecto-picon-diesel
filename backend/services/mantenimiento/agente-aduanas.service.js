@@ -4,7 +4,7 @@ import { generateCodeAgenteAduanas } from "../../utils/codes";
 export class AgenteAduanasService {
   static async createAgenteAduanas(data) {
     const { nombre, observaciones, telefono, email, empresaId } = data;
-    const agente = prisma.agenteAduanas.create({
+    const agente = await prisma.agenteAduanas.create({
       data: {
         nombre,
         observaciones,

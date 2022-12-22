@@ -10,11 +10,7 @@ export class CuentasBancarias {
         moneda,
         bancoId,
         numeroCuenta,
-        empresa: {
-          connect: {
-            id: empresaId,
-          },
-        },
+        empresaId,
       },
     });
 

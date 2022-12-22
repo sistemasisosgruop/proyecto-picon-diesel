@@ -61,8 +61,10 @@ export class EmpresasService {
   }
 
   static async getAllEmpresas(body) {
-    const { empresaId } = body;
-    return prisma.empresa.findMany({ where: { empresaId } });
+    const { userId } = body;
+    return prisma.empresa.findMany({
+      where: { personal: { some: { id: userId } } },
+    });
   }
 
   static async getEmpresa(id) {

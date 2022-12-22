@@ -1,20 +1,13 @@
-import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
+import { AuthService } from "../../../backend/services/auth/auth.service";
 
-export default function loginHandler(req, res) {
-  const { email, password } = req.body;
+export default async function loginHandler(req, res) {
+  try {
+    const token = await AuthService.login(req.body);
 
-  if (email === "admin@gmail.com" && password === "admin") {
-    const token = jwt.sign(
-      {
-        exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
-        email,
-        username: "victor",
-        roles: ["Administrador", "Global"],
-      },
-      process.env.JWT_SECRET || "secret"
-    );
-
+    if (!token) {
+      return res.status(401).json({ status: 401, message: "Unautorized" });
+    }
     const serialized = serialize("myTokenName", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -24,8 +17,10 @@ export default function loginHandler(req, res) {
     });
 
     res.setHeader("Set-Cookie", serialized);
-    return res.status(200).json({ token });
-  }
 
-  return res.status(401).json({ status: 401, message: "Unautorized" });
+    return res.status(200).json({ token });
+  } catch (error) {
+    console.log(error)
+    return res.status(401).json({ status: 401, message: "Unautorized" });
+  }
 }

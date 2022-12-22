@@ -80,8 +80,7 @@ export default function Bancos() {
 			<ModalConfirmDelete
 				title={"Eliminar Banco"}
 				isOpen={isOpenModalDelete}
-				closeModal={() => setIsOpenModalDelete(false)}
-			/>
+				closeModal={() => setIsOpenModalDelete(false)} onClick={undefined}			/>
 		</>
 	);
 }

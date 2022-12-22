@@ -1,5 +1,5 @@
 import prisma from "../../prisma";
-import { generateCodeCliente, generateTipoCliente } from "../../utils/codes";
+import { generateCodeCliente, generateCodeTipoCliente } from "../../utils/codes";
 
 export class ClienteService {
   static async createTipoCliente(data) {
@@ -15,7 +15,7 @@ export class ClienteService {
         id: tipoCliente.id,
       },
       data: {
-        codigo: generateTipoCliente(tipoCliente.id),
+        codigo: generateCodeTipoCliente(tipoCliente.id),
       },
     });
 

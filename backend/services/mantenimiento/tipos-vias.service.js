@@ -4,7 +4,7 @@ import { generateCodeTipoVia } from "../../utils/codes";
 export class TiposViasService {
   static async createTipoVia(data) {
     const { nombre, descripcion, empresaId } = data;
-    const tipoVia = prisma.tipoVia.create({
+    const tipoVia = await prisma.tipoVia.create({
       data: {
         nombre,
         descripcion,

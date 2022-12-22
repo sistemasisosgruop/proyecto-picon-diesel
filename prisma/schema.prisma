@@ -16,11 +16,11 @@ model Empresa {
   id                  Int                   @id @default(autoincrement())
   codigo              String?               @unique
   nombre              String
-  ruc                 String
+  ruc                 String                @unique
   direccion           String
   telefono            String
-  email               String
-  web                 String
+  email               String?
+  web                 String?
   logo                String?
   sucursales          Sucursal[]
   paises              Pais[]
@@ -45,6 +45,9 @@ model Sucursal {
   id        Int      @id @default(autoincrement())
   codigo    String?  @unique
   nombre    String
+  direccion String?
+  telefono  String?
+  email     String?
   empresa   Empresa? @relation(fields: [empresaId], references: [id])
   empresaId Int?
 
@@ -126,7 +129,7 @@ model GastoImportacion {
 model FactorInternamiento {
   id        Int      @id @default(autoincrement())
   codigo    String?  @unique
-  valor     String
+  valor     Decimal
   fecha     DateTime
   empresa   Empresa? @relation(fields: [empresaId], references: [id])
   empresaId Int?
@@ -139,11 +142,11 @@ model Personal {
   id        Int        @id @default(autoincrement())
   codigo    String?    @unique
   nombre    String
-  email     String
+  email     String     @unique
   password  String
   telefono  String
   area      String
-  estado    EstadoEnum
+  estado    EstadoEnum @default(Activo)
   direccion String
   role      Role[]
   empresa   Empresa[]
@@ -155,13 +158,13 @@ model Vendedor {
   id                   Int        @id @default(autoincrement())
   codigo               String?    @unique
   nombre               String
-  email                String
+  email                String     @unique
   password             String
   telefono             String
   direccion            String
   comision             Decimal
   aprovacionCotizacion Boolean
-  estado               EstadoEnum
+  estado               EstadoEnum @default(Activo)
   empresa              Empresa?   @relation(fields: [empresaId], references: [id])
   empresaId            Int?
   role                 Role[]
@@ -177,7 +180,7 @@ model Cliente {
   nombre          String
   email           String
   telefono        String
-  estado          EstadoEnum
+  estado          EstadoEnum        @default(Activo)
   TipoCliente     TipoCliente?      @relation(fields: [tipoClienteId], references: [id])
   tipoClienteId   Int?
   empresa         Empresa?          @relation(fields: [empresaId], references: [id])
@@ -191,7 +194,7 @@ model Costo {
   codigo      String?    @unique
   nombre      String
   responsable String
-  estado      EstadoEnum
+  estado      EstadoEnum @default(Activo)
   empresa     Empresa?   @relation(fields: [empresaId], references: [id])
   empresaId   Int?
 
@@ -215,7 +218,7 @@ model CuentaBancaria {
   numeroCuenta String     @map("numero_cuenta")
   tipoCuenta   String     @map("tipo_cuenta")
   moneda       String
-  estado       EstadoEnum
+  estado       EstadoEnum @default(Activo)
   banco        Banco?     @relation(fields: [bancoId], references: [id])
   bancoId      Int?
   empresa      Empresa?   @relation(fields: [empresaId], references: [id])

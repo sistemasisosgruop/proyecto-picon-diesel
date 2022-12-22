@@ -14,14 +14,14 @@ export class IncotermsService {
   }
 
   static async updateIncoterm(id, data) {
-    const { nombre, observaciones } = data;
+    const { nombre, descripcion } = data;
     const result = prisma.incoterms.update({
       where: {
         id,
       },
       data: {
         nombre,
-        observaciones,
+        descripcion,
       },
     });
 

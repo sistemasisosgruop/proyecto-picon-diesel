@@ -1,20 +1,32 @@
 import prisma from "../../prisma";
-import { generateCodigo } from "../../utils/codes";
+import { encryptPassword } from "../../utils/auth";
+import { generateCode } from "../../utils/codes";
 
 export class PersonalService {
   static async createPersonal(data) {
-    const { nombre, password, email, telefono, direccion, empresaId, role } =
-      data;
+    const {
+      nombre,
+      password,
+      email,
+      telefono,
+      direccion,
+      empresaId,
+      role,
+      area,
+    } = data;
+    const passwordEncripted = await encryptPassword(password);
+
     const personal = await prisma.personal.create({
       data: {
+        area,
         nombre,
         email,
-        password,
+        password: passwordEncripted,
         telefono,
         direccion,
         empresa: {
           connect: {
-            empresaId,
+            id: empresaId,
           },
         },
         role: {
@@ -30,15 +42,17 @@ export class PersonalService {
         id: personal.id,
       },
       data: {
-        codigo: generateCodigo(personal.id),
+        codigo: generateCode(personal.id),
       },
     });
-    
+
     return result;
   }
 
   static async updatePersonal(id, data) {
     const { nombre, password, email, telefono, direccion, role } = data;
+    const passwordEncripted = await encryptPassword(password);
+
     const personal = prisma.personal.update({
       where: {
         id,
@@ -46,7 +60,7 @@ export class PersonalService {
       data: {
         nombre,
         email,
-        password,
+        password: passwordEncripted,
         telefono,
         direccion,
         role: {
@@ -75,8 +89,12 @@ export class PersonalService {
     const { empresaId } = body;
     return prisma.personal.findMany({
       where: {
-        empresaId,
-      }
+        empresa: {
+          some: {
+            id: empresaId,
+          },
+        },
+      },
     });
   }
 }

@@ -4,7 +4,7 @@ import { generateCodeGastoImportacion } from "../../utils/codes";
 export class GastosImportacionService {
   static async createGastoImportacion(data) {
     const { nombre, descripcion, empresaId } = data;
-    const gasto = await prisma.gastosImportacion.create({
+    const gasto = await prisma.gastoImportacion.create({
       data: {
         nombre,
         descripcion,
@@ -12,7 +12,7 @@ export class GastosImportacionService {
       },
     });
 
-    const result = await prisma.gastosImportacion.update({
+    const result = await prisma.gastoImportacion.update({
       where: {
         id: gasto.id,
       },
@@ -26,7 +26,7 @@ export class GastosImportacionService {
 
   static async updateGastoImportacion(id, data) {
     const { nombre, descripcion } = data;
-    const result = prisma.gastosImportacion.update({
+    const result = prisma.gastoImportacion.update({
       where: {
         id,
       },
@@ -40,7 +40,7 @@ export class GastosImportacionService {
   }
 
   static async deleteGastoImportacion(id) {
-    const result = prisma.gastosImportacion.delete({
+    const result = prisma.gastoImportacion.delete({
       where: {
         id,
       },
@@ -50,7 +50,7 @@ export class GastosImportacionService {
   }
 
   static async getGastoImportacion(id) {
-    const result = prisma.gastosImportacion.findUnique({
+    const result = prisma.gastoImportacion.findUnique({
       where: {
         id,
       },
@@ -61,7 +61,7 @@ export class GastosImportacionService {
 
   static async getGastosImportacion(body) {
     const { empresaId } = body;
-    const result = prisma.gastosImportacion.findMany({
+    const result = prisma.gastoImportacion.findMany({
       where: {
         empresaId,
       },

@@ -4,14 +4,10 @@ import { generateCodeBanco } from "../../utils/codes";
 export class BancoService {
   static async createBanco(data) {
     const { nombre, empresaId } = data;
-    const banco = prisma.banco.create({
+    const banco = await prisma.banco.create({
       data: {
         nombre,
-        empresa: {
-          connect: {
-            empresaId,
-          },
-        },
+        empresaId,
       },
     });
 

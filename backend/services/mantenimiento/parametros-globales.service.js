@@ -109,11 +109,7 @@ export class ParametrosGlobalesService {
       data: {
         nombre,
         valor,
-        empresa: {
-          connect: {
-            empresaId,
-          },
-        },
+        empresaId,
       },
     });
     return globalParam;

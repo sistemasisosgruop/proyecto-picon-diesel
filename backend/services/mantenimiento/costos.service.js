@@ -3,15 +3,12 @@ import { generateCodeCostos } from "../../utils/codes";
 
 export class CostosService {
   static async createCosto(data) {
-    const { responsable, empresaId } = data;
+    const { responsable, nombre, empresaId } = data;
     const costo = await prisma.costo.create({
       data: {
         responsable,
-        empresa: {
-          connect: {
-            id: empresaId,
-          },
-        },
+        nombre,
+        empresaId,
       },
     });
 
@@ -27,13 +24,14 @@ export class CostosService {
   }
 
   static async updateCosto(id, data) {
-    const { responsable } = data;
+    const { responsable, nombre } = data;
     const costo = prisma.costo.update({
       where: {
         id,
       },
       data: {
         responsable,
+        nombre,
       },
     });
 

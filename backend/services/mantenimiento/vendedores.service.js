@@ -1,5 +1,5 @@
 import prisma from "../../prisma";
-import { generateCodigo } from "../../utils/codes";
+import { generateCode } from "../../utils/codes";
 import { EnumRole } from "../../utils/enums";
 
 export class VendedoresService {
@@ -25,12 +25,12 @@ export class VendedoresService {
         aprovacionCotizacion,
         empresa: {
           connect: {
-            empresaId,
+            id: empresaId,
           },
         },
         role: {
           connect: {
-            name: EnumRole.Vendedor,
+            name: EnumRole[EnumRole.Vendedor],
           },
         },
       },
@@ -40,7 +40,7 @@ export class VendedoresService {
         id: vendedor.id,
       },
       data: {
-        codigo: generateCodigo(vendedor.id),
+        codigo: generateCode(vendedor.id),
       },
     });
 
