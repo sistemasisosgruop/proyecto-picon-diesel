@@ -1,19 +1,20 @@
 import { ParametrosGlobalesService } from "../../../../backend/services/mantenimiento/parametros-globales.service";
+import { AuthService } from "../../../../backend/services/auth/auth.service";
 
 export default async function handler(req, res) {
   try {
-    const paisId = Number(req.query.paisId);
+    const user = await AuthService.ValidateAccessToken(req, res);
+    user && AuthService.AdministradorFeatures(user.roles);
+
+    const id = Number(req.query.id);
     if (req.method === "PUT") {
-      const pais = await ParametrosGlobalesService.updateCountry(
-        paisId,
-        req.body
-      );
-      return res.status(200).json(pais);
+      const result = await ParametrosGlobalesService.updateCountry(id, req.body);
+      return res.status(200).json(result);
     }
 
     if (req.method === "DELETE") {
-      const pais = await ParametrosGlobalesService.deleteCountry(paisId);
-      return res.status(200).json(pais);
+      const result = await ParametrosGlobalesService.deleteCountry(id);
+      return res.status(200).json(result);
     }
   } catch (error) {
     if (error.code === "P2025") {

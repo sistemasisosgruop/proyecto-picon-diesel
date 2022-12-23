@@ -38,8 +38,7 @@ export class ParametrosGlobalesService {
     return country;
   }
 
-  static async getAllCountries(body) {
-    const { empresaId } = body;
+  static async getAllCountries(empresaId) {
     return prisma.pais.findMany({
       where: {
         empresaId,
@@ -67,8 +66,7 @@ export class ParametrosGlobalesService {
     return globalParam;
   }
 
-  static async getGlobalParams(body) {
-    const { empresaId } = body;
+  static async getGlobalParams(empresaId) {
     const globalParams = await prisma.parametroGlobal.findMany({
       where: {
         empresaId,

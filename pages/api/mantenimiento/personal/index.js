@@ -1,5 +1,6 @@
+
 import { AuthService } from "../../../../backend/services/auth/auth.service";
-import { EmpresasService } from "../../../../backend/services/mantenimiento/empresas.service";
+import { PersonalService } from "../../../../backend/services/mantenimiento/personal.service";
 
 export default async function handler(req, res) {
   try {
@@ -8,13 +9,13 @@ export default async function handler(req, res) {
     user && AuthService.AdministradorFeatures(user.roles);
 
     if (req.method === "POST") {
-      const result = await EmpresasService.createEmpresa(req.body);
+      const result = await PersonalService.createPersonal(req.body);
       return res.status(200).json(result);
     }
 
     if (req.method === "GET") {
-      const adminId = Number(req.query.adminId);
-      const result = await EmpresasService.getAllEmpresas(adminId);
+      const empresaId = Number(req.query.empresaId);
+      const result = await PersonalService.getAllPersonal(empresaId);
       return res.status(200).json({ data: result });
     }
   } catch (error) {

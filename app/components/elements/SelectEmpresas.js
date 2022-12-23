@@ -1,3 +1,4 @@
+// @ts-ignore
 import { Listbox, Transition } from "@headlessui/react";
 import {
   Popover,
@@ -8,36 +9,52 @@ import { Building, Building4, Buildings2 } from "iconsax-react";
 import { Fragment, useEffect, useState } from "react";
 import { Check } from "./icons/Check";
 import { Empresas } from "./icons/Empresas";
-
 import { axiosRequest } from "../../utils/axios-request";
+import { useAuthState } from "../../../contexts/auth.context";
 
 export const SelectEmpresas = () => {
-  // TODO - Cambiar la db
-  const [empresas, setEmpresas] = useState([
-    { name: "Empresa 1" },
-    { name: "Emprese 2" },
-  ]);
-  const [selectedEmpresa, setSelectedEmpresa] = useState('');
-  const sucursales = [{ name: "sucursal 1" }, { name: "sucursal 2" }];
-  const [selectedSucursal, setSelectedSucursal] = useState(sucursales[0]);
-
+  const [empresas, setEmpresas] = useState([{ name: "Default" }]);
+  const [selectedEmpresa, setSelectedEmpresa] = useState({
+    name: "default",
+    id: 0,
+  });
+  const [sucursales, setSucursales] = useState([{ name: "Default" }]);
+  const [selectedSucursal, setSelectedSucursal] = useState({ name: "default" });
+  const auth = useAuthState();
 
   useEffect(() => {
-    const getEmpresas = async () => {
-      const { data } = await axiosRequest(
-        "GET",
-        "/api/mantenimiento/empresas",
-        {
-          userId: 1,
-        }
-      );
+    if (selectedEmpresa.id !== 0) {
+      getSucursales(selectedEmpresa.id);
+      localStorage.setItem("empresa", JSON.stringify(selectedEmpresa));
+    }
+  }, [selectedEmpresa]);
 
-      const result = data.data.map((empresa) => ({ name: empresa.nombre }));
-      setEmpresas(result)
-      setSelectedEmpresa(result[0])
-    };
+  useEffect(() => {
     getEmpresas();
   }, []);
+
+  const getEmpresas = async () => {
+    const { data: { data } } = await axiosRequest(
+      "get",
+      `/api/mantenimiento/empresas?adminId=${auth.id}`
+    );
+    localStorage.setItem("empresas", JSON.stringify(data));
+    const result = data.map(({ nombre, id }) => ({ name: nombre, id }));
+    setEmpresas(result);
+    setSelectedEmpresa(result[0]);
+    getSucursales(result[0].id);
+  };
+
+  const getSucursales = async (empresaId) => {
+    const { data } = await axiosRequest(
+      "get",
+      `/api/mantenimiento/sucursales?empresaId=${empresaId}`
+    );
+
+    const result = data.data.map(({ nombre, id }) => ({ name: nombre, id }));
+    setSucursales(result);
+    setSelectedSucursal(result[0]);
+  };
 
   return (
     <Popover placement="right-end">

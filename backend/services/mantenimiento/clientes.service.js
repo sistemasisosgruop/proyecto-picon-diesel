@@ -46,8 +46,7 @@ export class ClienteService {
     return tipoCliente;
   }
 
-  async getAllTipoCliente(body) {
-    const { empresaId } = body;
+  static async getAllTipoCliente(empresaId) {
     const tipoCliente = await prisma.tipoCliente.findMany({
       where: {
         empresaId,
@@ -57,7 +56,7 @@ export class ClienteService {
     return tipoCliente;
   }
 
-  async getTipoCliente(id) {
+  static async getTipoCliente(id) {
     const tipoCliente = await prisma.tipoCliente.findUnique({
       where: {
         id,
@@ -136,8 +135,7 @@ export class ClienteService {
     return cliente;
   }
 
-  static async getAllCliente(body) {
-    const { empresaId } = body;
+  static async getClientes(empresaId) {
     const cliente = await prisma.cliente.findMany({
       where:{
         empresaId,

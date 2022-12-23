@@ -1,4 +1,4 @@
-import { EmpresasService } from "../../../../backend/services/mantenimiento/empresas.service";
+import { ParametrosGlobalesService } from "../../../../backend/services/mantenimiento/parametros-globales.service";
 import { AuthService } from "../../../../backend/services/auth/auth.service";
 
 
@@ -9,12 +9,12 @@ export default async function handler(req, res) {
 
     const id = Number(req.query.id);
     if (req.method === "PUT") {
-      const result = await EmpresasService.updateEmpresa(id, req.body);
+      const result = await ParametrosGlobalesService.updateGlobalParam(id, req.body);
       return res.status(200).json(result);
     }
 
     if (req.method === "DELETE") {
-      const result = await EmpresasService.deleteEmpresa(id);
+      const result = await ParametrosGlobalesService.deleteGlobalParam(id);
       return res.status(200).json(result);
     }
   } catch (error) {

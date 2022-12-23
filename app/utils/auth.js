@@ -8,6 +8,7 @@ const defaultUser = {
   nombre: "",
   isAuthenticated: false,
   token: "",
+  id: -1,
   empresas: [],
   roles: [],
 };
@@ -52,6 +53,7 @@ export const authenticate = (token) => {
   return {
     email: decoded.username,
     isAuthenticated: true,
+    id: decoded.id,
     token: _token,
     nombre: decoded.name,
     empresas: [...decoded.empresas],

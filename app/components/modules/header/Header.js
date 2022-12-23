@@ -1,3 +1,4 @@
+// @ts-ignore
 import { Menu } from "@headlessui/react";
 import { ArrowDown2, LogoutCurve, Setting, User } from "iconsax-react";
 import { Fragment, useEffect, useState } from "react";
@@ -15,8 +16,7 @@ export const Header = () => {
 
   useEffect(() => {
     setUser({ nombre: auth.nombre, rol: auth.roles[0] });
-
-  },[])
+  }, []);
 
   return (
     <header className="flex items-center justify-end px-8 py-3 bg-white shadow-lg">

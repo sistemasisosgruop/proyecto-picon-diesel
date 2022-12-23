@@ -47,8 +47,7 @@ export class BancoService {
     return banco;
   }
 
-  static async getAllBancos(body) {
-    const { empresaId } = body;
+  static async getBancos(empresaId) {
     return prisma.banco.findMany({
       where: {
         empresaId,

@@ -23,12 +23,13 @@ export class SucursalService {
   }
 
   static async updateSucursal(id, data) {
-    const { nombre, direccion, telefono } = data;
+    const { nombre, direccion, email, telefono } = data;
     const sucursal = prisma.sucursal.update({
       where: {
         id,
       },
       data: {
+        email,
         nombre,
         direccion,
         telefono,
@@ -46,5 +47,27 @@ export class SucursalService {
     });
 
     return sucursal;
+  }
+
+  static async getSucursal(id) {
+    const sucursal = prisma.sucursal.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return sucursal;
+  }
+
+  static async getSucursales(empresaId) {
+    const sucursales = prisma.sucursal.findMany({
+      where: {
+        empresa:{
+          id: empresaId
+        },
+      },
+    });
+
+    return sucursales;
   }
 }

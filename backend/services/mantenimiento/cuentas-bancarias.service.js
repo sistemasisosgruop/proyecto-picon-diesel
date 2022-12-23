@@ -1,7 +1,7 @@
 import prisma from "../../prisma";
 import { generateCodeCuentaBancaria } from "../../utils/codes";
 
-export class CuentasBancarias {
+export class CuentasBancariasService {
   static async createCuentaBancaria(data) {
     const { bancoId, moneda, empresaId, tipoCuenta, numeroCuenta } = data;
     const cuentaBancaria = await prisma.cuentaBancaria.create({
@@ -62,9 +62,7 @@ export class CuentasBancarias {
     return cuentaBancaria;
   }
 
-  static async getAllCuentasBancarias(body) {
-    const { empresaId } = body;
-
+  static async getCuentasBancarias(empresaId) {
     return prisma.cuentaBancaria.findMany({ where: { empresaId } });
   }
 }

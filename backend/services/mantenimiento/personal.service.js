@@ -85,8 +85,7 @@ export class PersonalService {
     return personal;
   }
 
-  static async getAllPersonal(body) {
-    const { empresaId } = body;
+  static async getAllPersonal(empresaId) {
     return prisma.personal.findMany({
       where: {
         empresa: {

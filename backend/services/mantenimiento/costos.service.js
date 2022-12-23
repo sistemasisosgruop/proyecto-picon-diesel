@@ -58,8 +58,7 @@ export class CostosService {
     return costos;
   }
 
-  static async getCostos(body) {
-    const { empresaId } = body;
+  static async getCostos(empresaId) {
     const costos = await prisma.costo.findMany({ where: { empresaId } });
 
     return costos;

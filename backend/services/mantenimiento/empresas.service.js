@@ -60,10 +60,9 @@ export class EmpresasService {
     return empresa;
   }
 
-  static async getAllEmpresas(body) {
-    const { userId } = body;
+  static async getAllEmpresas(adminId) {
     return prisma.empresa.findMany({
-      where: { personal: { some: { id: userId } } },
+      where: { personal: { some: { id: adminId } } },
     });
   }
 

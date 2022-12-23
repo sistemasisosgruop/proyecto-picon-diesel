@@ -7,6 +7,8 @@ const {
   randUrl,
   randFirstName,
   randLastName,
+  randSeatNumber,
+  randCity,
 } = require("@ngneat/falso");
 const { hashSync } = require("bcrypt");
 const { DateTime } = require("luxon");
@@ -24,9 +26,9 @@ async function main() {
   const vendedores = await createVendedores();
   console.log({ roles, empresas, sucursales, adminUser, vendedores });
   console.log(
-    `seeds created successfully on ${
-      (DateTime.now().toSeconds() - startTime).toFixed(2)
-    } seconds`
+    `seeds created successfully on ${(
+      DateTime.now().toSeconds() - startTime
+    ).toFixed(2)} seconds`
   );
 }
 
@@ -71,8 +73,8 @@ async function createVendedores() {
   return await Promise.all(userTasks);
 }
 async function createEmpresas() {
-  const empresasTasks = rucs.map(async (ruc) => {
-    const empresa = await createEmpresa(ruc);
+  const empresasTasks = rucs.map(async (ruc, index) => {
+    const empresa = await createEmpresa(ruc, index);
     const sucursales = await prisma.sucursal.findMany({
       where: {
         empresaId: empresa.id,
@@ -82,8 +84,8 @@ async function createEmpresas() {
     if (sucursales.length >= 3) {
       return empresa;
     }
-    for (let index = 0; index < 3; index++) {
-      await createSucursal(empresa.id);
+    for (let i = 1; i <= 3; i++) {
+      await createSucursal(empresa.id, i);
     }
 
     return await prisma.empresa.findUnique({
@@ -201,12 +203,13 @@ async function createVendedor(email, password, role, ruc, nombre) {
   });
 }
 
-function createEmpresa(ruc) {
+function createEmpresa(ruc, index) {
   return prisma.empresa.upsert({
     where: { ruc },
     create: {
       ruc,
       nombre: randBrand(),
+      codigo: `000${randSeatNumber()}${index + 1}`,
       direccion: randStreetAddress(),
       telefono: randPhoneNumber({ countryCode: "PE" }),
       email: randEmail(),
@@ -214,6 +217,7 @@ function createEmpresa(ruc) {
     },
     update: {
       ruc,
+      codigo: `000${randSeatNumber({ length: 3 })}${index + 1}`,
       nombre: randBrand(),
       direccion: randStreetAddress(),
       telefono: randPhoneNumber({ countryCode: "PE" }),
@@ -226,10 +230,11 @@ function createEmpresa(ruc) {
   });
 }
 
-async function createSucursal(empresaId) {
+async function createSucursal(empresaId, index) {
   return prisma.sucursal.create({
     data: {
-      nombre: randBrand(),
+      nombre: `${randCity()} ${randBrand()}`,
+      codigo: `000${randSeatNumber()}${index + 1}`,
       direccion: randStreetAddress(),
       telefono: randPhoneNumber({ countryCode: "PE" }),
       email: randEmail(),

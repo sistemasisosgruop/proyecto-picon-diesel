@@ -7,9 +7,11 @@ export async function axiosRequest(method, url, data = null) {
       method,
       url,
       data,
-      headers:{
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-      }
+      },
     });
     return response;
   } catch (error) {

@@ -85,8 +85,7 @@ export class VendedoresService {
     return vendedor;
   }
 
-  static async getAllVendedores(body) {
-    const { empresaId } = body;
+  static async getAllVendedores(empresaId) {
     return prisma.vendedor.findMany({
       where: {
         empresaId,
