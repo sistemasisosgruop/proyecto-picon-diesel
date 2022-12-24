@@ -5,6 +5,7 @@ const nextConfig = {
     domains: ['*']
   },
   experimental: {
+    appDir: true,
     allowMiddlewareResponseBody: true,
   },
 };

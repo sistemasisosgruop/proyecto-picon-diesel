@@ -13,30 +13,57 @@ datasource db {
 // CONFIGURACION DE EMPRESA
 
 model Empresa {
-  id                  Int                   @id @default(autoincrement())
-  codigo              String?               @unique
-  nombre              String
-  ruc                 String                @unique
-  direccion           String
-  telefono            String
-  email               String?
-  web                 String?
-  logo                String?
-  sucursales          Sucursal[]
-  paises              Pais[]
-  parametrosGlobales  ParametroGlobal[]
-  personal            Personal[]
-  vendedores          Vendedor[]
-  clientes            Cliente[]
-  costos              Costo[]
-  banco               Banco[]
-  cuentasBancarias    CuentaBancaria[]
-  TipoCliente         TipoCliente[]
-  AgenteAduanas       AgenteAduanas[]
-  Incoterms           Incoterms[]
-  TipoVia             TipoVia[]
-  GastoImportacion    GastoImportacion[]
-  FactorInternamiento FactorInternamiento[]
+  id                           Int                            @id @default(autoincrement())
+  codigo                       String?                        @unique
+  nombre                       String
+  ruc                          String                         @unique
+  direccion                    String
+  telefono                     String
+  email                        String?
+  web                          String?
+  logo                         String?
+  sucursales                   Sucursal[]
+  paises                       Pais[]
+  parametrosGlobales           ParametroGlobal[]
+  personal                     Personal[]
+  vendedores                   Vendedor[]
+  clientes                     Cliente[]
+  costos                       Costo[]
+  banco                        Banco[]
+  cuentasBancarias             CuentaBancaria[]
+  TipoCliente                  TipoCliente[]
+  AgenteAduanas                AgenteAduanas[]
+  Incoterms                    Incoterms[]
+  TipoVia                      TipoVia[]
+  GastoImportacion             GastoImportacion[]
+  FactorInternamiento          FactorInternamiento[]
+  Almacen                      Almacen[]
+  MotivoMovimientoAlmacen      MotivoMovimientoAlmacen[]
+  AgenciaTransporte            AgenciaTransporte[]
+  Vehiculo                     Vehiculo[]
+  Chofer                       Chofer[]
+  TipoDeCambio                 TipoDeCambio[]
+  ParametroDescuento           ParametroDescuento[]
+  FormaDePagoContado           FormaDePagoContado[]
+  FormaDePagoCredito           FormaDePagoCredito[]
+  DocumentoContable            DocumentoContable[]
+  DocumentoAdministrativo      DocumentoAdministrativo[]
+  Detraccion                   Detraccion[]
+  MotivoTrasladoGuiaRemision   MotivoTrasladoGuiaRemision[]
+  Familia                      Familia[]
+  Servicio                     Servicio[]
+  TrabajoTerceros              TrabajoTerceros[]
+  Caracteristica               Caracteristica[]
+  ModeloMaquina                ModeloMaquina[]
+  FabricaMaquina               FabricaMaquina[]
+  NombreMaquina                NombreMaquina[]
+  MarcaMotor                   MarcaMotor[]
+  MarcaFabricaSistemaInyeccion MarcaFabricaSistemaInyeccion[]
+  DescripcionBombaInyeccion    DescripcionBombaInyeccion[]
+  MarcaFabricaInyector         MarcaFabricaInyector[]
+  DescripcionInyector          DescripcionInyector[]
+  Maquina                      Maquina[]
+  Material                     Material[]
 
   @@map("empresa")
 }
@@ -58,11 +85,15 @@ model Sucursal {
 // AREA GENERAL
 
 model Pais {
-  id        Int      @id @default(autoincrement())
-  codigo    String   @unique
-  nombre    String
-  empresa   Empresa? @relation(fields: [empresaId], references: [id])
-  empresaId Int?
+  id                       Int       @id @default(autoincrement())
+  codigo                   String    @unique
+  nombre                   String
+  empresa                  Empresa?  @relation(fields: [empresaId], references: [id])
+  empresaId                Int?
+  maquinas                 Maquina[] @relation(name: "maquina")
+  maquinasBombaInyecciones Maquina[] @relation(name: "bombaInyeccionPais")
+  maquinasInyectores       Maquina[] @relation(name: "inyectorPais")
+  maquinasMotores          Maquina[] @relation(name: "motorPais")
 
   @@map("pais")
 }
@@ -246,6 +277,410 @@ model Role {
   vendor   Vendedor[]
 
   @@map("role")
+}
+
+model Almacen {
+  id        Int      @id @default(autoincrement())
+  codigo    String?  @unique
+  nombre    String
+  direccion String
+  telefono  String
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId Int?
+
+  @@map("almacen")
+}
+
+model MotivoMovimientoAlmacen {
+  id        Int      @id @default(autoincrement())
+  codigo    String?  @unique
+  nombre    String
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId Int?
+
+  @@map("motivo_movimiento_almacen")
+}
+
+model AgenciaTransporte {
+  id              Int               @id @default(autoincrement())
+  codigo          String?           @unique
+  nombre          String
+  tipoDocumento   TipoDocumentoEnum @map("tipo_documento")
+  numeroDocumento String            @map("numero_documento")
+  direccion       String
+  telefono        String
+  email           String
+  empresa         Empresa?          @relation(fields: [empresaId], references: [id])
+  empresaId       Int
+
+  @@map("agencia_transporte")
+}
+
+model Vehiculo {
+  id               Int      @id @default(autoincrement())
+  codigo           String?  @unique
+  placa            String
+  marca            String
+  modelo           String
+  tipo             String?
+  descripcion      String?
+  color            String
+  tarjetaPropiedad String   @map("tarjeta_propiedad")
+  empresa          Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId        Int
+
+  @@map("vehiculo")
+}
+
+model Chofer {
+  id                 Int      @id @default(autoincrement())
+  codigo             String?  @unique
+  nombre             String
+  dni                String
+  locencia           String
+  fechaVencimiento   DateTime
+  tarjetaDePropiedad String   @map("tarjeta_de_propiedad")
+  email              String
+  telefono           String
+  empresa            Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId          Int
+
+  @@map("chofer")
+}
+
+model TipoDeCambio {
+  id        Int      @id @default(autoincrement())
+  codigo    String?  @unique
+  de        String
+  a         String
+  valor     Decimal
+  fecha     DateTime
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId Int
+
+  @@map("tipo_de_cambio")
+}
+
+model ParametroDescuento {
+  id        Int      @id @default(autoincrement())
+  de        String
+  a         String
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId Int
+
+  @@map("parametro_descuento")
+}
+
+model FormaDePagoContado {
+  id        Int      @id @default(autoincrement())
+  codigo    String?  @unique
+  nombre    String
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId Int
+
+  @@map("forma_de_pago_contado")
+}
+
+model FormaDePagoCredito {
+  id        Int      @id @default(autoincrement())
+  codigo    String?  @unique
+  nombre    String
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId Int
+
+  @@map("forma_de_pago_credito")
+}
+
+model DocumentoContable {
+  id            Int      @id @default(autoincrement())
+  codigo        String   @unique
+  numeroDeSerie String   @map("numero_de_serie")
+  nombre        String
+  abreviatura   String
+  empresa       Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId     Int
+
+  @@map("documento_contable")
+}
+
+model DocumentoAdministrativo {
+  id          Int      @id @default(autoincrement())
+  codigo      String   @unique
+  nombre      String
+  abreviatura String
+  empresa     Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId   Int
+
+  @@map("documento_administrativo")
+}
+
+model Detraccion {
+  id          Int      @id @default(autoincrement())
+  codigo      String   @unique
+  nombre      String
+  porcentaje  Decimal
+  abreviatura String?
+  empresa     Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId   Int
+
+  @@map("detraccion")
+}
+
+model MotivoTrasladoGuiaRemision {
+  id          Int      @id @default(autoincrement())
+  codigo      String?  @unique
+  motivo      String
+  descripcion String?
+  empresa     Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId   Int
+
+  @@map("motivo_traslado_guia_remision")
+}
+
+model MaterialPresupuesto {
+  id           Int         @id @default(autoincrement())
+  codigo       String?     @unique
+  familia      Familia?    @relation(fields: [familiaId], references: [id])
+  familiaId    Int
+  SubFamilia   SubFamilia? @relation(fields: [subFamiliaId], references: [id])
+  subFamiliaId Int
+  correlativo  String?
+  nombre       String
+  precio       Decimal
+
+  @@map("material_presupuesto")
+}
+
+model Servicio {
+  id         Int      @id @default(autoincrement())
+  codigo     String   @unique
+  definicion String
+  precio     Decimal
+  empresa    Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId  Int
+
+  @@map("servicio")
+}
+
+model TrabajoTerceros {
+  id         Int      @id @default(autoincrement())
+  codigo     String   @unique
+  definicion String
+  precio     Decimal
+  empresa    Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId  Int
+
+  @@map("trabajo_terceros")
+}
+
+// MAESTRO DE CODIGOS
+model Familia {
+  id                  Int                   @id @default(autoincrement())
+  codigo              String                @unique
+  descripcion         String
+  empresa             Empresa?              @relation(fields: [empresaId], references: [id])
+  empresaId           Int
+  SubFamilia          SubFamilia[]
+  MaterialPresupuesto MaterialPresupuesto[]
+  Material            Material[]
+
+  @@map("familia")
+}
+
+model SubFamilia {
+  id                  Int                   @id @default(autoincrement())
+  codigo              String                @unique
+  descripcion         String
+  familia             Familia?              @relation(fields: [familiaId], references: [id])
+  familiaId           Int
+  MaterialPresupuesto MaterialPresupuesto[]
+  Material            Material[]
+
+  @@map("sub_familia")
+}
+
+model Caracteristica {
+  id                       Int                        @id @default(autoincrement())
+  codigo                   String                     @unique
+  descripcion              String
+  abreviatura              String
+  empresa                  Empresa?                   @relation(fields: [empresaId], references: [id])
+  empresaId                Int
+  caracteristicaToMaterial CaracteristicaToMaterial[]
+
+  @@map("caracteristica")
+}
+
+model ModeloMaquina {
+  id        Int       @id @default(autoincrement())
+  codigo    String    @unique
+  modelo    String
+  empresa   Empresa?  @relation(fields: [empresaId], references: [id])
+  empresaId Int
+  Maquina   Maquina[]
+
+  @@map("modelo_maquina")
+}
+
+model FabricaMaquina {
+  id        Int       @id @default(autoincrement())
+  codigo    String    @unique
+  fabrica   String
+  empresa   Empresa?  @relation(fields: [empresaId], references: [id])
+  empresaId Int
+  Maquina   Maquina[]
+
+  @@map("fabrica_maquina")
+}
+
+model NombreMaquina {
+  id        Int       @id @default(autoincrement())
+  codigo    String    @unique
+  nombre    String
+  empresa   Empresa?  @relation(fields: [empresaId], references: [id])
+  empresaId Int
+  Maquina   Maquina[]
+
+  @@map("nombre_maquina")
+}
+
+model MarcaMotor {
+  id        Int       @id @default(autoincrement())
+  codigo    String    @unique
+  marca     String
+  empresa   Empresa?  @relation(fields: [empresaId], references: [id])
+  empresaId Int
+  Maquina   Maquina[]
+
+  @@map("marca_motor")
+}
+
+model MarcaFabricaSistemaInyeccion {
+  id        Int       @id @default(autoincrement())
+  codigo    String    @unique
+  marca     String
+  empresa   Empresa?  @relation(fields: [empresaId], references: [id])
+  empresaId Int
+  Maquina   Maquina[]
+
+  @@map("marca_fabrica_sistema_inyeccion")
+}
+
+model DescripcionBombaInyeccion {
+  id          Int       @id @default(autoincrement())
+  codigo      String    @unique
+  descripcion String
+  empresa     Empresa?  @relation(fields: [empresaId], references: [id])
+  empresaId   Int
+  Maquina     Maquina[]
+
+  @@map("descripcion_bomba_inyeccion")
+}
+
+model MarcaFabricaInyector {
+  id        Int       @id @default(autoincrement())
+  codigo    String    @unique
+  marca     String
+  empresa   Empresa?  @relation(fields: [empresaId], references: [id])
+  empresaId Int
+  Maquina   Maquina[]
+
+  @@map("marca_fabrica_inyector")
+}
+
+model DescripcionInyector {
+  id          Int       @id @default(autoincrement())
+  codigo      String    @unique
+  descripcion String
+  empresa     Empresa?  @relation(fields: [empresaId], references: [id])
+  empresaId   Int
+  Maquina     Maquina[]
+
+  @@map("descripcion_inyector")
+}
+
+model MaquinaProcedencia {
+  id Int @id @default(autoincrement())
+
+  @@map("maquina_procedencia")
+}
+
+model Maquina {
+  id                             Int                           @id @default(autoincrement())
+  codigo                         String?                       @unique
+  fabricaMaquina                 FabricaMaquina?               @relation(fields: [fabricaMaquinaId], references: [id])
+  fabricaMaquinaId               Int
+  modeloMaquina                  ModeloMaquina?                @relation(fields: [modeloMaquinaId], references: [id])
+  modeloMaquinaId                Int
+  nombreMaquina                  NombreMaquina?                @relation(fields: [nombreMaquinaId], references: [id])
+  nombreMaquinaId                Int
+  procedencia                    Pais?                         @relation(name: "maquina", fields: [paisId], references: [id])
+  paisId                         Int
+  codigoOriginal                 String
+  modeloMotor                    String
+  marcaMotor                     MarcaMotor?                   @relation(fields: [marcaMotorId], references: [id])
+  marcaMotorId                   Int
+  procedenciaMotor               Pais?                         @relation(name: "motorPais", fields: [motorPaisId], references: [id])
+  motorPaisId                    Int
+  numeroCilindros                Int
+  codigoFabricaBombaInyeccion    String
+  tipoBombaInyeccion             String
+  marcaFabricaSistemaInyeccion   MarcaFabricaSistemaInyeccion? @relation(fields: [marcaFabricaSistemaInyeccionId], references: [id])
+  marcaFabricaSistemaInyeccionId Int
+  descripcionBombaInyeccion      DescripcionBombaInyeccion?    @relation(fields: [descripcionBombaInyeccionId], references: [id])
+  descripcionBombaInyeccionId    Int
+  procedenciaBombaInyeccion      Pais?                         @relation(name: "bombaInyeccionPais", fields: [bombaInyeccionPaisId], references: [id])
+  bombaInyeccionPaisId           Int
+  codigoOriginalBombaInyeccion   String
+  codigoFabricaInyector          String
+  tipoFabricaInyector            String
+  marcaFabricaInyector           MarcaFabricaInyector?         @relation(fields: [marcaFabricaInyectorId], references: [id])
+  marcaFabricaInyectorId         Int
+  descripcionInyector            DescripcionInyector?          @relation(fields: [descripcionInyectorId], references: [id])
+  descripcionInyectorId          Int
+  procedenciaInyector            Pais?                         @relation(name: "inyectorPais", fields: [inyectorPaisId], references: [id])
+  inyectorPaisId                 Int
+  codigoOriginalInyector         String
+  codigoTobera                   String
+  tipoTobera                     String
+  empresa                        Empresa?                      @relation(fields: [empresaId], references: [id])
+  empresaId                      Int
+
+  @@map("maquina")
+}
+
+model Material {
+  id                       Int                        @id @default(autoincrement())
+  codigo                   String?                    @unique
+  correlativo              String?                    @unique
+  familia                  Familia?                   @relation(fields: [familiaId], references: [id])
+  familiaId                Int
+  subfamilia               SubFamilia?                @relation(fields: [subfamiliaId], references: [id])
+  subfamiliaId             Int
+  denominacion             String
+  codigoFabricante         String
+  tipoFabricante           String
+  materialReemplazo        Json?
+  materialSimilitud        Json?
+  materialEquivalencia     Json?
+  aplicacionDeMaquina      Json?
+  caracteristicaToMaterial CaracteristicaToMaterial[]
+  empresa                  Empresa?                   @relation(fields: [empresaId], references: [id])
+  empresaId                Int
+
+  @@map("material")
+}
+
+model CaracteristicaToMaterial {
+  id               Int             @id @default(autoincrement())
+  isChecked        Boolean
+  valor            String
+  material         Material?       @relation(fields: [materialId], references: [id])
+  materialId       Int
+  caracteristica   Caracteristica? @relation(fields: [caracteristicaId], references: [id])
+  caracteristicaId Int
+
+  @@map("caracteristica_to_material")
 }
 
 enum EstadoEnum {
