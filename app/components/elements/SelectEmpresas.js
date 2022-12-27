@@ -13,12 +13,12 @@ import { axiosRequest } from "../../utils/axios-request";
 import { useAuthState } from "../../../contexts/auth.context";
 
 export const SelectEmpresas = () => {
-  const [empresas, setEmpresas] = useState([{ name: "Default" }]);
+  const [empresas, setEmpresas] = useState([{ name: "Default", id: 0 }]);
   const [selectedEmpresa, setSelectedEmpresa] = useState({
     name: "default",
     id: 0,
   });
-  const [sucursales, setSucursales] = useState([{ name: "Default" }]);
+  const [sucursales, setSucursales] = useState([{ name: "Default", id: 0 }]);
   const [selectedSucursal, setSelectedSucursal] = useState({ name: "default" });
   const auth = useAuthState();
 
@@ -34,7 +34,9 @@ export const SelectEmpresas = () => {
   }, []);
 
   const getEmpresas = async () => {
-    const { data: { data } } = await axiosRequest(
+    const {
+      data: { data },
+    } = await axiosRequest(
       "get",
       `/api/mantenimiento/empresas?adminId=${auth.id}`
     );
@@ -89,9 +91,9 @@ export const SelectEmpresas = () => {
                 leaveTo="opacity-0"
               >
                 <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-[999]">
-                  {empresas.map((empresa, empresaIdx) => (
+                  {empresas.map((empresa) => (
                     <Listbox.Option
-                      key={empresaIdx}
+                      key={empresa.id}
                       className={({ active }) =>
                         `relative cursor-default select-none py-2 pl-10 pr-4 ${
                           active

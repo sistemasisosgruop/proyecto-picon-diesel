@@ -83,11 +83,12 @@ export default function DatosEmpresa() {
     },
   });
 
-  const empresas = useMemo(() => data === null ? [] : data.data , []);
+  console.log(data)
 
+  const empresas = useMemo(() => data.data , [data.data]);
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data: [...Empresas] });
+    useTable({ columns, data: empresas });
 
   return (
     <>
@@ -125,7 +126,7 @@ export default function DatosEmpresa() {
                               <Image
                                 className="w-full h-full rounded-full"
                                 src={
-                                  cell.value === ""
+                                  cell?.value === ""
                                     ? "/images/placeholder.jpg"
                                     : cell.value
                                 }
@@ -222,3 +223,14 @@ export default function DatosEmpresa() {
     </>
   );
 }
+
+// export async function getServerSideProps(context) {
+//   const auth = useAuthState();
+//   console.log('data..',auth)
+//   const { data } = await axiosRequest(
+//     "get",
+//     `/api/mantenimiento/empresas?adminId=${auth.id}`
+//   );
+
+//   return { props: { data } };
+// }

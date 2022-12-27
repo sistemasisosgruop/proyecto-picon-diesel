@@ -56,8 +56,8 @@ export const authenticate = (token) => {
     id: decoded.id,
     token: _token,
     nombre: decoded.name,
-    empresas: [...decoded.empresas],
-    roles: [...decoded.roles],
+    empresas: decoded?.empresas,
+    roles: decoded?.roles,
   };
 };
 

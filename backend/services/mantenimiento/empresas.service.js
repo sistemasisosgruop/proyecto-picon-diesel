@@ -61,9 +61,11 @@ export class EmpresasService {
   }
 
   static async getAllEmpresas(adminId) {
-    return prisma.empresa.findMany({
+    const empresas = await prisma.empresa.findMany({
       where: { personal: { some: { id: adminId } } },
     });
+
+    return empresas.map(({ logo, ...data }) => ({ ...data, logo: logo ?? "" }));
   }
 
   static async getEmpresa(id) {
