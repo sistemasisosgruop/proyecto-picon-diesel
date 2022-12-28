@@ -25,7 +25,6 @@ export const SelectEmpresas = () => {
   useEffect(() => {
     if (selectedEmpresa.id !== 0) {
       getSucursales(selectedEmpresa.id);
-      localStorage.setItem("empresa", JSON.stringify(selectedEmpresa));
     }
   }, [selectedEmpresa]);
 
@@ -40,7 +39,7 @@ export const SelectEmpresas = () => {
       "get",
       `/api/mantenimiento/empresas?adminId=${auth.id}`
     );
-    localStorage.setItem("empresas", JSON.stringify(data));
+
     const result = data.map(({ nombre, id }) => ({ name: nombre, id }));
     setEmpresas(result);
     setSelectedEmpresa(result[0]);
@@ -94,6 +93,9 @@ export const SelectEmpresas = () => {
                   {empresas.map((empresa) => (
                     <Listbox.Option
                       key={empresa.id}
+                      onClick={() => {
+                        localStorage.setItem("empresaId", empresa.id.toString());
+                      }}
                       className={({ active }) =>
                         `relative cursor-default select-none py-2 pl-10 pr-4 ${
                           active

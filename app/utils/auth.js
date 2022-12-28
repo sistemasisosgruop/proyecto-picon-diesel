@@ -1,8 +1,9 @@
 // @ts-nocheck
 import jwtDecode from "jwt-decode";
 
-
 const TOKEN_KEY = "token";
+const EMPRESA_ID = "empresaId";
+
 const defaultUser = {
   email: "",
   nombre: "",
@@ -11,6 +12,7 @@ const defaultUser = {
   id: -1,
   empresas: [],
   roles: [],
+  empresaId: -1,
 };
 
 const setToken = (token) => {
@@ -28,6 +30,7 @@ const getToken = () => {
 const removeToken = () => {
   if (typeof window !== "undefined") {
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(EMPRESA_ID);
   }
 };
 
@@ -50,6 +53,8 @@ export const authenticate = (token) => {
     return { ...defaultUser };
   }
 
+  localStorage.setItem("empresaId", decoded?.empresas[0]?.id);
+
   return {
     email: decoded.username,
     isAuthenticated: true,
@@ -58,6 +63,7 @@ export const authenticate = (token) => {
     nombre: decoded.name,
     empresas: decoded?.empresas,
     roles: decoded?.roles,
+    empresaId: decoded?.empresas[0]?.id,
   };
 };
 

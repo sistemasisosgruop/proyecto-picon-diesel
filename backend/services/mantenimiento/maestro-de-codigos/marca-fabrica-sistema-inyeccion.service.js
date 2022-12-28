@@ -1,6 +1,6 @@
 import prisma from "../../../prisma";
 
-export class MarvaFabricaSistemaInyeccionService {
+export class MarcaFabricaSistemaInyeccionService {
   static async createMarcaFabricaSistemaInyeccion(data) {
     const { codigo, marca, empresaId } = data;
     const marcaFabricaSistemaInyeccion = await prisma.marcaFabricaSistemaInyeccion.create({

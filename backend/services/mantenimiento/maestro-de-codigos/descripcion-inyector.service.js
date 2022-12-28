@@ -2,16 +2,21 @@ import prisma from "../../../prisma";
 
 export class DescripcionInyectorService {
   static async createDescripcionInyector(data) {
-    const { codigo, descripcion, empresaId } = data;
-    const descripcionInyector = await prisma.descripcionInyector.create({
-      data: {
-        codigo,
-        descripcion,
-        empresaId,
-      },
-    });
+    const transaction = await prisma.$transaction(async (prismaClient) => {
+      const { codigo, descripcion, empresaId } = data;
+      const descripcionInyector = await prismaClient.descripcionInyector.create(
+        {
+          data: {
+            codigo,
+            descripcion,
+            empresaId,
+          },
+        }
+      );
 
-    return descripcionInyector;
+      return descripcionInyector;
+    });
+    return transaction;
   }
 
   static async updateDescripcionInyector(id, data) {
@@ -22,7 +27,7 @@ export class DescripcionInyectorService {
       },
       data: {
         codigo,
-        descripcion
+        descripcion,
       },
     });
 

@@ -2,11 +2,12 @@ import prisma from "../../../prisma";
 
 export class ModeloMaquinasService {
   static async createModeloMaquina(data) {
-    const { codigo, modelo } = data;
+    const { codigo, modelo, empresaId } = data;
     const modeloMaquina = await prisma.modeloMaquina.create({
       data: {
         codigo,
         modelo,
+        empresaId,
       },
     });
 

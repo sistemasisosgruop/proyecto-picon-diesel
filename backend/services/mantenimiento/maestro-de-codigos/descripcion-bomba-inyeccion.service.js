@@ -1,6 +1,6 @@
 import prisma from "../../../prisma";
 
-export class DescripcionBombaInyeccion {
+export class DescripcionBombaInyeccionService {
   static async createDescripcionBombaInyeccion(data) {
     const { codigo, descripcion, empresaId } = data;
     const descripcionBombaInyeccion = await prisma.descripcionBombaInyeccion.create({

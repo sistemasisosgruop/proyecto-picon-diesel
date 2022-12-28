@@ -7,7 +7,6 @@ import {
   ButtonSave,
   ButtonCancel,
 } from "../../../app/components/elements/Buttons";
-import { Empresas } from "../../../data/empresas";
 import { Container } from "../../../app/components/elements/Containers";
 import { Title } from "../../../app/components/elements/Title";
 import {
@@ -82,8 +81,6 @@ export default function DatosEmpresa() {
       data: [],
     },
   });
-
-  console.log(data)
 
   const empresas = useMemo(() => data.data , [data.data]);
 
