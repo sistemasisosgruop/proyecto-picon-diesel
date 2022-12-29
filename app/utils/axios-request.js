@@ -16,5 +16,8 @@ export async function axiosRequest(method, url, data = null) {
     return response;
   } catch (error) {
     console.error(error);
+    if (method === "post") {
+      throw error;
+    }
   }
 }

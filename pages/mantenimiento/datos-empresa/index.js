@@ -27,10 +27,24 @@ import { useModal } from "../../../app/hooks/useModal";
 import { useTable } from "react-table";
 import { axiosRequest } from "../../../app/utils/axios-request";
 import { useAuthState } from "../../../contexts/auth.context";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useQuery } from "react-query";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import * as yup from "yup";
+import { ToastAlert } from "../../../app/components/elements/ToastAlert";
+import { errorProps, successProps } from "../../../app/utils/alert-config";
 
 const fileTypes = ["JPEG", "PNG"];
+
+const schema = yup.object().shape({
+  ruc: yup.number().required(),
+  nombre: yup.string().required(),
+  direccion: yup.string().nullable(),
+  telefono: yup.string().nullable(),
+  email: yup.string().nullable().email(),
+  web: yup.string().nullable(),
+});
 
 export default function DatosEmpresa() {
   const {
@@ -45,6 +59,16 @@ export default function DatosEmpresa() {
   // Logo de la empresa
   const [file, setFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
+  const [empresaForm, setEmpresaForm] = useState({
+    ruc: null,
+    direccion: null,
+    telefono: null,
+    email: null,
+    nombre: null,
+    web: null,
+    logo: null,
+  });
+  const [changeData, setChangeData] = useState(false);
   const auth = useAuthState();
 
   const getEmpresas = async () => {
@@ -54,6 +78,29 @@ export default function DatosEmpresa() {
     );
 
     return data;
+  };
+
+  const saveData = async () => {
+    try {
+      await schema.validate(empresaForm, { abortEarly: false });
+      const { data } = await axiosRequest(
+        "post",
+        "/api/mantenimiento/empresas",
+        {
+          ...empresaForm,
+          adminId: auth.id,
+        }
+      );
+
+      toast.success(
+        `🦄 Empresa ${data.nombre} registrada exitosamente!`,
+        successProps
+      );
+      setChangeData(!changeData);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error}/>, errorProps);
+    }
   };
 
   const handleChange = (file) => {
@@ -76,13 +123,17 @@ export default function DatosEmpresa() {
     []
   );
 
-  const { data, isLoading } = useQuery("empresas", getEmpresas, {
+  useEffect(() => {
+    refetch();
+  }, [changeData]);
+
+  const { data, isLoading, refetch } = useQuery("empresas", getEmpresas, {
     initialData: {
       data: [],
     },
   });
 
-  const empresas = useMemo(() => data.data , [data.data]);
+  const empresas = useMemo(() => data.data, [data.data]);
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data: empresas });
@@ -194,23 +245,54 @@ export default function DatosEmpresa() {
         </Group>
         <Group title={"Datos de la empresa"}>
           <GroupInputs>
-            <Input label="RUC" />
-            <Input label="Nombre" />
+            <Input
+              label="RUC"
+              onChange={(e) => {
+                setEmpresaForm({ ...empresaForm, ruc: e.target.value });
+              }}
+            />
+            <Input
+              label="Nombre"
+              onChange={(e) => {
+                setEmpresaForm({ ...empresaForm, nombre: e.target.value });
+              }}
+            />
           </GroupInputs>
           <GroupInputs>
-            <Input label="Dirección" />
-            <Input label="Teléfono" />
+            <Input
+              label="Dirección"
+              onChange={(e) => {
+                setEmpresaForm({ ...empresaForm, direccion: e.target.value });
+              }}
+            />
+            <Input
+              label="Teléfono"
+              onChange={(e) => {
+                setEmpresaForm({ ...empresaForm, telefono: e.target.value });
+              }}
+            />
           </GroupInputs>
           <GroupInputs>
-            <Input label="Correo" />
-            <Input label="Página web" />
+            <Input
+              label="Correo"
+              onChange={(e) => {
+                setEmpresaForm({ ...empresaForm, email: e.target.value });
+              }}
+            />
+            <Input
+              label="Página web"
+              onChange={(e) => {
+                setEmpresaForm({ ...empresaForm, web: e.target.value });
+              }}
+            />
           </GroupInputs>
         </Group>
         <div className="w-full flex justify-end gap-5">
           <ButtonCancel onClick={closeModal} />
-          <ButtonSave onClick={"hola"} />
+          <ButtonSave onClick={saveData} />
         </div>
       </ModalLg>
+      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Empresa"}

@@ -14,7 +14,7 @@ export class EmpresasService {
         web,
         personal: {
           connect: {
-            id: adminId,
+            id: Number(adminId),
           },
         },
       },
@@ -76,5 +76,26 @@ export class EmpresasService {
     });
 
     return empresa;
+  }
+
+  static async getEmpresaWithInfo(id) {
+    const result = await prisma.empresa.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        fabricaMaquina: true,
+        modeloMaquina: true,
+        nombreMaquina: true,
+        paises: true,
+        marcaMotor: true,
+        marcaFabricaSistemaInyeccion: true,
+        descripcionBombaInyeccion: true,
+        marcaFabricaInyector: true,
+        descripcionInyector: true,
+      },
+    });
+
+    return result;
   }
 }

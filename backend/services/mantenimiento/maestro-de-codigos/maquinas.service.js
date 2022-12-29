@@ -1,20 +1,31 @@
 import prisma from "../../../prisma";
+import { generateCodeMaquina } from "../../../utils/codes";
 
 export class MaquinaService {
   static async createMaquina(data) {
-    const { empresaId, ...props } = data;
+    const { empresaId, numeroCilindros, ...props } = data;
     const maquina = await prisma.maquina.create({
       data: {
         ...props,
+        numeroCilindros: parseInt(numeroCilindros),
         empresaId,
       },
     });
 
-    return maquina;
+    const newMaquina = await prisma.maquina.update({
+      where: {
+        id: maquina.id,
+      },
+      data: {
+        codigo: generateCodeMaquina(maquina.id),
+      },
+    });
+
+    return newMaquina;
   }
 
   static async updateMaquina(id, data) {
-    const maquina = prisma.maquina.update({
+    const maquina = await prisma.maquina.update({
       where: {
         id,
       },
@@ -27,7 +38,7 @@ export class MaquinaService {
   }
 
   static async deleteMaquina(id) {
-    const maquina = prisma.maquina.delete({
+    const maquina = await prisma.maquina.delete({
       where: {
         id,
       },
@@ -40,6 +51,13 @@ export class MaquinaService {
     return prisma.maquina.findMany({
       where: {
         empresaId,
+      },
+      include: {
+        fabricaMaquina: {
+          select: {
+            fabrica: true,
+          },
+        },
       },
     });
   }

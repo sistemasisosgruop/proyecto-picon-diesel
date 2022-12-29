@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -17,6 +17,19 @@ import TemplateMaestroCodigos from "../../../../../../app/components/templates/m
 import { useModal } from "../../../../../../app/hooks/useModal";
 import { axiosRequest } from "../../../../../../app/utils/axios-request";
 import { useQuery } from "react-query";
+import * as yup from "yup";
+import { useLocalStorage } from "../../../../../../app/hooks/useLocalStorage";
+import { ToastContainer, toast } from "react-toastify";
+import {
+  errorProps,
+  successProps,
+} from "../../../../../../app/utils/alert-config";
+import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert";
+
+const schema = yup.object().shape({
+  codigo: yup.string().required(),
+  modelo: yup.string().required(),
+});
 
 export default function ModelosMaquina() {
   const {
@@ -28,9 +41,36 @@ export default function ModelosMaquina() {
     openModal,
   } = useModal();
 
-  const saveData = () => {
-    closeModal();
+  const [empresaId] = useLocalStorage("empresaId");
+  const [form, setForm] = useState({
+    codigo: null,
+    modelo: null,
+  });
+  const [changeData, setChangeData] = useState(false);
+
+  const saveData = async () => {
+    try {
+      await schema.validate(form, { abortEarly: false });
+      await axiosRequest(
+        "post",
+        "/api/mantenimiento/maestro-de-codigos/configuracion/modelo",
+        {
+          ...form,
+          empresaId,
+        }
+      );
+
+      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      setChangeData(!changeData);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
+
+  useEffect(() => {
+    refetch();
+  }, [changeData]);
 
   const columns = useMemo(
     () => [
@@ -42,7 +82,6 @@ export default function ModelosMaquina() {
   );
 
   const getModelosMaquinas = async () => {
-    const empresaId = localStorage.getItem("empresaId");
     const { data } = await axiosRequest(
       "get",
       `/api/mantenimiento/maestro-de-codigos/configuracion/modelo?empresaId=${empresaId}`
@@ -51,7 +90,7 @@ export default function ModelosMaquina() {
     return data;
   };
 
-  const { data } = useQuery("modelosMaquinas", getModelosMaquinas, {
+  const { data, refetch } = useQuery("modelosMaquinas", getModelosMaquinas, {
     initialData: {
       data: [],
     },
@@ -89,14 +128,21 @@ export default function ModelosMaquina() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input label="Código" />
-          <Input label="Modelo" />
+          <Input
+            label="Código"
+            onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+          />
+          <Input
+            label="Modelo"
+            onChange={(e) => setForm({ ...form, modelo: e.target.value })}
+          />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
             <ButtonSave onClick={saveData} />
           </div>
         </form>
       </Modal>
+      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Máquina"}

@@ -1,7 +1,7 @@
 import { Input } from "@material-tailwind/react";
 import { Back } from "iconsax-react";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -19,6 +19,18 @@ import { useModal } from "../../../../../../app/hooks/useModal";
 import { familias } from "../../../../../../data/familias";
 import { axiosRequest } from "../../../../../../app/utils/axios-request";
 import { useQuery } from "react-query";
+import * as yup from "yup";
+import { ToastContainer, toast } from "react-toastify";
+import {
+  errorProps,
+  successProps,
+} from "../../../../../../app/utils/alert-config";
+import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert";
+
+const schema = yup.object().shape({
+  codigo: yup.string().required(),
+  descripcion: yup.string().required(),
+});
 
 export default function SubFamilias({ familia }) {
   const { codigo, id } = familia;
@@ -31,9 +43,31 @@ export default function SubFamilias({ familia }) {
     openModal,
   } = useModal();
 
-  const saveData = () => {
-    closeModal();
+  const [familiaForm, setfamiliaForm] = useState({
+    codigo: null,
+    descripcion: null,
+  });
+  const [changeData, setChangeData] = useState(false);
+
+  const saveData = async () => {
+    try {
+      await schema.validate(familiaForm, { abortEarly: false });
+      await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/familias/subfamilias", {
+        ...familiaForm,
+        familiaId: id,
+      });
+
+      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      setChangeData(!changeData);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
+
+  useEffect(() => {
+    refetch();
+  }, [changeData]);
 
   const columns = useMemo(
     () => [
@@ -53,7 +87,7 @@ export default function SubFamilias({ familia }) {
     return data;
   };
 
-  const { data } = useQuery("subfamilias", getSubFamilias, {
+  const { data, refetch } = useQuery("subfamilias", getSubFamilias, {
     initialData: {
       data: [],
     },
@@ -100,14 +134,25 @@ export default function SubFamilias({ familia }) {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input label="Código" />
-          <Input label="Descripción" />
+          <Input
+            label="Código"
+            onChange={(e) =>
+              setfamiliaForm({ ...familiaForm, codigo: e.target.value })
+            }
+          />
+          <Input
+            label="Descripción"
+            onChange={(e) =>
+              setfamiliaForm({ ...familiaForm, descripcion: e.target.value })
+            }
+          />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
             <ButtonSave onClick={saveData} />
           </div>
         </form>
       </Modal>
+      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar subfamilia"}

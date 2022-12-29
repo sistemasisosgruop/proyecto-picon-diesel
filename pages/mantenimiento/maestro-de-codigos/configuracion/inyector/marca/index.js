@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -17,6 +17,19 @@ import TemplateMaestroCodigos from "../../../../../../app/components/templates/m
 import { useModal } from "../../../../../../app/hooks/useModal";
 import { useQuery } from "react-query";
 import { axiosRequest } from "../../../../../../app/utils/axios-request";
+import * as yup from "yup";
+import { useLocalStorage } from "../../../../../../app/hooks/useLocalStorage";
+import {
+  errorProps,
+  successProps,
+} from "../../../../../../app/utils/alert-config";
+import { ToastContainer, toast } from "react-toastify";
+import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert";
+
+const schema = yup.object().shape({
+  codigo: yup.string().required(),
+  marca: yup.string().required(),
+});
 
 export default function MarcasInyector() {
   const {
@@ -28,9 +41,37 @@ export default function MarcasInyector() {
     openModal,
   } = useModal();
 
-  const saveData = () => {
-    closeModal();
+  const [empresaId] = useLocalStorage("empresaId");
+
+  const [form, setForm] = useState({
+    codigo: null,
+    marca: null,
+  });
+  const [changeData, setChangeData] = useState(false);
+
+  const saveData = async () => {
+    try {
+      await schema.validate(form, { abortEarly: false });
+      await axiosRequest(
+        "post",
+        "/api/mantenimiento/maestro-de-codigos/configuracion/marca-fabrica-inyector",
+        {
+          ...form,
+          empresaId,
+        }
+      );
+
+      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      setChangeData(!changeData);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
+
+  useEffect(() => {
+    refetch();
+  }, [changeData]);
 
   const columns = useMemo(
     () => [
@@ -51,12 +92,15 @@ export default function MarcasInyector() {
     return data;
   };
 
-  const { data } = useQuery("marcasFabricaInyector", getmMarcasFabricaInyector, {
-    initialData: {
-      data: [],
-    },
-  });
-
+  const { data, refetch } = useQuery(
+    "marcasFabricaInyector",
+    getmMarcasFabricaInyector,
+    {
+      initialData: {
+        data: [],
+      },
+    }
+  );
 
   const marcasFabricasInyector = useMemo(() => data?.data, [data?.data]);
 
@@ -94,14 +138,21 @@ export default function MarcasInyector() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input label="Código" />
-          <Input label="Marca" />
+          <Input
+            label="Código"
+            onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+          />
+          <Input
+            label="Marca"
+            onChange={(e) => setForm({ ...form, marca: e.target.value })}
+          />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
             <ButtonSave onClick={saveData} />
           </div>
         </form>
       </Modal>
+      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar marca"}

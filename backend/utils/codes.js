@@ -131,3 +131,17 @@ export function generateFactorInternamiento(number) {
 
   return `FAC${currentNumber}`;
 }
+
+
+export function generateCodeMaquina(number) {
+  const currentNumber = Number(number);
+  if (currentNumber < 10) {
+    return `MAC00${currentNumber}`;
+  }
+
+  if (currentNumber >= 10 && currentNumber < 100) {
+    return `MAC0${currentNumber}`;
+  }
+
+  return `MAC${currentNumber}`;
+}

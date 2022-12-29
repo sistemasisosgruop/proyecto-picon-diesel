@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -15,9 +15,21 @@ import TableComplete from "../../../../../../app/components/modules/TableComplet
 import { TemplateConfiguracionBombaInyeccion } from "../../../../../../app/components/templates/mantenimiento/maestro-codigos/TemplateConfiguracionBombaInyeccion";
 import TemplateMaestroCodigos from "../../../../../../app/components/templates/mantenimiento/TemplateMaestroCodigos";
 import { useModal } from "../../../../../../app/hooks/useModal";
-import { modelosMaquinas } from "../../../../../../data/configuracion-maquinas-modelos";
 import { axiosRequest } from "../../../../../../app/utils/axios-request";
 import { useQuery } from "react-query";
+import * as yup from "yup";
+import { useLocalStorage } from "../../../../../../app/hooks/useLocalStorage";
+import {
+  errorProps,
+  successProps,
+} from "../../../../../../app/utils/alert-config";
+import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert";
+import { ToastContainer, toast } from "react-toastify";
+
+const schema = yup.object().shape({
+  codigo: yup.string().required(),
+  descripcion: yup.string().required(),
+});
 
 export default function DescripcionBombaInyeccion() {
   const {
@@ -29,9 +41,36 @@ export default function DescripcionBombaInyeccion() {
     openModal,
   } = useModal();
 
-  const saveData = () => {
-    closeModal();
+  const [empresaId] = useLocalStorage("empresaId");
+  const [form, setForm] = useState({
+    codigo: null,
+    descripcion: null,
+  });
+  const [changeData, setChangeData] = useState(false);
+
+  const saveData = async () => {
+    try {
+      await schema.validate(form, { abortEarly: false });
+      await axiosRequest(
+        "post",
+        "/api/mantenimiento/maestro-de-codigos/configuracion/bomba-inyeccion",
+        {
+          ...form,
+          empresaId,
+        }
+      );
+
+      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      setChangeData(!changeData);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
+
+  useEffect(() => {
+    refetch();
+  }, [changeData]);
 
   const columns = useMemo(
     () => [
@@ -43,7 +82,6 @@ export default function DescripcionBombaInyeccion() {
   );
 
   const getbombasInyeccion = async () => {
-    const empresaId = localStorage.getItem("empresaId");
     const { data } = await axiosRequest(
       "get",
       `/api/mantenimiento/maestro-de-codigos/configuracion/bomba-inyeccion?empresaId=${empresaId}`
@@ -52,11 +90,15 @@ export default function DescripcionBombaInyeccion() {
     return data;
   };
 
-  const { data } = useQuery("descripcionBombasInyeccion", getbombasInyeccion, {
-    initialData: {
-      data: [],
-    },
-  });
+  const { data, refetch } = useQuery(
+    "descripcionBombasInyeccion",
+    getbombasInyeccion,
+    {
+      initialData: {
+        data: [],
+      },
+    }
+  );
 
   const bombasInyeccion = useMemo(() => data?.data, [data?.data]);
 
@@ -94,14 +136,21 @@ export default function DescripcionBombaInyeccion() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input label="Código" />
-          <Input label="Descripcion" />
+          <Input
+            label="Código"
+            onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+          />
+          <Input
+            label="Descripcion"
+            onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+          />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
             <ButtonSave onClick={saveData} />
           </div>
         </form>
       </Modal>
+      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Descripcion"}

@@ -97,6 +97,13 @@ export default function Cotizaciones() {
 
   const { globalFilter } = state;
 
+
+  const saveData = () => {
+    //
+
+    console.log('clic');
+  };
+
   return (
     <>
       <Container whiteColor={true}>
@@ -213,9 +220,9 @@ export default function Cotizaciones() {
             <Input label="Página web" />
           </GroupInputs>
         </Group>
-        <div className="w-full flex justify-end gap-5">
+        <div className="w-full flex justify-end gap-5"> 
           <ButtonCancel onClick={closeModal} />
-          <ButtonSave onClick={"hola"} />
+          <ButtonSave onClick={() => {console.log('clic')}}  />
         </div>
       </ModalLg>
       {/* Modal Eliminar */}
