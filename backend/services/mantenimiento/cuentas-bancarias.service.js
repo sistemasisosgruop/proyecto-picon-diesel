@@ -63,6 +63,9 @@ export class CuentasBancariasService {
   }
 
   static async getCuentasBancarias(empresaId) {
-    return prisma.cuentaBancaria.findMany({ where: { empresaId } });
+    return prisma.cuentaBancaria.findMany({
+      where: { empresaId },
+      include: { banco: true },
+    });
   }
 }

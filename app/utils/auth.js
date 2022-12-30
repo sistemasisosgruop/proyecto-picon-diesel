@@ -53,7 +53,11 @@ export const authenticate = (token) => {
     return { ...defaultUser };
   }
 
-  localStorage.setItem("empresaId", decoded?.empresas[0]?.id);
+  const currentEmpresa = localStorage.getItem("empresaId");
+  
+  if (!currentEmpresa) {
+    localStorage.setItem("empresaId", decoded?.empresas[0]?.id);
+  }
 
   return {
     email: decoded.username,
@@ -72,3 +76,4 @@ export const logout = () => {
 
   return { ...defaultUser };
 };
+

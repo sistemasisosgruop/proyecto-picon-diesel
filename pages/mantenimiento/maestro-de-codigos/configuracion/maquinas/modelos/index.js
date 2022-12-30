@@ -69,6 +69,10 @@ export default function ModelosMaquina() {
   };
 
   useEffect(() => {
+    setForm({
+      codigo: null,
+      modelo: null,
+    })
     refetch();
   }, [changeData]);
 

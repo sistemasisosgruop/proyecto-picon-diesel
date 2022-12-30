@@ -99,7 +99,7 @@ export default function DatosEmpresa() {
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
-      toast.error(<ToastAlert error={error}/>, errorProps);
+      toast.error(<ToastAlert error={error} />, errorProps);
     }
   };
 
@@ -124,6 +124,15 @@ export default function DatosEmpresa() {
   );
 
   useEffect(() => {
+    setEmpresaForm({
+      ruc: null,
+      direccion: null,
+      telefono: null,
+      email: null,
+      nombre: null,
+      web: null,
+      logo: null,
+    });
     refetch();
   }, [changeData]);
 

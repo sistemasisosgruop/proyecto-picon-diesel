@@ -70,6 +70,10 @@ export default function DescripcionInyector() {
   };
 
   useEffect(() => {
+    setForm({
+      codigo: null,
+      descripcion: null,
+    })
     refetch();
   }, [changeData]);
 

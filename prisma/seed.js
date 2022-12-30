@@ -12,6 +12,7 @@ const {
 } = require("@ngneat/falso");
 const { hashSync } = require("bcrypt");
 const { DateTime } = require("luxon");
+const { EnumTipoCliente } = require("../backend/utils/enums");
 
 const prisma = new PrismaClient();
 const rucs = ["1000001", "1000002", "1000003"];
@@ -24,7 +25,15 @@ async function main() {
   const roles = await createRoles();
   const adminUser = await createAdminUser();
   const vendedores = await createVendedores();
-  console.log({ roles, empresas, sucursales, adminUser, vendedores });
+  const tipoClientes = await createTipoCliente();
+  console.log({
+    roles,
+    empresas,
+    sucursales,
+    adminUser,
+    vendedores,
+    tipoClientes,
+  });
   console.log(
     `seeds created successfully on ${(
       DateTime.now().toSeconds() - startTime
@@ -41,8 +50,37 @@ main()
 function createAdminUser() {
   const user = "admin@admin.com";
   const password = hashSync("admin", 10);
-  const empresaRUC = "1000000";
-  return createUser(user, password, RolesEnum.Administrador, empresaRUC);
+  return createUser(user, password, RolesEnum.Administrador, rucs[0]);
+}
+
+async function createTipoCliente() {
+  const tipoClientes = [
+    EnumTipoCliente.ciente,
+    EnumTipoCliente.proveedor,
+    EnumTipoCliente.cienteProveedor,
+  ];
+  const tipoClienteTasks = tipoClientes.map(async (tipoCliente) => {
+    return await prisma.tipoCliente.upsert({
+      where: { tipo: tipoCliente },
+      create: {
+        tipo: tipoCliente,
+        empresa: {
+          connect: {
+            id: 1,
+          },
+        },
+      },
+      update: {
+        tipo: tipoCliente,
+        empresa: {
+          connect: {
+            id: 1,
+          },
+        },
+      },
+    });
+  });
+  return await Promise.all(tipoClienteTasks);
 }
 
 async function createVendedores() {
@@ -58,14 +96,13 @@ async function createVendedores() {
       name: `${randFirstName()} ${randLastName()} ${randLastName()}`,
     },
   ];
-  const empresaRUC = rucs[0];
 
   const userTasks = users.map(async ({ username, password, name }) => {
     return createVendedor(
       username,
       password,
       RolesEnum.Vendedor,
-      empresaRUC,
+      rucs[0],
       name
     );
   });
@@ -117,7 +154,7 @@ async function createUser(email, password, role, ruc) {
   return prisma.personal.upsert({
     where: { email },
     create: {
-      area: "Administración",
+      puesto: "CTO",
       nombre: "Victor Benavente",
       email,
       password,
@@ -133,7 +170,7 @@ async function createUser(email, password, role, ruc) {
       },
     },
     update: {
-      area: "Administración",
+      puesto: "CTO",
       nombre: "Victor Benavente",
       email,
       password,
@@ -168,7 +205,7 @@ async function createVendedor(email, password, role, ruc, nombre) {
       direccion: randStreetAddress(),
       empresa: {
         connect: {
-          ruc,
+          id: 1,
         },
       },
       role: {
@@ -187,7 +224,7 @@ async function createVendedor(email, password, role, ruc, nombre) {
       direccion: randStreetAddress(),
       empresa: {
         connect: {
-          ruc,
+          id: 1,
         },
       },
       role: {

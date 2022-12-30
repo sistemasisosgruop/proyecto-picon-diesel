@@ -58,6 +58,62 @@ export class MaquinaService {
             fabrica: true,
           },
         },
+        procedencia: {
+          select: {
+            nombre: true,
+          },
+        },
+        marcaFabricaInyector: {
+          select: {
+            marca: true,
+          },
+        },
+        marcaFabricaSistemaInyeccion: {
+          select: {
+            marca: true,
+          },
+        },
+        descripcionBombaInyeccion: {
+          select: {
+            descripcion: true,
+          },
+        },
+        descripcionInyector: {
+          select: {
+            descripcion: true,
+          },
+        },
+        procedenciaBombaInyeccion: {
+          select: {
+            nombre: true,
+          },
+        },
+        procedenciaInyector: {
+          select: {
+            nombre: true,
+          },
+        },
+        marcaMotor: {
+          select: {
+            marca: true,
+          },
+        },
+        modeloMaquina: {
+          select: {
+            modelo: true,
+          },
+        },
+        nombreMaquina: {
+          select: {
+            nombre: true,
+          },
+        },
+        procedenciaMotor: {
+          select: {
+            nombre: true,
+          },
+        },
+        
       },
     });
   }

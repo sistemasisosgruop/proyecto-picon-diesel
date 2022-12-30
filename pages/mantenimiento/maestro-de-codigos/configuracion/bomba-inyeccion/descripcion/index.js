@@ -69,6 +69,10 @@ export default function DescripcionBombaInyeccion() {
   };
 
   useEffect(() => {
+    setForm({
+      codigo: null,
+      descripcion: null,
+    })
     refetch();
   }, [changeData]);
 

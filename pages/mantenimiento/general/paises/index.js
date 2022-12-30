@@ -60,6 +60,10 @@ export default function Paises() {
   };
 
   useEffect(() => {
+    setForm({
+      codigo: null,
+      nombre: null,
+    })
     refetch();
   }, [changeData]);
 

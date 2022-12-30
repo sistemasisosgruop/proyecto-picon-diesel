@@ -69,6 +69,10 @@ export default function NombresMaquina() {
   };
 
   useEffect(() => {
+    setForm({
+      codigo: null,
+      nombre: null,
+    })
     refetch();
   }, [changeData]);
 

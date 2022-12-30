@@ -70,6 +70,10 @@ export default function MarcasInyector() {
   };
 
   useEffect(() => {
+    setForm({
+      codigo: null,
+      marca: null,
+    })
     refetch();
   }, [changeData]);
 

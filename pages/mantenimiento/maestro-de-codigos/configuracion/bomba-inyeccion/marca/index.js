@@ -69,6 +69,10 @@ export default function MarcasBombaInyeccion() {
   };
 
   useEffect(() => {
+    setForm({
+      codigo: null,
+      marca: null,
+    })
     refetch();
   }, [changeData]);
 

@@ -47,10 +47,10 @@ export class FamiliaService {
     });
   }
 
-  static async getFamilia(id) {
+  static async getFamilia(codigo) {
     const familia = await prisma.familia.findUnique({
       where: {
-        id,
+        codigo,
       },
     });
 

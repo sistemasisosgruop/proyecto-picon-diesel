@@ -11,6 +11,7 @@ import { Check } from "./icons/Check";
 import { Empresas } from "./icons/Empresas";
 import { axiosRequest } from "../../utils/axios-request";
 import { useAuthState } from "../../../contexts/auth.context";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 export const SelectEmpresas = () => {
   const [empresas, setEmpresas] = useState([{ name: "Default", id: 0 }]);
@@ -21,6 +22,9 @@ export const SelectEmpresas = () => {
   const [sucursales, setSucursales] = useState([{ name: "Default", id: 0 }]);
   const [selectedSucursal, setSelectedSucursal] = useState({ name: "default" });
   const auth = useAuthState();
+  // eslint-disable-next-line no-unused-vars
+  const [empresaId, setEmpresaId] = useLocalStorage("empresaId");
+  const [empresa, setEmpresa] = useLocalStorage("empresa");
 
   useEffect(() => {
     if (selectedEmpresa.id !== 0) {
@@ -42,8 +46,9 @@ export const SelectEmpresas = () => {
 
     const result = data.map(({ nombre, id }) => ({ name: nombre, id }));
     setEmpresas(result);
-    setSelectedEmpresa(result[0]);
-    getSucursales(result[0].id);
+    const empresaPicked = empresa ?? result[0];
+    setSelectedEmpresa(empresaPicked);
+    getSucursales(empresaPicked?.id ?? result[0].id);
   };
 
   const getSucursales = async (empresaId) => {
@@ -52,7 +57,10 @@ export const SelectEmpresas = () => {
       `/api/mantenimiento/sucursales?empresaId=${empresaId}`
     );
 
-    const result = data.data.map(({ nombre, id }) => ({ name: nombre, id }));
+    const result = data.data.map((sucursal) => ({
+      name: sucursal?.nombre ?? "",
+      id: sucursal?.id ?? 0,
+    }));
     setSucursales(result);
     setSelectedSucursal(result[0]);
   };
@@ -94,7 +102,9 @@ export const SelectEmpresas = () => {
                     <Listbox.Option
                       key={empresa.id}
                       onClick={() => {
-                        localStorage.setItem("empresaId", empresa.id.toString());
+                        setEmpresaId(empresa.id.toString());
+                        setEmpresa(empresa)
+                        window.location.reload()
                       }}
                       className={({ active }) =>
                         `relative cursor-default select-none py-2 pl-10 pr-4 ${
@@ -135,7 +145,9 @@ export const SelectEmpresas = () => {
           <Listbox value={selectedSucursal} onChange={setSelectedSucursal}>
             <div className="relative mt-1 w-[200px]">
               <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-                <span className="block truncate">{selectedSucursal.name}</span>
+                <span className="block truncate">
+                  {selectedSucursal?.name ?? ""}
+                </span>
                 <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                   <Empresas
                     className="h-5 w-5 text-gray-400"

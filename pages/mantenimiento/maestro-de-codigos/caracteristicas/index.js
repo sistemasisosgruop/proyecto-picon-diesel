@@ -67,6 +67,11 @@ export default function Caracteristicas() {
   };
 
   useEffect(() => {
+    setCaracteristicaForm({
+      codigo: null,
+      descripcion: null,
+      abreviatura: null,
+    })
     refetch();
   }, [changeData]);
 

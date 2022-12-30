@@ -12,13 +12,13 @@ export class PersonalService {
       direccion,
       empresaId,
       role,
-      area,
+      puesto,
     } = data;
     const passwordEncripted = await encryptPassword(password);
 
     const personal = await prisma.personal.create({
       data: {
-        area,
+        puesto,
         nombre,
         email,
         password: passwordEncripted,
@@ -31,7 +31,7 @@ export class PersonalService {
         },
         role: {
           connect: {
-            name: role,
+            name: role ?? 'Administrador',
           },
         },
       },

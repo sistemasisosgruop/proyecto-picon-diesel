@@ -69,6 +69,10 @@ export default function FabricasMaquina() {
   };
 
   useEffect(() => {
+    setForm({
+      codigo: null,
+      fabrica: null,
+    })
     refetch();
   }, [changeData]);
 

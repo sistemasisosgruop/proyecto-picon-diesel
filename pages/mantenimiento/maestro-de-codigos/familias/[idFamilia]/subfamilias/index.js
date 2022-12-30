@@ -16,7 +16,6 @@ import {
 import TableComplete from "../../../../../../app/components/modules/TableComplete";
 import TemplateMaestroCodigos from "../../../../../../app/components/templates/mantenimiento/TemplateMaestroCodigos";
 import { useModal } from "../../../../../../app/hooks/useModal";
-import { familias } from "../../../../../../data/familias";
 import { axiosRequest } from "../../../../../../app/utils/axios-request";
 import { useQuery } from "react-query";
 import * as yup from "yup";
@@ -26,6 +25,7 @@ import {
   successProps,
 } from "../../../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert";
+import axios from "axios";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -52,10 +52,14 @@ export default function SubFamilias({ familia }) {
   const saveData = async () => {
     try {
       await schema.validate(familiaForm, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/familias/subfamilias", {
-        ...familiaForm,
-        familiaId: id,
-      });
+      await axiosRequest(
+        "post",
+        "/api/mantenimiento/maestro-de-codigos/familias/subfamilias",
+        {
+          ...familiaForm,
+          familiaId: id,
+        }
+      );
 
       toast.success(`🦄 Registro guardado exitosamente!`, successProps);
       setChangeData(!changeData);
@@ -66,6 +70,10 @@ export default function SubFamilias({ familia }) {
   };
 
   useEffect(() => {
+    setfamiliaForm({
+      codigo: null,
+      descripcion: null,
+    });
     refetch();
   }, [changeData]);
 
@@ -163,14 +171,22 @@ export default function SubFamilias({ familia }) {
   );
 }
 
-export const getServerSideProps = async ({ params }) => {
-  const familia = familias.find(
-    (familia) => familia.codigo === params.idFamilia
-  );
+export const getServerSideProps = async (context) => {
+  const { params, req } = context;
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+
+  const response = await axios({
+    method: "get",
+    url: `${protocol}://${req.headers.host}/api/mantenimiento/maestro-de-codigos/familias/${params.idFamilia}`,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
 
   return {
     props: {
-      familia,
+      familia: response.data,
     },
   };
 };

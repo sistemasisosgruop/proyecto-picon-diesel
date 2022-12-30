@@ -1,5 +1,5 @@
 import { Input, Option, Select } from "@material-tailwind/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -15,7 +15,6 @@ import {
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateMaestroCodigos from "../../../../app/components/templates/mantenimiento/TemplateMaestroCodigos";
 import { useModal } from "../../../../app/hooks/useModal";
-import { maquinas } from "../../../../data/maquinas";
 import { axiosRequest } from "../../../../app/utils/axios-request";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { useQuery } from "react-query";
@@ -36,6 +35,18 @@ const schema = yup.object().shape({
   codigoOriginalInyector: yup.string().required(),
   codigoTobera: yup.string().required(),
   tipoTobera: yup.string().required(),
+  fabricaMaquinaId: yup.number().required(),
+  modeloMaquinaId: yup.number().required(),
+  nombreMaquinaId: yup.number().required(),
+  paisId: yup.number().required(),
+  marcaMotorId: yup.number().required(),
+  motorPaisId: yup.number().required(),
+  marcaFabricaSistemaInyeccionId: yup.number().required(),
+  descripcionBombaInyeccionId: yup.number().required(),
+  marcaFabricaInyectorId: yup.number().required(),
+  descripcionInyectorId: yup.number().required(),
+  inyectorPaisId: yup.number().required(),
+  bombaInyeccionPaisId: yup.number().required(),
 });
 
 export default function Maquinas() {
@@ -94,14 +105,43 @@ export default function Maquinas() {
       toast.error(<ToastAlert error={error} />, errorProps);
     }
   };
+  useEffect(() => {
+    setForm({
+      fabricaMaquinaId: null,
+      modeloMaquinaId: null,
+      nombreMaquinaId: null,
+      paisId: null,
+      codigoOriginal: null,
+      modeloMotor: null,
+      marcaMotorId: null,
+      motorPaisId: null,
+      numeroCilindros: null,
+      codigoFabricaBombaInyeccion: null,
+      tipoBombaInyeccion: null,
+      marcaFabricaSistemaInyeccionId: null,
+      descripcionBombaInyeccionId: null,
+      bombaInyeccionPaisId: null,
+      codigoOriginalBombaInyeccion: null,
+      codigoFabricaInyector: null,
+      tipoFabricaInyector: null,
+      marcaFabricaInyectorId: null,
+      descripcionInyectorId: null,
+      inyectorPaisId: null,
+      codigoOriginalInyector: null,
+      codigoTobera: null,
+      tipoTobera: null,
+    });
+    // refetch();
+  }, [changeData]);
+
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
       { Header: "Codigo", accessor: "codigo" },
-      { Header: "Fábrica Máquina", accessor: "fábricaMaquina" },
+      { Header: "Fábrica Máquina", accessor: "fabricaMaquina" },
       { Header: "Modelo Máquina", accessor: "modeloMaquina" },
       { Header: "Nombre Máquina", accessor: "nombreMaquina" },
-      { Header: "Procedencia Máquina", accessor: "procedenciaMaquina" },
+      { Header: "Procedencia Máquina", accessor: "procedencia" },
       {
         Header: "Código Original del Motor",
         accessor: "codigoOriginalMotor",
@@ -112,7 +152,7 @@ export default function Maquinas() {
       { Header: "N° de cilindros", accessor: "numeroCilindros" },
       {
         Header: "Código fábrica Bomba de Inyeccion",
-        accessor: "codigofábricaBombaInyeccion",
+        accessor: "codigoFabricaBombaInyeccion",
       },
       {
         Header: "Tipo de Bomba de Inyeccion",
@@ -120,7 +160,7 @@ export default function Maquinas() {
       },
       {
         Header: "Marca fábrica de Sistema deInyeccion",
-        accessor: "marcafábricaSistemaInyeccion",
+        accessor: "marcaFabricaSistemaInyeccion",
       },
       {
         Header: "Descripción de Bomba de Inyeccion",
@@ -136,15 +176,15 @@ export default function Maquinas() {
       },
       {
         Header: "Código fábrica de Inyector",
-        accessor: "codigofábricaInyector",
+        accessor: "codigoFabricaInyector",
       },
       {
         Header: "Tipo fábrica de Inyector",
-        accessor: "tipofábricaInyector",
+        accessor: "tipoFabricaInyector",
       },
       {
         Header: "Marca fábrica de Inyector",
-        accessor: "marcafábricaInyector",
+        accessor: "marcaFabricaInyector",
       },
       { Header: "Descripción Inyector", accessor: "descripcionInyector" },
       {
@@ -157,7 +197,57 @@ export default function Maquinas() {
     []
   );
 
-  const data = useMemo(() => maquinas, []);
+  const getMaquinas = async () => {
+    const { data } = await axiosRequest(
+      "get",
+      `/api/mantenimiento/maestro-de-codigos/configuracion/maquinas?empresaId=${empresaId}`
+    );
+
+    return data;
+  };
+  const { data: maquinasResponse } = useQuery("maquinas", getMaquinas, {
+    initialData: {
+      data: [],
+    },
+  });
+  const data = useMemo(
+    () =>
+      maquinasResponse?.data?.map((maquina) => {
+        return {
+          id: maquina.id,
+          codigo: maquina.codigo,
+          fabricaMaquina: maquina.fabricaMaquina.fabrica,
+          modeloMaquina: maquina.modeloMaquina.modelo,
+          nombreMaquina: maquina.nombreMaquina.nombre,
+          procedencia: maquina.procedencia.nombre,
+
+          modeloMotor: maquina.modeloMotor,
+          marcaMotor: maquina.marcaMotor.marca,
+          procedenciaMotor: maquina.procedenciaMotor.nombre,
+          numeroCilindros: maquina.numeroCilindros,
+          codigoOriginalMotor: maquina.codigoOriginal,
+
+          codigoFabricaBombaInyeccion: maquina.codigoFabricaBombaInyeccion,
+          tipoBombaInyeccion: maquina.tipoBombaInyeccion,
+          marcaFabricaSistemaInyeccion:
+            maquina.marcaFabricaSistemaInyeccion.marca,
+          descripcionBombasInyeccion:
+            maquina.descripcionBombaInyeccion.descripcion,
+          procedenciaBombaInyeccion: maquina.procedenciaBombaInyeccion.nombre,
+          codigoOriginalBombaInyeccion: maquina.codigoOriginalBombaInyeccion,
+
+          codigoFabricaInyector: maquina.codigoFabricaInyector,
+          tipoFabricaInyector: maquina.tipoFabricaInyector,
+          marcaFabricaInyector: maquina.marcaFabricaInyector.marca,
+          codigoOriginalInyector: maquina.codigoOriginalInyector,
+          descripcionInyector: maquina.descripcionInyector.descripcion,
+
+          codigoTobera: maquina.codigoTobera,
+          tipoTobera: maquina.tipoTobera,
+        };
+      }),
+    [maquinasResponse?.data]
+  );
 
   const getFormInfo = async () => {
     const { data } = await axiosRequest(
@@ -487,6 +577,7 @@ export default function Maquinas() {
       <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={undefined}
         title={"Eliminar Máquina"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

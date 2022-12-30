@@ -68,6 +68,10 @@ export default function ParametrosGlobales() {
   };
 
   useEffect(() => {
+    setForm({
+      nombre: null,
+      valor: null,
+    })
     refetch();
   }, [changeData]);
 

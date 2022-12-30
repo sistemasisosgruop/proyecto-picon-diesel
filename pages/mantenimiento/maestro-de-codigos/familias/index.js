@@ -36,7 +36,6 @@ export default function Familias() {
     closeModal,
     openModal,
   } = useModal();
-
   const [empresaId] = useLocalStorage("empresaId");
 
   const [form, setForm] = useState({
@@ -66,6 +65,10 @@ export default function Familias() {
   };
 
   useEffect(() => {
+    setForm({
+      codigo: null,
+      descripcion: null,
+    });
     refetch();
   }, [changeData]);
 
@@ -88,6 +91,7 @@ export default function Familias() {
   };
 
   const { data, refetch } = useQuery("familias", getFamilias, {
+    refetchOnMount: true,
     initialData: {
       data: [],
     },
