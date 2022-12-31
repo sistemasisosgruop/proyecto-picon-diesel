@@ -132,7 +132,6 @@ export function generateFactorInternamiento(number) {
   return `FAC${currentNumber}`;
 }
 
-
 export function generateCodeMaquina(number) {
   const currentNumber = Number(number);
   if (currentNumber < 10) {
@@ -144,4 +143,69 @@ export function generateCodeMaquina(number) {
   }
 
   return `MAC${currentNumber}`;
+}
+
+export function generateCodeAlmacen(number) {
+  const currentNumber = Number(number);
+  if (currentNumber < 10) {
+    return `ALM-00${currentNumber}`;
+  }
+
+  if (currentNumber >= 10 && currentNumber < 100) {
+    return `ALM-0${currentNumber}`;
+  }
+
+  return `ALM-${currentNumber}`;
+}
+
+export function generateCodeMotivoMovimientoAlmacen(number) {
+  const currentNumber = Number(number);
+  if (currentNumber < 10) {
+    return `MMA-00${currentNumber}`;
+  }
+
+  if (currentNumber >= 10 && currentNumber < 100) {
+    return `MMA-0${currentNumber}`;
+  }
+
+  return `MMA-${currentNumber}`;
+}
+
+export function generateCodeAgenciaTransportes(number) {
+  const currentNumber = Number(number);
+  if (currentNumber < 10) {
+    return `AGT-00${currentNumber}`;
+  }
+
+  if (currentNumber >= 10 && currentNumber < 100) {
+    return `AGT-0${currentNumber}`;
+  }
+
+  return `AGT-${currentNumber}`;
+}
+
+export function generateCodeVehiculo(number) {
+  const currentNumber = Number(number);
+  if (currentNumber < 10) {
+    return `VH-00${currentNumber}`;
+  }
+
+  if (currentNumber >= 10 && currentNumber < 100) {
+    return `VH-0${currentNumber}`;
+  }
+
+  return `VH-${currentNumber}`;
+}
+
+export function generateCodeChofer(number) {
+  const currentNumber = Number(number);
+  if (currentNumber < 10) {
+    return `CHF-00${currentNumber}`;
+  }
+
+  if (currentNumber >= 10 && currentNumber < 100) {
+    return `CHF-0${currentNumber}`;
+  }
+
+  return `CHF-${currentNumber}`;
 }

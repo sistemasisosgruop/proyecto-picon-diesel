@@ -160,7 +160,7 @@ model GastoImportacion {
 model FactorInternamiento {
   id        Int      @id @default(autoincrement())
   codigo    String?  @unique
-  valor     Decimal
+  valor     Decimal  @default(0) @db.Decimal(12, 2)
   fecha     DateTime
   empresa   Empresa? @relation(fields: [empresaId], references: [id])
   empresaId Int?
@@ -193,7 +193,7 @@ model Vendedor {
   password             String
   telefono             String
   direccion            String
-  comision             Decimal?   @default(0.0)
+  comision             Decimal    @default(0) @db.Decimal(12, 2)
   aprovacionCotizacion Boolean
   estado               EstadoEnum @default(Activo)
   empresa              Empresa?   @relation(fields: [empresaId], references: [id])
@@ -353,7 +353,7 @@ model TipoDeCambio {
   codigo    String?  @unique
   de        String
   a         String
-  valor     Decimal
+  valor     Decimal  @default(0) @db.Decimal(12, 2)
   fecha     DateTime
   empresa   Empresa? @relation(fields: [empresaId], references: [id])
   empresaId Int
@@ -418,7 +418,7 @@ model Detraccion {
   id          Int      @id @default(autoincrement())
   codigo      String   @unique
   nombre      String
-  porcentaje  Decimal
+  porcentaje  Decimal  @default(0) @db.Decimal(12, 2)
   abreviatura String?
   empresa     Empresa? @relation(fields: [empresaId], references: [id])
   empresaId   Int
@@ -446,7 +446,7 @@ model MaterialPresupuesto {
   subFamiliaId Int
   correlativo  String?
   nombre       String
-  precio       Decimal
+  precio       Decimal     @default(0) @db.Decimal(12, 2)
 
   @@map("material_presupuesto")
 }
@@ -455,7 +455,7 @@ model Servicio {
   id         Int      @id @default(autoincrement())
   codigo     String   @unique
   definicion String
-  precio     Decimal
+  precio     Decimal  @default(0) @db.Decimal(12, 2)
   empresa    Empresa? @relation(fields: [empresaId], references: [id])
   empresaId  Int
 
@@ -466,7 +466,7 @@ model TrabajoTerceros {
   id         Int      @id @default(autoincrement())
   codigo     String   @unique
   definicion String
-  precio     Decimal
+  precio     Decimal  @default(0) @db.Decimal(12, 2)
   empresa    Empresa? @relation(fields: [empresaId], references: [id])
   empresaId  Int
 

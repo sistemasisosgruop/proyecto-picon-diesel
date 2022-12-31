@@ -1,14 +1,25 @@
 import prisma from "../../prisma";
-import dinero from "dinero.js";
+import { generateFactorInternamiento } from "../../utils/codes";
+import { formatAmount } from "../../utils/format-amount";
 
 export class FactorInternamiento {
   static async createFactorInternamiento(data) {
     const { valor, fecha, empresaId } = data;
-    return prisma.factorInternamiento.create({
+
+    const factor = await prisma.factorInternamiento.create({
       data: {
-        valor: dinero({ amount: valor }).toUnit(),
+        valor: formatAmount(valor).toUnit(),
         fecha,
         empresaId,
+      },
+    });
+
+    return prisma.factorInternamiento.update({
+      where: {
+        id: factor.id,
+      },
+      data: {
+        codigo: generateFactorInternamiento(factor.id),
       },
     });
   }
@@ -20,7 +31,7 @@ export class FactorInternamiento {
         id,
       },
       data: {
-        valor: dinero({ amount: valor }).toUnit(),
+        valor: formatAmount(valor).toUnit(),
         fecha,
       },
     });
