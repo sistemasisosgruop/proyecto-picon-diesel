@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -14,7 +14,19 @@ import {
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateInventario from "../../../../app/components/templates/mantenimiento/TemplateInventario";
 import { useModal } from "../../../../app/hooks/useModal";
-import { almacenes } from "../../../../data/almacenes";
+import { axiosRequest } from "../../../../app/utils/axios-request";
+import { useQuery } from "react-query";
+import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
+import * as yup from "yup";
+import { errorProps, successProps } from "../../../../app/utils/alert-config";
+import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
+import { ToastContainer, toast } from "react-toastify";
+
+const schema = yup.object().shape({
+  nombre: yup.string().required(),
+  direccion: yup.string().required(),
+  telefono: yup.string().required(),
+});
 
 export default function FactorInternamiento() {
   const {
@@ -25,10 +37,38 @@ export default function FactorInternamiento() {
     closeModal,
     openModal,
   } = useModal();
+  const [empresaId] = useLocalStorage("empresaId");
+  const [form, setForm] = useState({
+    nombre: null,
+    direccion: null,
+    telefono: null,
+  });
+  const [changeData, setChangeData] = useState(false);
 
-  const saveData = () => {
-    closeModal();
+  const saveData = async () => {
+    try {
+      await schema.validate(form, { abortEarly: false });
+      await axiosRequest("post", "/api/mantenimiento/almacenes", {
+        ...form,
+        empresaId: parseInt(empresaId),
+      });
+
+      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      setChangeData(!changeData);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
+
+  useEffect(() => {
+    setForm({
+      nombre: null,
+      direccion: null,
+      telefono: null,
+    });
+    refetch();
+  }, [changeData]);
 
   const columns = useMemo(
     () => [
@@ -40,8 +80,22 @@ export default function FactorInternamiento() {
     ],
     []
   );
+  const getAlmacenes = async () => {
+    const { data } = await axiosRequest(
+      "get",
+      `/api/mantenimiento/almacenes?empresaId=${empresaId}`
+    );
 
-  const data = useMemo(() => almacenes, []);
+    return data;
+  };
+
+  const { data, refetch } = useQuery("getAlmacenes", getAlmacenes, {
+    initialData: {
+      data: [],
+    },
+  });
+
+  const almacenes = useMemo(() => data?.data, [data?.data]);
 
   return (
     <>
@@ -58,7 +112,7 @@ export default function FactorInternamiento() {
         {/* Table list */}
         <TableComplete
           columns={columns}
-          data={data}
+          data={almacenes}
           openModal={openModal}
           setIsOpenModalDelete={setIsOpenModalDelete}
         />
@@ -71,15 +125,25 @@ export default function FactorInternamiento() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input label="Nombre" />
-          <Input label="Dirección" />
-          <Input label="Teléfono" />
+          <Input
+            label="Nombre"
+            onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+          />
+          <Input
+            label="Dirección"
+            onChange={(e) => setForm({ ...form, direccion: e.target.value })}
+          />
+          <Input
+            label="Teléfono"
+            onChange={(e) => setForm({ ...form, telefono: e.target.value })}
+          />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
             <ButtonSave onClick={saveData} />
           </div>
         </form>
       </Modal>
+      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Almacen"}

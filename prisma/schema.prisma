@@ -337,7 +337,7 @@ model Chofer {
   codigo             String?  @unique
   nombre             String
   dni                String
-  locencia           String
+  licencia           String
   fechaVencimiento   DateTime
   tarjetaDePropiedad String   @map("tarjeta_de_propiedad")
   email              String
@@ -363,8 +363,8 @@ model TipoDeCambio {
 
 model ParametroDescuento {
   id        Int      @id @default(autoincrement())
-  de        String
-  a         String
+  de        Decimal  @default(0) @db.Decimal(12, 2)
+  a         Decimal  @default(0) @db.Decimal(12, 2)
   empresa   Empresa? @relation(fields: [empresaId], references: [id])
   empresaId Int
 
@@ -382,11 +382,12 @@ model FormaDePagoContado {
 }
 
 model FormaDePagoCredito {
-  id        Int      @id @default(autoincrement())
-  codigo    String?  @unique
-  nombre    String
-  empresa   Empresa? @relation(fields: [empresaId], references: [id])
-  empresaId Int
+  id           Int      @id @default(autoincrement())
+  codigo       String?  @unique
+  nombre       String
+  numeroDeDias Int      @map("numero_de_dias")
+  empresa      Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId    Int
 
   @@map("forma_de_pago_credito")
 }
@@ -415,13 +416,12 @@ model DocumentoAdministrativo {
 }
 
 model Detraccion {
-  id          Int      @id @default(autoincrement())
-  codigo      String   @unique
-  nombre      String
-  porcentaje  Decimal  @default(0) @db.Decimal(12, 2)
-  abreviatura String?
-  empresa     Empresa? @relation(fields: [empresaId], references: [id])
-  empresaId   Int
+  id         Int      @id @default(autoincrement())
+  codigo     String   @unique
+  definicion String
+  porcentaje Decimal  @default(0) @db.Decimal(12, 2)
+  empresa    Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId  Int
 
   @@map("detraccion")
 }

@@ -24,8 +24,8 @@ yup.setLocale({
     max: "Este campo debe tener como máximo {max} caracteres",
   },
   number: {
-    min: "Este campo debe ser mayor o igual a {min}",
-    max: "Este campo debe ser menor o igual a {max}",
+    min: ({ min }) => `Este campo debe ser mayor o igual a ${min}`,
+    max: ({ max }) => `Este campo debe ser menor o igual a ${max}`,
   },
 });
 

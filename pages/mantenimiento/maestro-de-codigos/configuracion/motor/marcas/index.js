@@ -56,7 +56,7 @@ export default function MarcasMotor() {
         "/api/mantenimiento/maestro-de-codigos/configuracion/marca-motor",
         {
           ...form,
-          empresaId,
+          empresaId: parseInt(empresaId),
         }
       );
 

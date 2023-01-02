@@ -56,7 +56,7 @@ export default function DescripcionBombaInyeccion() {
         "/api/mantenimiento/maestro-de-codigos/configuracion/bomba-inyeccion",
         {
           ...form,
-          empresaId,
+          empresaId: parseInt(empresaId),
         }
       );
 

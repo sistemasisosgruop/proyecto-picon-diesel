@@ -56,7 +56,7 @@ export default function FabricasMaquina() {
         "/api/mantenimiento/maestro-de-codigos/configuracion/fabrica",
         {
           ...form,
-          empresaId,
+          empresaId: parseInt(empresaId),
         }
       );
 

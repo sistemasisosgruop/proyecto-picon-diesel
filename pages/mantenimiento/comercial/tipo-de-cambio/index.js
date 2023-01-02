@@ -1,99 +1,177 @@
 import { Input } from "@material-tailwind/react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-	ButtonAdd,
-	ButtonCancel,
-	ButtonSave,
+  ButtonAdd,
+  ButtonCancel,
+  ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
 import {
-	Modal,
-	ModalConfirmDelete,
+  Modal,
+  ModalConfirmDelete,
 } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateComercial from "../../../../app/components/templates/mantenimiento/TemplateComercial";
 import { useModal } from "../../../../app/hooks/useModal";
-import { tipoDeCambios } from "../../../../data/tipo-de-cambios";
+import { axiosRequest } from "../../../../app/utils/axios-request";
+import { useQuery } from "react-query";
+import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
+import * as yup from "yup";
+import { errorProps, successProps } from "../../../../app/utils/alert-config";
+import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
+import { ToastContainer, toast } from "react-toastify";
+
+const schema = yup.object().shape({
+  de: yup.string().required(),
+  a: yup.string().required(),
+  valor: yup.number().required(),
+  fecha: yup.string().required(),
+});
 
 export default function TipoDeCambio() {
-	const {
-		isOpenModal,
-		isOpenModalDelete,
-		isEdit,
-		setIsOpenModalDelete,
-		closeModal,
-		openModal,
-	} = useModal();
+  const {
+    isOpenModal,
+    isOpenModalDelete,
+    isEdit,
+    setIsOpenModalDelete,
+    closeModal,
+    openModal,
+  } = useModal();
+  const [empresaId] = useLocalStorage("empresaId");
+  const [form, setForm] = useState({
+    de: null,
+    a: null,
+    valor: null,
+    fecha: null,
+  });
+  const [changeData, setChangeData] = useState(false);
 
-	const saveData = () => {
-		closeModal();
-	};
+  const saveData = async () => {
+    try {
+      await schema.validate(form, { abortEarly: false });
+      await axiosRequest("post", "/api/mantenimiento/tipo-de-cambio", {
+        ...form,
+        fecha: new Date(form.fecha).toISOString(),
+        valor: parseFloat(form.valor),
+        empresaId: parseInt(empresaId),
+      });
 
-	const columns = useMemo(
-		() => [
-			{ Header: "#", accessor: "id" },
-			{ Header: "Codigo", accessor: "codigo" },
+      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      setChangeData(!changeData);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
+  };
+
+  useEffect(() => {
+    setForm({
+      de: null,
+      a: null,
+      valor: null,
+      fecha: null,
+    });
+    refetch();
+  }, [changeData]);
+
+  const columns = useMemo(
+    () => [
+      { Header: "#", accessor: "id" },
+      { Header: "Codigo", accessor: "codigo" },
       { Header: "De", accessor: "de" },
       { Header: "A", accessor: "a" },
       { Header: "Valor", accessor: "valor" },
       { Header: "Fecha", accessor: "fecha" },
-		],
-		[]
-	);
+    ],
+    []
+  );
 
-	const data = useMemo(() => tipoDeCambios, []);
+  const getTiposCambio = async () => {
+    const { data } = await axiosRequest(
+      "get",
+      `/api/mantenimiento/tipo-de-cambio?empresaId=${empresaId}`
+    );
 
-	return (
-		<>
-			<TemplateComercial>
-				<Title text={"Lista Tipo de Cambio"}>
-					<div className="flex gap-4">
-						<ButtonAdd
-							text={"Nuevo tipo de cambio"}
-							onClick={() => openModal(false)}
-						/>
-					</div>
-				</Title>
-				{/* Table list */}
-				<TableComplete
-					columns={columns}
-					data={data}
-					openModal={openModal}
-					setIsOpenModalDelete={setIsOpenModalDelete}
-				/>
-			</TemplateComercial>
-			{/* Modal agregar */}
-			<Modal
-				title={
-					isEdit
-						? "Editar Tipo de cambio"
-						: "Nuevo Tipo de cambio"
-				}
-				isOpen={isOpenModal}
-				closeModal={closeModal}
-			>
-				{/* Form */}
-				<form className="flex flex-col gap-5">
-					<div className="flex gap-5">
-						<Input label="De" />
-						<Input label="A" />
-					</div>
-					<div className="flex gap-5">
-						<Input label="Valor" type="number"/>
-						<Input label="Fecha" type="date"/>
-					</div>
-					<div className="w-full flex justify-end gap-5">
-						<ButtonCancel onClick={closeModal} />
-						<ButtonSave onClick={saveData} />
-					</div>
-				</form>
-			</Modal>
-			{/* Modal Eliminar */}
-			<ModalConfirmDelete
-				title={"Eliminar Tipo de cambio"}
-				isOpen={isOpenModalDelete}
-				closeModal={() => setIsOpenModalDelete(false)}
-			/>
-		</>
-	);
+    return data;
+  };
+
+  const { data, refetch } = useQuery("getTiposCambio", getTiposCambio, {
+    initialData: {
+      data: [],
+    },
+  });
+
+  const tiposDeCambio = useMemo(
+    () =>
+      data?.data.map(({ fecha, ...data }) => ({
+        ...data,
+        fecha: fecha.split("T")[0],
+      })),
+    [data?.data]
+  );
+
+  return (
+    <>
+      <TemplateComercial>
+        <Title text={"Lista Tipo de Cambio"}>
+          <div className="flex gap-4">
+            <ButtonAdd
+              text={"Nuevo tipo de cambio"}
+              onClick={() => openModal(false)}
+            />
+          </div>
+        </Title>
+        {/* Table list */}
+        <TableComplete
+          columns={columns}
+          data={tiposDeCambio}
+          openModal={openModal}
+          setIsOpenModalDelete={setIsOpenModalDelete}
+        />
+      </TemplateComercial>
+      {/* Modal agregar */}
+      <Modal
+        title={isEdit ? "Editar Tipo de cambio" : "Nuevo Tipo de cambio"}
+        isOpen={isOpenModal}
+        closeModal={closeModal}
+      >
+        {/* Form */}
+        <form className="flex flex-col gap-5">
+          <div className="flex gap-5">
+            <Input
+              label="De"
+              onChange={(e) => setForm({ ...form, de: e.target.value })}
+            />
+            <Input
+              label="A"
+              onChange={(e) => setForm({ ...form, a: e.target.value })}
+            />
+          </div>
+          <div className="flex gap-5">
+            <Input
+              label="Valor"
+              type="number"
+              onChange={(e) => setForm({ ...form, valor: e.target.value })}
+            />
+            <Input
+              label="Fecha"
+              type="date"
+              onChange={(e) => setForm({ ...form, fecha: e.target.value })}
+            />
+          </div>
+          <div className="w-full flex justify-end gap-5">
+            <ButtonCancel onClick={closeModal} />
+            <ButtonSave onClick={saveData} />
+          </div>
+        </form>
+      </Modal>
+      <ToastContainer />
+      {/* Modal Eliminar */}
+      <ModalConfirmDelete
+        title={"Eliminar Tipo de cambio"}
+        isOpen={isOpenModalDelete}
+        closeModal={() => setIsOpenModalDelete(false)}
+      />
+    </>
+  );
 }

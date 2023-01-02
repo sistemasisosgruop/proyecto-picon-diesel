@@ -56,7 +56,7 @@ export default function MarcasBombaInyeccion() {
         "/api/mantenimiento/maestro-de-codigos/configuracion/marca-fabrica-sistema-inyeccion",
         {
           ...form,
-          empresaId,
+          empresaId: parseInt(empresaId),
         }
       );
 

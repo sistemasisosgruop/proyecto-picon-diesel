@@ -56,7 +56,7 @@ export default function NombresMaquina() {
         "/api/mantenimiento/maestro-de-codigos/configuracion/nombre",
         {
           ...form,
-          empresaId,
+          empresaId: parseInt(empresaId),
         }
       );
 

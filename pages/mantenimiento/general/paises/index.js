@@ -48,7 +48,7 @@ export default function Paises() {
       await schema.validate(form, { abortEarly: false });
       await axiosRequest("post", "/api/mantenimiento/paises", {
         ...form,
-        empresaId,
+        empresaId: parseInt(empresaId),
       });
 
       toast.success(`🦄 Registro guardado exitosamente!`, successProps);

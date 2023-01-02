@@ -1,5 +1,5 @@
 import { AuthService } from "../../../../backend/services/auth/auth.service";
-import { BancoService } from "../../../../backend/services/mantenimiento/bancos.service";
+import { VehiculoService } from "../../../../backend/services/mantenimiento/vehiculo.service";
 
 export default async function handler(req, res) {
   try {
@@ -8,12 +8,12 @@ export default async function handler(req, res) {
 
     const id = Number(req.query.id);
     if (req.method === "PUT") {
-      const result = await BancoService.updateBanco(id, req.body);
+      const result = await VehiculoService.update(id, req.body);
       return res.status(200).json(result);
     }
 
     if (req.method === "DELETE") {
-      const result = await BancoService.deleteBanco(id);
+      const result = await VehiculoService.delete(id);
       return res.status(200).json(result);
     }
   } catch (error) {

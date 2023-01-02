@@ -56,7 +56,7 @@ export default function ModelosMaquina() {
         "/api/mantenimiento/maestro-de-codigos/configuracion/modelo",
         {
           ...form,
-          empresaId,
+          empresaId: parseInt(empresaId),
         }
       );
 

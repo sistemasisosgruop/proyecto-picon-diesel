@@ -57,7 +57,7 @@ export default function DescripcionInyector() {
         "/api/mantenimiento/maestro-de-codigos/configuracion/descripcion-inyector",
         {
           ...form,
-          empresaId,
+          empresaId: parseInt(empresaId),
         }
       );
 

@@ -56,7 +56,7 @@ export default function ParametrosGlobales() {
       await schema.validate(form, { abortEarly: false });
       await axiosRequest("post", "/api/mantenimiento/parametros", {
         ...form,
-        empresaId,
+        empresaId: parseInt(empresaId),
       });
 
       toast.success(`🦄 Registro guardado exitosamente!`, successProps);

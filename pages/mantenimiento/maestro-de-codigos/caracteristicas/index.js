@@ -54,7 +54,7 @@ export default function Caracteristicas() {
         "/api/mantenimiento/maestro-de-codigos/caracteristicas",
         {
           ...caracteristicaForm,
-          empresaId,
+          empresaId: parseInt(empresaId),
         }
       );
 

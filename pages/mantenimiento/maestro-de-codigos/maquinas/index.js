@@ -94,7 +94,7 @@ export default function Maquinas() {
         "/api/mantenimiento/maestro-de-codigos/configuracion/maquinas",
         {
           ...form,
-          empresaId,
+          empresaId: parseInt(empresaId),
         }
       );
 
@@ -131,7 +131,7 @@ export default function Maquinas() {
       codigoTobera: null,
       tipoTobera: null,
     });
-    // refetch();
+    refetch();
   }, [changeData]);
 
   const columns = useMemo(
@@ -205,7 +205,7 @@ export default function Maquinas() {
 
     return data;
   };
-  const { data: maquinasResponse } = useQuery("maquinas", getMaquinas, {
+  const { data: maquinasResponse, refetch } = useQuery("maquinas", getMaquinas, {
     initialData: {
       data: [],
     },

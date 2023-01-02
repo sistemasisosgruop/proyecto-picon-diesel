@@ -209,3 +209,31 @@ export function generateCodeChofer(number) {
 
   return `CHF-${currentNumber}`;
 }
+
+export function generateCodeTipoCambio(number) {
+  const currentNumber = Number(number);
+  if (currentNumber < 10) {
+    return `CAMB00${currentNumber}`;
+  }
+
+  if (currentNumber >= 10 && currentNumber < 100) {
+    return `CAMB0${currentNumber}`;
+  }
+
+  return `CAMB${currentNumber}`;
+}
+
+export function generateCodeFormaDePago(number) {
+  const currentNumber = Number(number);
+  if (currentNumber < 10) {
+    return `00${currentNumber}`;
+  }
+
+  return `${currentNumber}`;
+}
+
+export function generateCodeTrasladoGuiaRemision(number) {
+  const currentNumber = Number(number);
+
+  return `0${currentNumber}`;
+}

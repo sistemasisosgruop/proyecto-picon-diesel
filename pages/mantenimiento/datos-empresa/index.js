@@ -40,8 +40,8 @@ const fileTypes = ["JPEG", "PNG"];
 const schema = yup.object().shape({
   ruc: yup.number().required(),
   nombre: yup.string().required(),
-  direccion: yup.string().nullable(),
-  telefono: yup.string().nullable(),
+  direccion: yup.string().required(),
+  telefono: yup.string().required(),
   email: yup.string().nullable().email(),
   web: yup.string().nullable(),
 });

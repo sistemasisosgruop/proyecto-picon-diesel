@@ -1,5 +1,5 @@
 import { AuthService } from "../../../../backend/services/auth/auth.service";
-import { BancoService } from "../../../../backend/services/mantenimiento/bancos.service";
+import { VehiculoService } from "../../../../backend/services/mantenimiento/vehiculo.service";
 
 export default async function handler(req, res) {
   try {
@@ -8,13 +8,13 @@ export default async function handler(req, res) {
     user && AuthService.AdministradorFeatures(user.roles);
 
     if (req.method === "POST") {
-      const result = await BancoService.createBanco(req.body);
+      const result = await VehiculoService.create(req.body);
       return res.status(200).json(result);
     }
 
     if (req.method === "GET") {
       const empresaId = Number(req.query.empresaId);
-      const result = await BancoService.getBancos(empresaId);
+      const result = await VehiculoService.getAll(empresaId);
       return res.status(200).json({ data: result });
     }
   } catch (error) {

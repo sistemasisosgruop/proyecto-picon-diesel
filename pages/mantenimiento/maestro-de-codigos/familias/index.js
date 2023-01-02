@@ -52,7 +52,7 @@ export default function Familias() {
         "/api/mantenimiento/maestro-de-codigos/familias",
         {
           ...form,
-          empresaId,
+          empresaId: parseInt(empresaId),
         }
       );
 

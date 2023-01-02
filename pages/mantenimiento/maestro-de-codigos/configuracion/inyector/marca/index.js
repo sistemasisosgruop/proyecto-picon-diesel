@@ -57,7 +57,7 @@ export default function MarcasInyector() {
         "/api/mantenimiento/maestro-de-codigos/configuracion/marca-fabrica-inyector",
         {
           ...form,
-          empresaId,
+          empresaId: parseInt(empresaId),
         }
       );
 
@@ -87,7 +87,6 @@ export default function MarcasInyector() {
   );
 
   const getmMarcasFabricaInyector = async () => {
-    const empresaId = localStorage.getItem("empresaId");
     const { data } = await axiosRequest(
       "get",
       `/api/mantenimiento/maestro-de-codigos/configuracion/marca-fabrica-inyector?empresaId=${empresaId}`
