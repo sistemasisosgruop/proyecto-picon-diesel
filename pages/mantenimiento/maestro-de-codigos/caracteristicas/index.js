@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -7,10 +7,7 @@ import {
   ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateMaestroCodigos from "../../../../app/components/templates/mantenimiento/TemplateMaestroCodigos";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -21,6 +18,7 @@ import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastContainer, toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -29,36 +27,50 @@ const schema = yup.object().shape({
 });
 
 export default function Caracteristicas() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
 
   const [empresaId] = useLocalStorage("empresaId");
-  const [caracteristicaForm, setCaracteristicaForm] = useState({
+  const [form, setForm] = useState({
     codigo: null,
     descripcion: null,
     abreviatura: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/caracteristicas", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest(
+      "put",
+      `/api/mantenimiento/maestro-de-codigos/caracteristicas/${elementId}`,
+      {
+        ...form,
+      }
+    );
+
+    toast.success(`🦄 Registro actualizado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(caracteristicaForm, { abortEarly: false });
-      await axiosRequest(
-        "post",
-        "/api/mantenimiento/maestro-de-codigos/caracteristicas",
-        {
-          ...caracteristicaForm,
-          empresaId: parseInt(empresaId),
-        }
-      );
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -67,11 +79,11 @@ export default function Caracteristicas() {
   };
 
   useEffect(() => {
-    setCaracteristicaForm({
+    setForm({
       codigo: null,
       descripcion: null,
       abreviatura: null,
-    })
+    });
     refetch();
   }, [changeData]);
 
@@ -107,11 +119,14 @@ export default function Caracteristicas() {
       <TemplateMaestroCodigos>
         <Title text={"Lista Características"}>
           <div className="flex gap-4">
-            <ButtonImportData />
-            <ButtonAdd
-              text={"Nuevo característica"}
-              onClick={() => openModal(false)}
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(
+                  `/api/mantenimiento/maestro-de-codigos/caracteristicas/upload?empresaId=${empresaId}`
+                )
+              }
             />
+            <ButtonAdd text={"Nuevo característica"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -133,29 +148,32 @@ export default function Caracteristicas() {
           <Input
             label="Código"
             onChange={(e) => {
-              setCaracteristicaForm({
-                ...caracteristicaForm,
+              setForm({
+                ...form,
                 codigo: e.target.value,
               });
             }}
+            defaultValue={isEdit ? updateForm.codigo : undefined}
           />
           <Input
             label="Descripción"
             onChange={(e) => {
-              setCaracteristicaForm({
-                ...caracteristicaForm,
+              setForm({
+                ...form,
                 descripcion: e.target.value,
               });
             }}
+            defaultValue={isEdit ? updateForm.descripcion : undefined}
           />
           <Input
             label="Abreviatura"
             onChange={(e) => {
-              setCaracteristicaForm({
-                ...caracteristicaForm,
+              setForm({
+                ...form,
                 abreviatura: e.target.value,
               });
             }}
+            defaultValue={isEdit ? updateForm.abreviatura : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
@@ -166,6 +184,7 @@ export default function Caracteristicas() {
       <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={undefined}
         title={"Eliminar Característica"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

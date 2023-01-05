@@ -7,6 +7,7 @@ import create from "zustand";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { useRef } from "react";
 import * as yup from "yup";
+import { FormProvider } from "../contexts/form.context";
 
 export const useEmpresaStore = create((set) => ({
   empresaGlobal: { name: "default", id: 0 },
@@ -36,11 +37,13 @@ function MyApp({ Component, pageProps }) {
     <QueryClientProvider client={queryClient.current}>
       <Hydrate state={pageProps.dehydratedState}>
         <AuthProvider>
-          <ThemeProvider>
-            <LayoutDefault>
-              <Component {...pageProps} />
-            </LayoutDefault>
-          </ThemeProvider>
+          <FormProvider>
+            <ThemeProvider>
+              <LayoutDefault>
+                <Component {...pageProps} />
+              </LayoutDefault>
+            </ThemeProvider>
+          </FormProvider>
         </AuthProvider>
       </Hydrate>
     </QueryClientProvider>

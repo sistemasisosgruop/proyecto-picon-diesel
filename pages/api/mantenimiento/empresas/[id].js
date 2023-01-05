@@ -1,5 +1,6 @@
+import { EmpresasService } from "../../../../backend/services/mantenimiento/empresas.service";
 import { AuthService } from "../../../../backend/services/auth/auth.service";
-import { FactorInternamiento } from "../../../../backend/services/mantenimiento/factor-internamiento.service";
+
 
 export default async function handler(req, res) {
   try {
@@ -7,19 +8,22 @@ export default async function handler(req, res) {
     user && AuthService.AdministradorFeatures(user.roles);
 
     const id = Number(req.query.id);
+    if (req.method === "GET") {
+      const result = await EmpresasService.getEmpresa(id);
+      return res.status(200).json(result);
+    }
+
     if (req.method === "PUT") {
-      const result = await FactorInternamiento.updateFactorInternamiento(
-        id,
-        req.body
-      );
+      const result = await EmpresasService.updateEmpresa(id, req.body);
       return res.status(200).json(result);
     }
 
     if (req.method === "DELETE") {
-      const result = await FactorInternamiento.deleteFactorInternamiento(id);
+      const result = await EmpresasService.deleteEmpresa(id);
       return res.status(200).json(result);
     }
   } catch (error) {
+    console.log(error)
     if (error.code === "P2025") {
       return res.status(404).json({ error: error.meta.cause });
     }

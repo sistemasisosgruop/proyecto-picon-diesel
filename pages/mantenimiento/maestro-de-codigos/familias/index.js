@@ -1,5 +1,6 @@
+"use client";
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -7,10 +8,7 @@ import {
   ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableMaestroCodigos from "../../../../app/components/modules/TableMaestroCodigos";
 import TemplateMaestroCodigos from "../../../../app/components/templates/mantenimiento/TemplateMaestroCodigos";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -21,6 +19,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -28,40 +27,49 @@ const schema = yup.object().shape({
 });
 
 export default function Familias() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
-
   const [form, setForm] = useState({
     codigo: null,
     descripcion: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest(
-        "post",
-        "/api/mantenimiento/maestro-de-codigos/familias",
-        {
-          ...form,
-          empresaId: parseInt(empresaId),
-        }
-      );
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
       toast.error(<ToastAlert error={error} />, errorProps);
     }
+  };
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/familias", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/maestro-de-codigos/familias/${elementId}`, {
+      ...form,
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
   };
 
   useEffect(() => {
@@ -104,11 +112,14 @@ export default function Familias() {
       <TemplateMaestroCodigos>
         <Title text={"Lista Familias"}>
           <div className="flex gap-4">
-            <ButtonImportData />
-            <ButtonAdd
-              text={"Nueva familia"}
-              onClick={() => openModal(false)}
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(
+                  `/api/mantenimiento/maestro-de-codigos/familias/upload?empresaId=${empresaId}`
+                )
+              }
             />
+            <ButtonAdd text={"Nueva familia"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -130,10 +141,12 @@ export default function Familias() {
           <Input
             label="Código"
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+            defaultValue={isEdit ? updateForm.codigo : undefined}
           />
           <Input
             label="Descripción"
             onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+            defaultValue={isEdit ? updateForm.descripcion : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
@@ -144,6 +157,7 @@ export default function Familias() {
       <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={undefined}
         title={"Eliminar familia"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

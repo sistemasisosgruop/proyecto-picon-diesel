@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export async function axiosRequest(method, url, data = null) {
+export async function axiosRequest(method, url, data = null, contentType = null) {
   const token = localStorage.getItem("token");
   try {
     const response = await axios({
@@ -9,7 +9,7 @@ export async function axiosRequest(method, url, data = null) {
       data,
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json",
+        "Content-Type": contentType ?? "application/json",
         Authorization: `Bearer ${token}`,
       },
     });

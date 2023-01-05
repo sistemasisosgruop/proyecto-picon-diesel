@@ -1,5 +1,5 @@
-import { AuthService } from "../../../../backend/services/auth/auth.service";
-import { FactorInternamiento } from "../../../../backend/services/mantenimiento/factor-internamiento.service";
+import { AuthService } from "../../../../../backend/services/auth/auth.service";
+import { MaterialPresupuestoService } from "../../../../../backend/services/mantenimiento/presupuesto-material.service";
 
 export default async function handler(req, res) {
   try {
@@ -8,15 +8,12 @@ export default async function handler(req, res) {
 
     const id = Number(req.query.id);
     if (req.method === "PUT") {
-      const result = await FactorInternamiento.updateFactorInternamiento(
-        id,
-        req.body
-      );
+      const result = await MaterialPresupuestoService.update(id, req.body);
       return res.status(200).json(result);
     }
 
     if (req.method === "DELETE") {
-      const result = await FactorInternamiento.deleteFactorInternamiento(id);
+      const result = await MaterialPresupuestoService.delete(id);
       return res.status(200).json(result);
     }
   } catch (error) {

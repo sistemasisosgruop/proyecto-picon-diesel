@@ -9,17 +9,8 @@ import {
 } from "../../../app/components/elements/Buttons";
 import { Container } from "../../../app/components/elements/Containers";
 import { Title } from "../../../app/components/elements/Title";
-import {
-  Table,
-  TableD,
-  TableDOptions,
-  TableH,
-  TableRH,
-} from "../../../app/components/elements/Table";
-import {
-  ModalConfirmDelete,
-  ModalLg,
-} from "../../../app/components/modules/Modal";
+import { Table, TableD, TableDOptions, TableH, TableRH } from "../../../app/components/elements/Table";
+import { ModalConfirmDelete, ModalLg } from "../../../app/components/modules/Modal";
 import { Group, GroupInputs } from "../../../app/components/elements/Form";
 import { Input } from "@material-tailwind/react";
 import { FileUploader } from "react-drag-drop-files";
@@ -47,16 +38,7 @@ const schema = yup.object().shape({
 });
 
 export default function DatosEmpresa() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
-
-  // Logo de la empresa
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } = useModal();
   const [file, setFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
   const [empresaForm, setEmpresaForm] = useState({
@@ -70,32 +52,21 @@ export default function DatosEmpresa() {
   });
   const [changeData, setChangeData] = useState(false);
   const auth = useAuthState();
+  const [empresaToUpdateId, setEmpresaToUpdateId] = useState(null);
 
   const getEmpresas = async () => {
-    const { data } = await axiosRequest(
-      "get",
-      `/api/mantenimiento/empresas?adminId=${auth.id}`
-    );
+    const { data } = await axiosRequest("get", `/api/mantenimiento/empresas?adminId=${auth.id}`);
 
     return data;
   };
 
   const saveData = async () => {
     try {
-      await schema.validate(empresaForm, { abortEarly: false });
-      const { data } = await axiosRequest(
-        "post",
-        "/api/mantenimiento/empresas",
-        {
-          ...empresaForm,
-          adminId: auth.id,
-        }
-      );
-
-      toast.success(
-        `🦄 Empresa ${data.nombre} registrada exitosamente!`,
-        successProps
-      );
+      if (isEdit) {
+        await updateEmpresa();
+      } else {
+        await createEmpresa();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -144,8 +115,26 @@ export default function DatosEmpresa() {
 
   const empresas = useMemo(() => data.data, [data.data]);
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data: empresas });
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data: empresas });
+
+  const updateEmpresa = async () => {
+    await schema.validate(empresaForm, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/empresas/${empresaToUpdateId}`, {
+      ...empresaForm,
+    });
+
+    toast.success(`🦄 Empresa actualizada exitosamente!`, successProps);
+  };
+
+  const createEmpresa = async () => {
+    await schema.validate(empresaForm, { abortEarly: false });
+    const { data } = await axiosRequest("post", "/api/mantenimiento/empresas", {
+      ...empresaForm,
+      adminId: auth.id,
+    });
+
+    toast.success(`🦄 Empresa ${data.nombre} registrada exitosamente!`, successProps);
+  };
 
   return (
     <>
@@ -182,11 +171,7 @@ export default function DatosEmpresa() {
                             <div className="flex-shrink-0 w-10 h-10">
                               <Image
                                 className="w-full h-full rounded-full"
-                                src={
-                                  cell?.value === ""
-                                    ? "/images/placeholder.jpg"
-                                    : cell.value
-                                }
+                                src={cell?.value === "" ? "/images/placeholder.jpg" : cell.value}
                                 alt=""
                                 width={40}
                                 height={40}
@@ -200,10 +185,16 @@ export default function DatosEmpresa() {
                       );
                     })}
                     <TableDOptions>
-                      <ButtonEdit onClick={() => openModal(true)} />
-                      <ButtonDelete
-                        onClick={() => setIsOpenModalDelete(true)}
+                      <ButtonEdit
+                        onClick={async () => {
+                          openModal(true);
+                          const { id } = row.values;
+                          const currentRow = empresas.find((empresa) => empresa.id === id);
+                          setEmpresaToUpdateId(id);
+                          setEmpresaForm({ ...currentRow });
+                        }}
                       />
+                      <ButtonDelete onClick={() => setIsOpenModalDelete(true)} />
                     </TableDOptions>
                   </tr>
                 );
@@ -212,30 +203,17 @@ export default function DatosEmpresa() {
           </Table>
         )}
       </Container>
-
       {/* Modal agregar */}
-      <ModalLg
-        title={isEdit ? "Editar Empresa" : "Nueva Empresa"}
-        isOpen={isOpenModal}
-        closeModal={closeModal}
-      >
+      <ModalLg title={isEdit ? "Editar Empresa" : "Nueva Empresa"} isOpen={isOpenModal} closeModal={closeModal}>
         <Group title={"Logo de la empresa"}>
-          <FileUploader
-            multiple={false}
-            handleChange={handleChange}
-            name="file"
-            types={fileTypes}
-            accept={fileTypes}
-          >
+          <FileUploader multiple={false} handleChange={handleChange} name="file" types={fileTypes} accept={fileTypes}>
             <div className="flex justify-center items-center rounded-md border-2 border-dashed border-primary-200 py-10 bg-primary-50">
               <div className="space-y-1 text-center flex flex-col items-center">
                 <Logo className="text-primary-200" />
                 <div className="flex text-sm text-primary-600">
                   <p className="pl-1">
                     Arrastre y suelte su imagen aqui, o{" "}
-                    <span className="cursor-pointer font-semibold">
-                      Seleccione un archivo
-                    </span>{" "}
+                    <span className="cursor-pointer font-semibold">Seleccione un archivo</span>{" "}
                   </p>
                 </div>
               </div>
@@ -244,8 +222,7 @@ export default function DatosEmpresa() {
           <p>
             {file ? (
               <div className=" w-full flex gap-2 text-xs items-center">
-                <Image src={logoPreview} width={100} height={20} />{" "}
-                {`Nombre del archivo: ${file.name}`}
+                <Image alt="logo" src={logoPreview} width={100} height={20} /> {`Nombre del archivo: ${file.name}`}
               </div>
             ) : (
               ""
@@ -256,12 +233,15 @@ export default function DatosEmpresa() {
           <GroupInputs>
             <Input
               label="RUC"
+              defaultValue={isEdit ? empresaForm.ruc : undefined}
               onChange={(e) => {
                 setEmpresaForm({ ...empresaForm, ruc: e.target.value });
               }}
             />
             <Input
               label="Nombre"
+              title="hola mundo"
+              defaultValue={isEdit ? empresaForm.nombre : undefined}
               onChange={(e) => {
                 setEmpresaForm({ ...empresaForm, nombre: e.target.value });
               }}
@@ -270,12 +250,14 @@ export default function DatosEmpresa() {
           <GroupInputs>
             <Input
               label="Dirección"
+              defaultValue={isEdit ? empresaForm.direccion : undefined}
               onChange={(e) => {
                 setEmpresaForm({ ...empresaForm, direccion: e.target.value });
               }}
             />
             <Input
               label="Teléfono"
+              defaultValue={isEdit ? empresaForm.telefono : undefined}
               onChange={(e) => {
                 setEmpresaForm({ ...empresaForm, telefono: e.target.value });
               }}
@@ -284,12 +266,14 @@ export default function DatosEmpresa() {
           <GroupInputs>
             <Input
               label="Correo"
+              defaultValue={isEdit ? empresaForm.email : undefined}
               onChange={(e) => {
                 setEmpresaForm({ ...empresaForm, email: e.target.value });
               }}
             />
             <Input
               label="Página web"
+              defaultValue={isEdit ? empresaForm.web : undefined}
               onChange={(e) => {
                 setEmpresaForm({ ...empresaForm, web: e.target.value });
               }}
@@ -304,6 +288,7 @@ export default function DatosEmpresa() {
       <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={undefined}
         title={"Eliminar Empresa"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}
@@ -311,14 +296,3 @@ export default function DatosEmpresa() {
     </>
   );
 }
-
-// export async function getServerSideProps(context) {
-//   const auth = useAuthState();
-//   console.log('data..',auth)
-//   const { data } = await axiosRequest(
-//     "get",
-//     `/api/mantenimiento/empresas?adminId=${auth.id}`
-//   );
-
-//   return { props: { data } };
-// }

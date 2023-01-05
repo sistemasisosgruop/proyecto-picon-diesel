@@ -64,6 +64,8 @@ model Empresa {
   descripcionInyector          DescripcionInyector[]
   maquina                      Maquina[]
   material                     Material[]
+  FamiliaPresupuesto           FamiliaPresupuesto[]
+  MaterialPresupuesto          MaterialPresupuesto[]
 
   @@map("empresa")
 }
@@ -437,16 +439,41 @@ model MotivoTrasladoGuiaRemision {
   @@map("motivo_traslado_guia_remision")
 }
 
+model FamiliaPresupuesto {
+  id                     Int                     @id @default(autoincrement())
+  codigo                 String?                 @unique
+  descripcion            String
+  empresa                Empresa?                @relation(fields: [empresaId], references: [id])
+  materialPresupuestos   MaterialPresupuesto[]
+  empresaId              Int
+  subFamiliaPresupuestos SubFamiliaPresupuesto[]
+
+  @@map("familia_presupuesto")
+}
+
+model SubFamiliaPresupuesto {
+  id                   Int                   @id @default(autoincrement())
+  codigo               String?               @unique
+  descripcion          String
+  familia              FamiliaPresupuesto?   @relation(fields: [familiaId], references: [id])
+  familiaId            Int
+  materialPresupuestos MaterialPresupuesto[]
+
+  @@map("sub_familia_presupuesto")
+}
+
 model MaterialPresupuesto {
-  id           Int         @id @default(autoincrement())
-  codigo       String?     @unique
-  familia      Familia?    @relation(fields: [familiaId], references: [id])
+  id           Int                    @id @default(autoincrement())
+  codigo       String?                @unique
+  familia      FamiliaPresupuesto?    @relation(fields: [familiaId], references: [id])
   familiaId    Int
-  SubFamilia   SubFamilia? @relation(fields: [subFamiliaId], references: [id])
+  subFamilia   SubFamiliaPresupuesto? @relation(fields: [subFamiliaId], references: [id])
   subFamiliaId Int
   correlativo  String?
   nombre       String
-  precio       Decimal     @default(0) @db.Decimal(12, 2)
+  precio       Decimal                @default(0) @db.Decimal(12, 2)
+  empresa      Empresa?               @relation(fields: [empresaId], references: [id])
+  empresaId    Int
 
   @@map("material_presupuesto")
 }
@@ -475,26 +502,24 @@ model TrabajoTerceros {
 
 // MAESTRO DE CODIGOS
 model Familia {
-  id                  Int                   @id @default(autoincrement())
-  codigo              String                @unique
-  descripcion         String
-  empresa             Empresa?              @relation(fields: [empresaId], references: [id])
-  empresaId           Int
-  SubFamilia          SubFamilia[]
-  MaterialPresupuesto MaterialPresupuesto[]
-  Material            Material[]
+  id          Int          @id @default(autoincrement())
+  codigo      String       @unique
+  descripcion String
+  empresa     Empresa?     @relation(fields: [empresaId], references: [id])
+  empresaId   Int
+  SubFamilia  SubFamilia[]
+  Material    Material[]
 
   @@map("familia")
 }
 
 model SubFamilia {
-  id                  Int                   @id @default(autoincrement())
-  codigo              String                @unique
-  descripcion         String
-  familia             Familia?              @relation(fields: [familiaId], references: [id])
-  familiaId           Int
-  MaterialPresupuesto MaterialPresupuesto[]
-  Material            Material[]
+  id          Int        @id @default(autoincrement())
+  codigo      String     @unique
+  descripcion String
+  familia     Familia?   @relation(fields: [familiaId], references: [id])
+  familiaId   Int
+  Material    Material[]
 
   @@map("sub_familia")
 }

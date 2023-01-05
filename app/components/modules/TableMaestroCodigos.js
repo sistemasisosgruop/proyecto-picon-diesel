@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+"use client";
+import { useContext, useMemo, useState } from "react";
 import "regenerator-runtime/runtime";
 import {
   useTable,
@@ -11,32 +12,13 @@ import {
 
 import matchSorter from "match-sorter";
 
-import {
-  Table as Tabla,
-  TableD,
-  TableDOptions,
-  TableHOptions,
-  TableRH,
-} from "../elements/Table";
-import {
-  ArrowDown,
-  ArrowLeft2,
-  ArrowRight2,
-  ArrowUp,
-  SearchNormal1,
-} from "iconsax-react";
+import { Table as Tabla, TableD, TableDOptions, TableHOptions, TableRH } from "../elements/Table";
+import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowUp, SearchNormal1 } from "iconsax-react";
 import { ArrowLeftFast, ArrowRightFast } from "../elements/icons/Arrow";
-import {
-  ButtonDelete,
-  ButtonEdit,
-  ButtonSubfamilia,
-} from "../elements/Buttons";
+import { ButtonDelete, ButtonEdit, ButtonSubfamilia } from "../elements/Buttons";
+import { FormContext } from "../../../contexts/form.context";
 
-function GlobalFilter({
-  preGlobalFilteredRows,
-  globalFilter,
-  setGlobalFilter,
-}) {
+function GlobalFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) {
   const count = preGlobalFilteredRows.length;
   const [value, setValue] = useState(globalFilter);
   const onChange = useAsyncDebounce((value) => {
@@ -64,9 +46,7 @@ function GlobalFilter({
 }
 
 // Define a default UI for filtering
-function DefaultColumnFilter({
-  column: { filterValue, preFilteredRows, setFilter },
-}) {
+function DefaultColumnFilter({ column: { filterValue, preFilteredRows, setFilter } }) {
   const count = preFilteredRows.length;
 
   return (
@@ -89,6 +69,7 @@ fuzzyTextFilterFn.autoRemove = (val) => !val;
 
 // Our table component
 function Table({ columns, data, openModal, setIsOpenModalDelete }) {
+  const { setUpdateForm, setElementId } = useContext(FormContext);
   const filterTypes = useMemo(
     () => ({
       fuzzyText: fuzzyTextFilterFn,
@@ -96,9 +77,7 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
         return rows.filter((row) => {
           const rowValue = row.values[id];
           return rowValue !== undefined
-            ? String(rowValue)
-                .toLowerCase()
-                .startsWith(String(filterValue).toLowerCase())
+            ? String(rowValue).toLowerCase().startsWith(String(filterValue).toLowerCase())
             : true;
         });
       },
@@ -193,7 +172,15 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                   );
                 })}
                 <TableDOptions>
-                  <ButtonEdit onClick={() => openModal(true)} />
+                  <ButtonEdit
+                    onClick={() => {
+                      openModal(true);
+                      const { id } = row.values;
+                      const currentRow = data.find((item) => item.id === id);
+                      setElementId(id);
+                      setUpdateForm({ ...currentRow });
+                    }}
+                  />
                   <ButtonDelete onClick={() => setIsOpenModalDelete(true)} />
                 </TableDOptions>
                 <TableD>
@@ -254,12 +241,7 @@ function filterGreaterThan(rows, id, filterValue) {
 
 filterGreaterThan.autoRemove = (val) => typeof val !== "number";
 
-function TableMaestroCodigos({
-  columns,
-  data,
-  openModal,
-  setIsOpenModalDelete,
-}) {
+function TableMaestroCodigos({ columns, data, openModal, setIsOpenModalDelete }) {
   return (
     <Table
       columns={columns}

@@ -237,3 +237,16 @@ export function generateCodeTrasladoGuiaRemision(number) {
 
   return `0${currentNumber}`;
 }
+
+export function generateCodePresupuestoMaterial(number) {
+  const currentNumber = Number(number);
+  if (currentNumber < 10) {
+    return `MAT00${currentNumber}`;
+  }
+
+  if (currentNumber >= 10 && currentNumber < 100) {
+    return `MAT0${currentNumber}`;
+  }
+
+  return `MAT${currentNumber}`;
+}

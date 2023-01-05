@@ -1,7 +1,8 @@
+"use client";
 import { Input } from "@material-tailwind/react";
 import { Back } from "iconsax-react";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -9,10 +10,7 @@ import {
   ButtonSave,
 } from "../../../../../../app/components/elements/Buttons";
 import { Title } from "../../../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../../../app/components/modules/Modal";
 import TableComplete from "../../../../../../app/components/modules/TableComplete";
 import TemplateMaestroCodigos from "../../../../../../app/components/templates/mantenimiento/TemplateMaestroCodigos";
 import { useModal } from "../../../../../../app/hooks/useModal";
@@ -20,12 +18,10 @@ import { axiosRequest } from "../../../../../../app/utils/axios-request";
 import { useQuery } from "react-query";
 import * as yup from "yup";
 import { ToastContainer, toast } from "react-toastify";
-import {
-  errorProps,
-  successProps,
-} from "../../../../../../app/utils/alert-config";
+import { errorProps, successProps } from "../../../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert";
 import axios from "axios";
+import { FormContext } from "../../../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -34,34 +30,48 @@ const schema = yup.object().shape({
 
 export default function SubFamilias({ familia }) {
   const { codigo, id } = familia;
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
 
-  const [familiaForm, setfamiliaForm] = useState({
+  const [form, setForm] = useState({
     codigo: null,
     descripcion: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId } = useContext(FormContext);
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/familias/subfamilias", {
+      ...form,
+      familiaId: id,
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest(
+      "put",
+      `/api/mantenimiento/maestro-de-codigos/familias/subfamilias/${elementId}`,
+      {
+        ...form,
+      }
+    );
+
+    toast.success(`🦄 Registro actualizado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(familiaForm, { abortEarly: false });
-      await axiosRequest(
-        "post",
-        "/api/mantenimiento/maestro-de-codigos/familias/subfamilias",
-        {
-          ...familiaForm,
-          familiaId: id,
-        }
-      );
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -70,7 +80,7 @@ export default function SubFamilias({ familia }) {
   };
 
   useEffect(() => {
-    setfamiliaForm({
+    setForm({
       codigo: null,
       descripcion: null,
     });
@@ -116,10 +126,7 @@ export default function SubFamilias({ familia }) {
         <Title text={"Lista Subfamilias"}>
           <div className="flex gap-4">
             <ButtonImportData />
-            <ButtonAdd
-              text={"Nueva subfamilia"}
-              onClick={() => openModal(false)}
-            />
+            <ButtonAdd text={"Nueva subfamilia"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -144,15 +151,13 @@ export default function SubFamilias({ familia }) {
         <form className="flex flex-col gap-5">
           <Input
             label="Código"
-            onChange={(e) =>
-              setfamiliaForm({ ...familiaForm, codigo: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+            defaultValue={isEdit ? updateForm.codigo : undefined}
           />
           <Input
             label="Descripción"
-            onChange={(e) =>
-              setfamiliaForm({ ...familiaForm, descripcion: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+            defaultValue={isEdit ? updateForm.descripcion : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
@@ -163,6 +168,7 @@ export default function SubFamilias({ familia }) {
       <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={undefined}
         title={"Eliminar subfamilia"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}
