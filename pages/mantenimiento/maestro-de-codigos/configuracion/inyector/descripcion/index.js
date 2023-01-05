@@ -24,7 +24,7 @@ import {
   successProps,
 } from "../../../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -155,7 +155,7 @@ export default function DescripcionInyector() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
+       
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar descripcion"}

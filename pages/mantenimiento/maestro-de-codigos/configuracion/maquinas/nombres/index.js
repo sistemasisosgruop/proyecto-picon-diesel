@@ -24,7 +24,7 @@ import {
 } from "../../../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert";
 import { useLocalStorage } from "../../../../../../app/hooks/useLocalStorage";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -146,7 +146,7 @@ export default function NombresMaquina() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
+       
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Nombre"}

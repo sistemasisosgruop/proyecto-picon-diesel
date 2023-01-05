@@ -7,10 +7,7 @@ import {
   ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -18,7 +15,7 @@ import { axiosRequest } from "../../../../app/utils/axios-request";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { useQuery } from "react-query";
 import * as yup from "yup";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 
@@ -32,14 +29,8 @@ const schema = yup.object().shape({
 });
 
 export default function Clientes() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     nombre: null,
@@ -79,7 +70,7 @@ export default function Clientes() {
     });
     refetch();
   }, [changeData]);
-  
+
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
@@ -138,10 +129,7 @@ export default function Clientes() {
         <Title text={"Lista Clientes / Proveedores"}>
           <div className="flex gap-4">
             <ButtonImportData />
-            <ButtonAdd
-              text={"Nuevo cliente / proveedor"}
-              onClick={() => openModal(false)}
-            />
+            <ButtonAdd text={"Nuevo cliente / proveedor"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -180,9 +168,7 @@ export default function Clientes() {
             <Input
               label="N° de documento"
               type="number"
-              onChange={(e) =>
-                setForm({ ...form, numeroDocumento: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, numeroDocumento: e.target.value })}
             />
           </div>
           <div className="flex gap-5">
@@ -196,10 +182,7 @@ export default function Clientes() {
               onChange={(e) => setForm({ ...form, telefono: e.target.value })}
             />
           </div>
-          <Select
-            label="Tipo"
-            onChange={(value) => setForm({ ...form, tipo: value })}
-          >
+          <Select label="Tipo" onChange={(value) => setForm({ ...form, tipo: value })}>
             {tipoClientes?.data?.map((item) => {
               return (
                 <Option key={item.id} value={item.id}>
@@ -214,7 +197,6 @@ export default function Clientes() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Cliente"}

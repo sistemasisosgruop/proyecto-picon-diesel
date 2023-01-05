@@ -14,9 +14,8 @@ import {
 import TablePresupuesto from "../../../../app/components/modules/TablePresupuesto";
 import TemplatePresupuesto from "../../../../app/components/templates/mantenimiento/TemplatePresupuesto";
 import { useModal } from "../../../../app/hooks/useModal";
-import { familias } from "../../../../data/familias";
 import * as yup from "yup";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
@@ -137,7 +136,6 @@ export default function Familias() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar familia"}

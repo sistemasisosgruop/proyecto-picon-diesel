@@ -8,6 +8,7 @@ import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { useRef } from "react";
 import * as yup from "yup";
 import { FormProvider } from "../contexts/form.context";
+import { ToastContainer } from "react-toastify";
 
 export const useEmpresaStore = create((set) => ({
   empresaGlobal: { name: "default", id: 0 },
@@ -46,6 +47,7 @@ function MyApp({ Component, pageProps }) {
           </FormProvider>
         </AuthProvider>
       </Hydrate>
+      <ToastContainer />
     </QueryClientProvider>
   );
 }

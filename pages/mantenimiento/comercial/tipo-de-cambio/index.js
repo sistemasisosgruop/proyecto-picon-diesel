@@ -19,7 +19,7 @@ import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import * as yup from "yup";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 
 const schema = yup.object().shape({
   de: yup.string().required(),
@@ -165,7 +165,7 @@ export default function TipoDeCambio() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
+       
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Tipo de cambio"}

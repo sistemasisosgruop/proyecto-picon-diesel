@@ -7,10 +7,7 @@ import {
   ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -18,7 +15,7 @@ import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { useQuery } from "react-query";
 import * as yup from "yup";
 import { axiosRequest } from "../../../../app/utils/axios-request";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 
@@ -28,14 +25,8 @@ const schema = yup.object().shape({
 });
 
 export default function CentroCostos() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     nombre: null,
@@ -100,10 +91,7 @@ export default function CentroCostos() {
         <Title text={"Lista Centro de Costos"}>
           <div className="flex gap-4">
             <ButtonImportData />
-            <ButtonAdd
-              text={"Nuevo centro de costos"}
-              onClick={() => openModal(false)}
-            />
+            <ButtonAdd text={"Nuevo centro de costos"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -123,15 +111,10 @@ export default function CentroCostos() {
         {/* Form */}
         <form className="flex flex-col gap-5">
           <div className="flex gap-5">
-            <Input
-              label="Nombre"
-              onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-            />
+            <Input label="Nombre" onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
             <Input
               label="Responsable"
-              onChange={(e) =>
-                setForm({ ...form, responsable: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, responsable: e.target.value })}
             />
           </div>
           <div className="w-full flex justify-end gap-5">
@@ -140,7 +123,6 @@ export default function CentroCostos() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Centro de Costos"}

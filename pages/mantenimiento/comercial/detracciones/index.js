@@ -1,15 +1,8 @@
 import { Input } from "@material-tailwind/react";
 import { useEffect, useMemo, useState } from "react";
-import {
-  ButtonAdd,
-  ButtonCancel,
-  ButtonSave,
-} from "../../../../app/components/elements/Buttons";
+import { ButtonAdd, ButtonCancel, ButtonSave } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateComercial from "../../../../app/components/templates/mantenimiento/TemplateComercial";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -17,7 +10,7 @@ import * as yup from "yup";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { axiosRequest } from "../../../../app/utils/axios-request";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { useQuery } from "react-query";
 
@@ -28,14 +21,8 @@ const schema = yup.object().shape({
 });
 
 export default function Detracciones() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     codigo: null,
@@ -100,10 +87,7 @@ export default function Detracciones() {
       <TemplateComercial>
         <Title text={"Lista Detracciones"}>
           <div className="flex gap-4">
-            <ButtonAdd
-              text={"Nuevo detraccion"}
-              onClick={() => openModal(false)}
-            />
+            <ButtonAdd text={"Nuevo detraccion"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -122,10 +106,7 @@ export default function Detracciones() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input
-            label="Código"
-            onChange={(e) => setForm({ ...form, codigo: e.target.value })}
-          />
+          <Input label="Código" onChange={(e) => setForm({ ...form, codigo: e.target.value })} />
           <div className="flex gap-5">
             <Input
               label="Definición"
@@ -143,7 +124,6 @@ export default function Detracciones() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Detracción"}

@@ -18,7 +18,7 @@ import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { axiosRequest } from "../../../../app/utils/axios-request";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useQuery } from "react-query";
 
 const schemaContado = yup.object().shape({
@@ -263,7 +263,6 @@ export default function formContadoasDePago() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar formContadoa de pago"}

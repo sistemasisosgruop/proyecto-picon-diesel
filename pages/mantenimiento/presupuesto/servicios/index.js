@@ -1,15 +1,8 @@
 import { Input } from "@material-tailwind/react";
 import { useEffect, useMemo, useState } from "react";
-import {
-  ButtonAdd,
-  ButtonCancel,
-  ButtonSave,
-} from "../../../../app/components/elements/Buttons";
+import { ButtonAdd, ButtonCancel, ButtonSave } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplatePresupuesto from "../../../../app/components/templates/mantenimiento/TemplatePresupuesto";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -17,7 +10,7 @@ import { axiosRequest } from "../../../../app/utils/axios-request";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { useQuery } from "react-query";
 import * as yup from "yup";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 
@@ -28,14 +21,8 @@ const schema = yup.object().shape({
 });
 
 export default function Servicios() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     codigo: null,
@@ -101,10 +88,7 @@ export default function Servicios() {
       <TemplatePresupuesto>
         <Title text={"Lista Servicios"}>
           <div className="flex gap-4">
-            <ButtonAdd
-              text={"Nuevo servicio"}
-              onClick={() => openModal(false)}
-            />
+            <ButtonAdd text={"Nuevo servicio"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -123,10 +107,7 @@ export default function Servicios() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input
-            label="Código"
-            onChange={(e) => setForm({ ...form, codigo: e.target.value })}
-          />
+          <Input label="Código" onChange={(e) => setForm({ ...form, codigo: e.target.value })} />
           <Input
             label="Definición"
             onChange={(e) => setForm({ ...form, definicion: e.target.value })}
@@ -142,7 +123,6 @@ export default function Servicios() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Servicio"}

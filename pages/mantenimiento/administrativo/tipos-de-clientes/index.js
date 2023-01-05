@@ -7,10 +7,7 @@ import {
   ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -18,7 +15,7 @@ import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { axiosRequest } from "../../../../app/utils/axios-request";
 import { useQuery } from "react-query";
 import * as yup from "yup";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 
@@ -27,14 +24,8 @@ const schema = yup.object().shape({
 });
 
 export default function TiposClientes() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     tipo: null,
@@ -43,7 +34,7 @@ export default function TiposClientes() {
 
   const saveData = async () => {
     try {
-		console.log(empresaId)
+      console.log(empresaId);
       await schema.validate(form, { abortEarly: false });
       await axiosRequest("post", "/api/mantenimiento/clientes/tipos", {
         ...form,
@@ -97,10 +88,7 @@ export default function TiposClientes() {
         <Title text={"Lista Tipos de clientes"}>
           <div className="flex gap-4">
             <ButtonImportData />
-            <ButtonAdd
-              text={"Nuevo tipo de cliente"}
-              onClick={() => openModal(false)}
-            />
+            <ButtonAdd text={"Nuevo tipo de cliente"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -119,10 +107,7 @@ export default function TiposClientes() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input
-            label="Tipo de cliente"
-            onChange={(e) => setForm({ tipo: e.target.value })}
-          />
+          <Input label="Tipo de cliente" onChange={(e) => setForm({ tipo: e.target.value })} />
 
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
@@ -130,7 +115,6 @@ export default function TiposClientes() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Tipo de cliente"}

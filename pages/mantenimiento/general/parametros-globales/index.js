@@ -27,7 +27,7 @@ import { useQuery } from "react-query";
 import { useEffect, useState } from "react";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import * as yup from "yup";
 
 const schema = yup.object().shape({
@@ -149,7 +149,7 @@ export default function ParametrosGlobales() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
+       
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Parámetro"}

@@ -18,7 +18,7 @@ import * as yup from "yup";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { axiosRequest } from "../../../../app/utils/axios-request";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import { useQuery } from "react-query";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 
@@ -137,7 +137,7 @@ export default function GastosImportacion() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
+       
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Gasto de importación"}

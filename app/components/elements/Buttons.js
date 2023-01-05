@@ -6,7 +6,7 @@ import { useContext, useState, useEffect, useRef } from "react";
 import { Excel } from "./icons/Excel";
 import { FormContext } from "../../../contexts/form.context";
 import { axiosRequest } from "../../utils/axios-request";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { successProps } from "../../utils/alert-config";
 import { useMutation } from "react-query";
 
@@ -135,7 +135,6 @@ export const ButtonImportData = ({ handleClick = undefined }) => {
           {fileExcel && mutate.isLoading ? fileExcel.name : "Importar data"}
         </p>
       </label>
-      <ToastContainer />
     </>
   );
 };

@@ -15,7 +15,7 @@ import { useModal } from "../../../../app/hooks/useModal";
 import { axiosRequest } from "../../../../app/utils/axios-request";
 import { useQuery } from "react-query";
 import * as yup from "yup";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
@@ -154,7 +154,6 @@ export default function Familias() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         onClick={undefined}

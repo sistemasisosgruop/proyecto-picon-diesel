@@ -14,13 +14,12 @@ import {
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
-import { bancos } from "../../../../data/bancos";
 import * as yup from "yup";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { axiosRequest } from "../../../../app/utils/axios-request";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useQuery } from "react-query";
 
 const schema = yup.object().shape({
@@ -124,7 +123,6 @@ export default function Bancos() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Banco"}

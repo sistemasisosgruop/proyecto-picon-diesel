@@ -17,7 +17,7 @@ import * as yup from "yup";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { axiosRequest } from "../../../../app/utils/axios-request";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { useQuery } from "react-query";
 
@@ -135,7 +135,7 @@ export default function MotivoGuiaRemision() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
+       
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Motivo"}

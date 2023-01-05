@@ -1,3 +1,4 @@
+"use client";
 import { Input } from "@material-tailwind/react";
 import { useContext, useEffect, useMemo, useState } from "react";
 import {
@@ -16,7 +17,7 @@ import { useQuery } from "react-query";
 import * as yup from "yup";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { FormContext } from "../../../../contexts/form.context";
 
@@ -67,6 +68,7 @@ export default function Caracteristicas() {
   const saveData = async () => {
     try {
       if (isEdit) {
+        console.log("update");
         await updateRegistro();
       } else {
         await createRegistro();
@@ -181,7 +183,6 @@ export default function Caracteristicas() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         onClick={undefined}

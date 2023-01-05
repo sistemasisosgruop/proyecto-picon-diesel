@@ -7,10 +7,7 @@ import {
   ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -18,7 +15,7 @@ import { axiosRequest } from "../../../../app/utils/axios-request";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { useQuery } from "react-query";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import * as yup from "yup";
 
@@ -30,14 +27,8 @@ const schema = yup.object().shape({
 });
 
 export default function CuentasBancarias() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     banco: null,
@@ -88,10 +79,7 @@ export default function CuentasBancarias() {
   );
 
   const getBancos = async () => {
-    const { data } = await axiosRequest(
-      "get",
-      `/api/mantenimiento/bancos?empresaId=${empresaId}`
-    );
+    const { data } = await axiosRequest("get", `/api/mantenimiento/bancos?empresaId=${empresaId}`);
 
     return data;
   };
@@ -110,15 +98,11 @@ export default function CuentasBancarias() {
 
     return data;
   };
-  const { data, refetch } = useQuery(
-    "getCuentasBancarias",
-    getCuentasBancarias,
-    {
-      initialData: {
-        data: [],
-      },
-    }
-  );
+  const { data, refetch } = useQuery("getCuentasBancarias", getCuentasBancarias, {
+    initialData: {
+      data: [],
+    },
+  });
 
   const cuentasBancarias = useMemo(
     () =>
@@ -158,15 +142,9 @@ export default function CuentasBancarias() {
             label="N° de cuenta"
             onChange={(e) => setForm({ ...form, numeroCuenta: e.target.value })}
           />
-          <Input
-            label="Tipo"
-            onChange={(e) => setForm({ ...form, tipoCuenta: e.target.value })}
-          />
+          <Input label="Tipo" onChange={(e) => setForm({ ...form, tipoCuenta: e.target.value })} />
           <div className="flex gap-5">
-            <Select
-              label="Banco"
-              onChange={(value) => setForm({ ...form, banco: value })}
-            >
+            <Select label="Banco" onChange={(value) => setForm({ ...form, banco: value })}>
               {bancos?.map((item) => {
                 return (
                   <Option key={item.id} value={item.id}>
@@ -175,10 +153,7 @@ export default function CuentasBancarias() {
                 );
               })}
             </Select>
-            <Input
-              label="Moneda"
-              onChange={(e) => setForm({ ...form, moneda: e.target.value })}
-            />
+            <Input label="Moneda" onChange={(e) => setForm({ ...form, moneda: e.target.value })} />
           </div>
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
@@ -186,7 +161,6 @@ export default function CuentasBancarias() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Cuenta Bancaria"}

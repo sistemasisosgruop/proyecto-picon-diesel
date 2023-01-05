@@ -10,7 +10,7 @@ import { axiosRequest } from "../../../../app/utils/axios-request";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { useQuery } from "react-query";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 
 export default function ParametroDescuento() {
@@ -84,7 +84,7 @@ export default function ParametroDescuento() {
           <ButtonEdit onClick={() => setIsEdit(true)} />
         )}
       </form>
-      <ToastContainer />
+       
     </TemplateComercial>
   );
 }

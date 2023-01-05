@@ -19,7 +19,7 @@ import { axiosRequest } from "../../../../app/utils/axios-request";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { useQuery } from "react-query";
 import * as yup from "yup";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 
@@ -574,7 +574,6 @@ export default function Maquinas() {
           </div>
         </form>
       </ModalLg>
-      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         onClick={undefined}

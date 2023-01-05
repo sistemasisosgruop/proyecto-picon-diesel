@@ -7,17 +7,14 @@ import {
   ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
 import * as yup from "yup";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { axiosRequest } from "../../../../app/utils/axios-request";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { useQuery } from "react-query";
@@ -33,14 +30,8 @@ const schema = yup.object().shape({
 });
 
 export default function Vendedores() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
 
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
@@ -128,10 +119,7 @@ export default function Vendedores() {
         <Title text={"Lista Vendedores"}>
           <div className="flex gap-4">
             <ButtonImportData />
-            <ButtonAdd
-              text={"Nuevo vendedor"}
-              onClick={() => openModal(false)}
-            />
+            <ButtonAdd text={"Nuevo vendedor"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -150,10 +138,7 @@ export default function Vendedores() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input
-            label="Nombre"
-            onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-          />
+          <Input label="Nombre" onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
           <div className="flex gap-5">
             <Input
               label="Correo"
@@ -190,7 +175,6 @@ export default function Vendedores() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Personal"}

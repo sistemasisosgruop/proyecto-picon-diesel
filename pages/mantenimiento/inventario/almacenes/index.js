@@ -20,7 +20,7 @@ import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import * as yup from "yup";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 
 const schema = yup.object().shape({
   nombre: yup.string().required(),
@@ -143,7 +143,7 @@ export default function FactorInternamiento() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
+       
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Almacen"}

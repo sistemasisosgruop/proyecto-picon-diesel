@@ -20,7 +20,7 @@ import { axiosRequest } from "../../../app/utils/axios-request";
 import { useAuthState } from "../../../contexts/auth.context";
 import { useMemo, useState, useEffect } from "react";
 import { useQuery } from "react-query";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as yup from "yup";
 import { ToastAlert } from "../../../app/components/elements/ToastAlert";
@@ -285,7 +285,7 @@ export default function DatosEmpresa() {
           <ButtonSave onClick={saveData} />
         </div>
       </ModalLg>
-      <ToastContainer />
+       
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         onClick={undefined}

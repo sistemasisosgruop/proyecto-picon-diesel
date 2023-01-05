@@ -19,7 +19,7 @@ import { axiosRequest } from "../../../../../../app/utils/axios-request";
 import { useQuery } from "react-query";
 import * as yup from "yup";
 import { useLocalStorage } from "../../../../../../app/hooks/useLocalStorage";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import {
   errorProps,
   successProps,
@@ -146,7 +146,7 @@ export default function ModelosMaquina() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
+       
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Máquina"}

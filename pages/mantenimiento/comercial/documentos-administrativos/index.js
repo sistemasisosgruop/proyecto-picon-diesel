@@ -1,15 +1,8 @@
 import { Input } from "@material-tailwind/react";
 import { useEffect, useMemo, useState } from "react";
-import {
-  ButtonAdd,
-  ButtonCancel,
-  ButtonSave,
-} from "../../../../app/components/elements/Buttons";
+import { ButtonAdd, ButtonCancel, ButtonSave } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateComercial from "../../../../app/components/templates/mantenimiento/TemplateComercial";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -17,7 +10,7 @@ import * as yup from "yup";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { axiosRequest } from "../../../../app/utils/axios-request";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { useQuery } from "react-query";
 
@@ -27,14 +20,8 @@ const schema = yup.object().shape({
   abreviatura: yup.string().required(),
 });
 export default function DocumentosAdministrativos() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     codigo: null,
@@ -46,14 +33,10 @@ export default function DocumentosAdministrativos() {
   const saveData = async () => {
     try {
       await schema.validate(form, { abortEarly: false });
-      await axiosRequest(
-        "post",
-        "/api/mantenimiento/documentos-administrativos",
-        {
-          ...form,
-          empresaId: parseInt(empresaId),
-        }
-      );
+      await axiosRequest("post", "/api/mantenimiento/documentos-administrativos", {
+        ...form,
+        empresaId: parseInt(empresaId),
+      });
 
       toast.success(`🦄 Registro guardado exitosamente!`, successProps);
       setChangeData(!changeData);
@@ -71,7 +54,7 @@ export default function DocumentosAdministrativos() {
     });
     refetch();
   }, [changeData]);
-  
+
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
@@ -90,15 +73,11 @@ export default function DocumentosAdministrativos() {
     return data;
   };
 
-  const { data, refetch } = useQuery(
-    "getDocumentosAdministrativos",
-    getDocumentosAdministrativos,
-    {
-      initialData: {
-        data: [],
-      },
-    }
-  );
+  const { data, refetch } = useQuery("getDocumentosAdministrativos", getDocumentosAdministrativos, {
+    initialData: {
+      data: [],
+    },
+  });
 
   const documentosAdministrativos = useMemo(() => data?.data, [data?.data]);
 
@@ -107,10 +86,7 @@ export default function DocumentosAdministrativos() {
       <TemplateComercial>
         <Title text={"Lista Documentos Administrativos"}>
           <div className="flex gap-4">
-            <ButtonAdd
-              text={"Nuevo documento"}
-              onClick={() => openModal(false)}
-            />
+            <ButtonAdd text={"Nuevo documento"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -123,30 +99,18 @@ export default function DocumentosAdministrativos() {
       </TemplateComercial>
       {/* Modal agregar */}
       <Modal
-        title={
-          isEdit
-            ? "Editar Documento administrativo"
-            : "Nuevo Documento administrativo"
-        }
+        title={isEdit ? "Editar Documento administrativo" : "Nuevo Documento administrativo"}
         isOpen={isOpenModal}
         closeModal={closeModal}
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input
-            label="Código"
-            onChange={(e) => setForm({ ...form, codigo: e.target.value })}
-          />
+          <Input label="Código" onChange={(e) => setForm({ ...form, codigo: e.target.value })} />
           <div className="flex gap-5">
-            <Input
-              label="Nombre"
-              onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-            />
+            <Input label="Nombre" onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
             <Input
               label="Abreviatura"
-              onChange={(e) =>
-                setForm({ ...form, abreviatura: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, abreviatura: e.target.value })}
             />
           </div>
           <div className="w-full flex justify-end gap-5">
@@ -155,7 +119,6 @@ export default function DocumentosAdministrativos() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Documento administrativo"}

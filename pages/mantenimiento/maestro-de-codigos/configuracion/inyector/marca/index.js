@@ -23,7 +23,7 @@ import {
   errorProps,
   successProps,
 } from "../../../../../../app/utils/alert-config";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert";
 
 const schema = yup.object().shape({
@@ -155,7 +155,7 @@ export default function MarcasInyector() {
           </div>
         </form>
       </Modal>
-      <ToastContainer />
+       
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar marca"}
