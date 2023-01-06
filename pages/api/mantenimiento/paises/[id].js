@@ -7,6 +7,7 @@ export default async function handler(req, res) {
     user && AuthService.AdministradorFeatures(user.roles);
 
     const id = Number(req.query.id);
+    console.log(id)
     if (req.method === "PUT") {
       const result = await ParametrosGlobalesService.updateCountry(id, req.body);
       return res.status(200).json(result);

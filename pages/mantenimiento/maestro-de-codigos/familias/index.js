@@ -35,7 +35,12 @@ export default function Familias() {
     descripcion: null,
   });
   const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
+  const { updateForm, elementId, setCsvPath, setUpdateForm } = useContext(FormContext);
+
+  useEffect(() => {
+    console.log('familias... ',updateForm);
+  }, []);
+
 
   const saveData = async () => {
     try {
@@ -46,6 +51,7 @@ export default function Familias() {
       }
       setChangeData(!changeData);
       closeModal();
+      setUpdateForm(null);
     } catch (error) {
       toast.error(<ToastAlert error={error} />, errorProps);
     }
@@ -141,12 +147,12 @@ export default function Familias() {
           <Input
             label="Código"
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
-            defaultValue={isEdit ? updateForm.codigo : undefined}
+            defaultValue={isEdit ? updateForm?.codigo : undefined}
           />
           <Input
             label="Descripción"
             onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
-            defaultValue={isEdit ? updateForm.descripcion : undefined}
+            defaultValue={isEdit ? updateForm?.descripcion : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />

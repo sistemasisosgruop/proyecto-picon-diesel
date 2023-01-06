@@ -1,4 +1,3 @@
-
 import { CloseCircle } from "iconsax-react";
 import { Fragment, useState } from "react";
 import { Divider } from "../elements/Divider";

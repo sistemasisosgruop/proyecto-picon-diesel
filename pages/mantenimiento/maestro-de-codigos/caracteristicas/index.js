@@ -17,7 +17,7 @@ import { useQuery } from "react-query";
 import * as yup from "yup";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { FormContext } from "../../../../contexts/form.context";
 
@@ -38,10 +38,14 @@ export default function Caracteristicas() {
     abreviatura: null,
   });
   const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
+  const { updateForm, elementId, setCsvPath, setUpdateForm } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
+
+  useEffect(() => {
+    console.log('caracteristicas... ',updateForm);
+  }, []);
 
   const createRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
@@ -68,13 +72,13 @@ export default function Caracteristicas() {
   const saveData = async () => {
     try {
       if (isEdit) {
-        console.log("update");
         await updateRegistro();
       } else {
         await createRegistro();
       }
       setChangeData(!changeData);
       closeModal();
+      setUpdateForm(null);
     } catch (error) {
       toast.error(<ToastAlert error={error} />, errorProps);
     }
@@ -155,7 +159,7 @@ export default function Caracteristicas() {
                 codigo: e.target.value,
               });
             }}
-            defaultValue={isEdit ? updateForm.codigo : undefined}
+            defaultValue={isEdit ? updateForm?.codigo : undefined}
           />
           <Input
             label="Descripción"
@@ -165,7 +169,7 @@ export default function Caracteristicas() {
                 descripcion: e.target.value,
               });
             }}
-            defaultValue={isEdit ? updateForm.descripcion : undefined}
+            defaultValue={isEdit ? updateForm?.descripcion : undefined}
           />
           <Input
             label="Abreviatura"
@@ -175,7 +179,7 @@ export default function Caracteristicas() {
                 abreviatura: e.target.value,
               });
             }}
-            defaultValue={isEdit ? updateForm.abreviatura : undefined}
+            defaultValue={isEdit ? updateForm?.abreviatura : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />

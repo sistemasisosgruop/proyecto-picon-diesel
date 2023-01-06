@@ -1,29 +1,22 @@
 import prisma from "../../prisma";
-import { encryptPassword } from "../../utils/auth";
+import { decrypt, encrypt, encryptPassword } from "../../utils/auth";
 import { generateCode } from "../../utils/codes";
 
 export class PersonalService {
   static async createPersonal(data) {
-    const {
-      nombre,
-      password,
-      email,
-      telefono,
-      direccion,
-      empresaId,
-      role,
-      puesto,
-    } = data;
-    const passwordEncripted = await encryptPassword(password);
+    const { nombre, password, email, telefono, direccion, empresaId, role, puesto } = data;
+    const bcryptPassword = await encryptPassword(password);
+    const cipherPassword = encrypt(password);
 
     const personal = await prisma.personal.create({
       data: {
         puesto,
         nombre,
         email,
-        password: passwordEncripted,
+        password: bcryptPassword,
         telefono,
         direccion,
+        passwordEncrypted: cipherPassword,
         empresa: {
           connect: {
             id: empresaId,
@@ -31,13 +24,13 @@ export class PersonalService {
         },
         role: {
           connect: {
-            name: role ?? 'Administrador',
+            name: role ?? "Administrador",
           },
         },
       },
     });
 
-    const result = prisma.personal.update({
+    const result = await prisma.personal.update({
       where: {
         id: personal.id,
       },
@@ -46,33 +39,29 @@ export class PersonalService {
       },
     });
 
-    return result;
+    return { ...result, password: decrypt(result?.passwordEncrypted ?? "") };
   }
 
   static async updatePersonal(id, data) {
-    const { nombre, password, email, telefono, direccion, role } = data;
-    const passwordEncripted = await encryptPassword(password);
+    const { nombre, password, email, telefono, direccion } = data;
+    const bcryptPassword = await encryptPassword(password);
+    const cipherPassword = encrypt(password);
 
-    const personal = prisma.personal.update({
+    const personal = await prisma.personal.update({
       where: {
         id,
       },
       data: {
         nombre,
         email,
-        password: passwordEncripted,
+        password: password.length > 0 ? bcryptPassword : undefined,
+        passwordEncrypted: password.length > 0 ? cipherPassword : undefined,
         telefono,
         direccion,
-        role: {
-          set: [],
-          connect: {
-            name: role,
-          },
-        },
       },
     });
 
-    return personal;
+    return { ...personal, password: decrypt(personal?.passwordEncrypted ?? "") };
   }
 
   static async deletePersonal(id) {
@@ -86,7 +75,7 @@ export class PersonalService {
   }
 
   static async getAllPersonal(empresaId) {
-    return prisma.personal.findMany({
+    const result = await prisma.personal.findMany({
       where: {
         empresa: {
           some: {
@@ -95,5 +84,10 @@ export class PersonalService {
         },
       },
     });
+
+    return result.map((personal) => ({
+      ...personal,
+      password: decrypt(personal?.passwordEncrypted ?? ""),
+    }));
   }
 }

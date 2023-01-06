@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -7,10 +7,7 @@ import {
   ButtonSave,
 } from "../../../../../../app/components/elements/Buttons";
 import { Title } from "../../../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../../../app/components/modules/Modal";
 import TableComplete from "../../../../../../app/components/modules/TableComplete";
 import { TemplateConfiguracionMaquinas } from "../../../../../../app/components/templates/mantenimiento/maestro-codigos/TemplateConfiguracionMaquinas";
 import TemplateMaestroCodigos from "../../../../../../app/components/templates/mantenimiento/TemplateMaestroCodigos";
@@ -19,12 +16,10 @@ import { axiosRequest } from "../../../../../../app/utils/axios-request";
 import { useQuery } from "react-query";
 import * as yup from "yup";
 import { useLocalStorage } from "../../../../../../app/hooks/useLocalStorage";
-import {  toast } from "react-toastify";
-import {
-  errorProps,
-  successProps,
-} from "../../../../../../app/utils/alert-config";
+import { toast } from "react-toastify";
+import { errorProps, successProps } from "../../../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert";
+import { FormContext } from "../../../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -32,14 +27,8 @@ const schema = yup.object().shape({
 });
 
 export default function ModelosMaquina() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
 
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
@@ -47,20 +36,41 @@ export default function ModelosMaquina() {
     modelo: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId } = useContext(FormContext);
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/configuracion/modelo", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest(
+      "put",
+      `/api/mantenimiento/maestro-de-codigos/configuracion/modelo/${elementId}`,
+      {
+        ...form,
+      }
+    );
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest(
-        "post",
-        "/api/mantenimiento/maestro-de-codigos/configuracion/modelo",
-        {
-          ...form,
-          empresaId: parseInt(empresaId),
-        }
-      );
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -72,7 +82,7 @@ export default function ModelosMaquina() {
     setForm({
       codigo: null,
       modelo: null,
-    })
+    });
     refetch();
   }, [changeData]);
 
@@ -109,10 +119,7 @@ export default function ModelosMaquina() {
           <Title text={"Modelo de Máquinas"}>
             <div className="flex gap-4">
               <ButtonImportData />
-              <ButtonAdd
-                text={"Nuevo modelo"}
-                onClick={() => openModal(false)}
-              />
+              <ButtonAdd text={"Nuevo modelo"} onClick={() => openModal(false)} />
             </div>
           </Title>
           {/* Table list */}
@@ -135,10 +142,12 @@ export default function ModelosMaquina() {
           <Input
             label="Código"
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+            defaultValue={isEdit ? updateForm?.codigo : undefined}
           />
           <Input
             label="Modelo"
             onChange={(e) => setForm({ ...form, modelo: e.target.value })}
+            defaultValue={isEdit ? updateForm?.modelo : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
@@ -146,7 +155,7 @@ export default function ModelosMaquina() {
           </div>
         </form>
       </Modal>
-       
+
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Máquina"}

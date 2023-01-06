@@ -90,7 +90,7 @@ export const ButtonCancel = ({ onClick }) => {
 
 export const ButtonImportData = ({ handleClick = undefined }) => {
   const [fileExcel, setfileExcel] = useState(null);
-  const { csvPath } = useContext(FormContext);
+  const { csvPath, setCsvPath } = useContext(FormContext);
   const fileInput = useRef(null);
 
   const handleFile = async (e) => {
@@ -105,13 +105,16 @@ export const ButtonImportData = ({ handleClick = undefined }) => {
 
   useEffect(() => {
     if (!fileExcel) return;
+
     const loadPromise = mutate.mutateAsync();
     toast
       .promise(loadPromise, {
         pending: "Importando data...",
       })
       .then(() => toast.success("Data importada correctamente", successProps));
+
     fileInput.current.value = "";
+    setCsvPath("");
   }, [fileExcel]);
 
   return (

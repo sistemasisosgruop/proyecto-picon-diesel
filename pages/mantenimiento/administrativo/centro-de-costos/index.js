@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -18,6 +18,7 @@ import { axiosRequest } from "../../../../app/utils/axios-request";
 import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   nombre: yup.string().required(),
@@ -33,16 +34,46 @@ export default function CentroCostos() {
     responsable: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  useEffect(() => {
+    setForm({
+      nombre: null,
+      responsable: null,
+    });
+  }, [resetInfo]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/centro-costos", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/centro-costos/${elementId}`, {
+      ...form,
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/centro-costos", {
-        ...form,
-        empresaId: parseInt(empresaId),
-      });
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
 
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -111,10 +142,15 @@ export default function CentroCostos() {
         {/* Form */}
         <form className="flex flex-col gap-5">
           <div className="flex gap-5">
-            <Input label="Nombre" onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
+            <Input
+              label="Nombre"
+              onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+              defaultValue={isEdit ? updateForm?.nombre : undefined}
+            />
             <Input
               label="Responsable"
               onChange={(e) => setForm({ ...form, responsable: e.target.value })}
+              defaultValue={isEdit ? updateForm?.responsable : undefined}
             />
           </div>
           <div className="w-full flex justify-end gap-5">

@@ -15,20 +15,18 @@ import {
   TableRH,
 } from "../../../../app/components/elements/Table";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TemplateGeneral from "../../../../app/components/templates/mantenimiento/TemplateGeneral";
 import { useModal } from "../../../../app/hooks/useModal";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { axiosRequest } from "../../../../app/utils/axios-request";
 import { useQuery } from "react-query";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
 import * as yup from "yup";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   nombre: yup.string().required(),
@@ -36,30 +34,46 @@ const schema = yup.object().shape({
 });
 
 export default function ParametrosGlobales() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     nombre: null,
     valor: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, setUpdateForm, elementId, setElementId } =
+    useContext(FormContext);
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/parametros", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/parametros/${elementId}`, {
+      ...form,
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/parametros", {
-        ...form,
-        empresaId: parseInt(empresaId),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -71,7 +85,7 @@ export default function ParametrosGlobales() {
     setForm({
       nombre: null,
       valor: null,
-    })
+    });
     refetch();
   }, [changeData]);
 
@@ -90,14 +104,13 @@ export default function ParametrosGlobales() {
     },
   });
 
+  const parametros = useMemo(() => data?.data, [data?.data]);
+
   return (
     <>
       <TemplateGeneral>
         <Title text={"Lista Parámetros Globales"}>
-          <ButtonAdd
-            text={"Nuevo Parámetro"}
-            onClick={() => openModal(false)}
-          />
+          <ButtonAdd text={"Nuevo Parámetro"} onClick={() => openModal(false)} />
         </Title>
         {/* Table list parametros glabales */}
         <Table>
@@ -105,11 +118,11 @@ export default function ParametrosGlobales() {
             <TableRH>
               <TableH>Parámetro</TableH>
               <TableH>Valor</TableH>
-              <TableH />
+              <TableH>{""}</TableH>
             </TableRH>
           </thead>
           <tbody>
-            {data?.data.map(({ nombre, valor }, index) => (
+            {parametros.map(({ nombre, valor, id }, index) => (
               <tr key={index}>
                 <TableD>
                   <div className="flex gap-2">
@@ -119,7 +132,14 @@ export default function ParametrosGlobales() {
                 </TableD>
                 <TableD>{valor}</TableD>
                 <TableDOptions>
-                  <ButtonEdit onClick={() => openModal(true)} />
+                  <ButtonEdit
+                    onClick={() => {
+                      openModal(true);
+                      const currentRow = parametros.find((parametro) => parametro.id === id);
+                      setElementId(id);
+                      setUpdateForm({ ...currentRow });
+                    }}
+                  />
                   <ButtonDelete onClick={() => setIsOpenModalDelete(true)} />
                 </TableDOptions>
               </tr>
@@ -137,10 +157,12 @@ export default function ParametrosGlobales() {
         <form className="flex flex-col gap-5">
           <Input
             label="Nombre"
+            defaultValue={isEdit ? updateForm?.nombre : undefined}
             onChange={(e) => setForm({ ...form, nombre: e.target.value })}
           />
           <Input
             label="Valor"
+            defaultValue={isEdit ? updateForm?.valor : undefined}
             onChange={(e) => setForm({ ...form, valor: e.target.value })}
           />
           <div className="w-full flex justify-end gap-5">
@@ -149,7 +171,7 @@ export default function ParametrosGlobales() {
           </div>
         </form>
       </Modal>
-       
+
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Parámetro"}

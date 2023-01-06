@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -7,10 +7,7 @@ import {
   ButtonSave,
 } from "../../../../../../app/components/elements/Buttons";
 import { Title } from "../../../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../../../app/components/modules/Modal";
 import TableComplete from "../../../../../../app/components/modules/TableComplete";
 import { TemplateConfiguracionInyector } from "../../../../../../app/components/templates/mantenimiento/maestro-codigos/TemplateConfiguracionInyector";
 import TemplateMaestroCodigos from "../../../../../../app/components/templates/mantenimiento/TemplateMaestroCodigos";
@@ -19,12 +16,10 @@ import { axiosRequest } from "../../../../../../app/utils/axios-request";
 import { useQuery } from "react-query";
 import * as yup from "yup";
 import { useLocalStorage } from "../../../../../../app/hooks/useLocalStorage";
-import {
-  errorProps,
-  successProps,
-} from "../../../../../../app/utils/alert-config";
+import { errorProps, successProps } from "../../../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
+import { FormContext } from "../../../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -32,14 +27,8 @@ const schema = yup.object().shape({
 });
 
 export default function DescripcionInyector() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
 
   const [empresaId] = useLocalStorage("empresaId");
 
@@ -48,20 +37,45 @@ export default function DescripcionInyector() {
     descripcion: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId } = useContext(FormContext);
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest(
+      "post",
+      "/api/mantenimiento/maestro-de-codigos/configuracion/descripcion-inyector",
+      {
+        ...form,
+        empresaId: parseInt(empresaId),
+      }
+    );
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest(
+      "put",
+      `/api/mantenimiento/maestro-de-codigos/configuracion/descripcion-inyector/${elementId}`,
+      {
+        ...form,
+      }
+    );
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest(
-        "post",
-        "/api/mantenimiento/maestro-de-codigos/configuracion/descripcion-inyector",
-        {
-          ...form,
-          empresaId: parseInt(empresaId),
-        }
-      );
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -73,7 +87,7 @@ export default function DescripcionInyector() {
     setForm({
       codigo: null,
       descripcion: null,
-    })
+    });
     refetch();
   }, [changeData]);
 
@@ -95,15 +109,11 @@ export default function DescripcionInyector() {
     return data;
   };
 
-  const { data, refetch } = useQuery(
-    "descripcionInyectores",
-    getDescripcionInyectores,
-    {
-      initialData: {
-        data: [],
-      },
-    }
-  );
+  const { data, refetch } = useQuery("descripcionInyectores", getDescripcionInyectores, {
+    initialData: {
+      data: [],
+    },
+  });
 
   const descripcionInyectores = useMemo(() => data?.data, [data?.data]);
 
@@ -114,10 +124,7 @@ export default function DescripcionInyector() {
           <Title text={"Descripcion de Inyector"}>
             <div className="flex gap-4">
               <ButtonImportData />
-              <ButtonAdd
-                text={"Nueva descripcion"}
-                onClick={() => openModal(false)}
-              />
+              <ButtonAdd text={"Nueva descripcion"} onClick={() => openModal(false)} />
             </div>
           </Title>
           {/* Table list */}
@@ -131,11 +138,7 @@ export default function DescripcionInyector() {
       </TemplateMaestroCodigos>
       {/* Modal agregar */}
       <Modal
-        title={
-          isEdit
-            ? "Editar Descripcion de Inyector"
-            : "Nueva Descripcion de Inyector"
-        }
+        title={isEdit ? "Editar Descripcion de Inyector" : "Nueva Descripcion de Inyector"}
         isOpen={isOpenModal}
         closeModal={closeModal}
       >
@@ -144,10 +147,12 @@ export default function DescripcionInyector() {
           <Input
             label="Código"
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+            defaultValue={isEdit ? updateForm?.codigo : undefined}
           />
           <Input
             label="Descripcion"
             onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+            defaultValue={isEdit ? updateForm?.descripcion : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
@@ -155,7 +160,7 @@ export default function DescripcionInyector() {
           </div>
         </form>
       </Modal>
-       
+
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar descripcion"}

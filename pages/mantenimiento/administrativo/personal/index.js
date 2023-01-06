@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -7,10 +7,7 @@ import {
   ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -21,6 +18,7 @@ import * as yup from "yup";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { toast } from "react-toastify";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   nombre: yup.string().required(),
@@ -30,16 +28,18 @@ const schema = yup.object().shape({
   puesto: yup.string().required(),
   direccion: yup.string().required(),
 });
+const schemaUpdate = yup.object().shape({
+  nombre: yup.string().required(),
+  email: yup.string().email().required(),
+  password: yup.string().nullable(),
+  telefono: yup.string().required(),
+  puesto: yup.string().required(),
+  direccion: yup.string().required(),
+});
 
 export default function Personal() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     nombre: null,
@@ -50,16 +50,37 @@ export default function Personal() {
     direccion: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/personal", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schemaUpdate.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/personal/${elementId}`, {
+      ...form,
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/personal", {
-        ...form,
-        empresaId: parseInt(empresaId),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -78,6 +99,17 @@ export default function Personal() {
     });
     refetch();
   }, [changeData]);
+
+  useEffect(() => {
+    setForm({
+      nombre: null,
+      email: null,
+      password: null,
+      telefono: null,
+      puesto: null,
+      direccion: null,
+    });
+  }, [resetInfo]);
 
   const columns = useMemo(
     () => [
@@ -124,10 +156,7 @@ export default function Personal() {
         <Title text={"Lista Personal"}>
           <div className="flex gap-4">
             <ButtonImportData />
-            <ButtonAdd
-              text={"Nuevo personal"}
-              onClick={() => openModal(false)}
-            />
+            <ButtonAdd text={"Nuevo personal"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -149,31 +178,37 @@ export default function Personal() {
           <Input
             label="Nombre"
             onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+            defaultValue={isEdit ? updateForm?.nombre : undefined}
           />
           <div className="flex gap-5">
             <Input
               label="Correo"
               type="email"
               onChange={(e) => setForm({ ...form, email: e.target.value })}
+              defaultValue={isEdit ? updateForm?.email : undefined}
             />
             <Input
               label="Contraseña"
               onChange={(e) => setForm({ ...form, password: e.target.value })}
+              defaultValue={isEdit ? updateForm?.password : undefined}
             />
           </div>
           <div className="flex gap-5">
             <Input
               label="Teléfono"
               onChange={(e) => setForm({ ...form, telefono: e.target.value })}
+              defaultValue={isEdit ? updateForm?.telefono : undefined}
             />
             <Input
               label="Dirección"
               onChange={(e) => setForm({ ...form, direccion: e.target.value })}
+              defaultValue={isEdit ? updateForm?.direccion : undefined}
             />
           </div>
           <Input
             label="Puesto"
             onChange={(e) => setForm({ ...form, puesto: e.target.value })}
+            defaultValue={isEdit ? updateForm?.puesto : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />

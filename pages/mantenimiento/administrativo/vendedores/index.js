@@ -1,5 +1,5 @@
 import { Checkbox, Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { useQuery } from "react-query";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   nombre: yup.string().required(),
@@ -41,19 +42,52 @@ export default function Vendedores() {
     telefono: null,
     direccion: null,
     comision: null,
-    aprovacionCotizacion: null,
+    aprovacionCotizacion: false,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  useEffect(() => {
+    setForm({
+      nombre: null,
+      email: null,
+      password: null,
+      telefono: null,
+      direccion: null,
+      comision: null,
+      aprovacionCotizacion: false,
+    });
+  }, [resetInfo]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/vendedores", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/vendedores/${elementId}`, {
+      ...form,
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/vendedores", {
-        ...form,
-        empresaId: parseInt(empresaId),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -69,7 +103,7 @@ export default function Vendedores() {
       telefono: null,
       direccion: null,
       comision: null,
-      aprovacionCotizacion: null,
+      aprovacionCotizacion: false,
     });
     refetch();
   }, [changeData]);
@@ -144,30 +178,36 @@ export default function Vendedores() {
               label="Correo"
               type="email"
               onChange={(e) => setForm({ ...form, email: e.target.value })}
+              defaultValue={isEdit ? updateForm?.email : undefined}
             />
             <Input
               label="Contraseña"
               onChange={(e) => setForm({ ...form, password: e.target.value })}
+              defaultValue={isEdit ? updateForm?.password : undefined}
             />
           </div>
           <div className="flex gap-5">
             <Input
               label="Teléfono"
               onChange={(e) => setForm({ ...form, telefono: e.target.value })}
+              defaultValue={isEdit ? updateForm?.telefono : undefined}
             />
             <Input
               label="Dirección"
               onChange={(e) => setForm({ ...form, direccion: e.target.value })}
+              defaultValue={isEdit ? updateForm?.direccion : undefined}
             />
           </div>
           <Input
             label="% Comision"
             type="number"
             onChange={(e) => setForm({ ...form, comision: e.target.value })}
+            defaultValue={isEdit ? updateForm?.comision : undefined}
           />
           <Checkbox
             label="Aprobación de cotización"
             onChange={(e) => setForm({ ...form, aprovacionCotizacion: e.target.checked })}
+            defaultChecked={isEdit && updateForm?.aprovacionCotizacion === "Si" ? true : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />

@@ -1,10 +1,13 @@
-import { useState } from "react";
+"use client"
+import { useContext, useState } from "react";
+import { FormContext } from "../../contexts/form.context";
 
 export const useModal = () => {
 
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const { resetInfo, setResetInfo } = useContext(FormContext);
 
 
   const openModal = (isEdit) => {
@@ -13,6 +16,7 @@ export const useModal = () => {
   };
 
   const closeModal = () => {
+    setResetInfo(!resetInfo);
     setIsOpenModal(false);
   };
 

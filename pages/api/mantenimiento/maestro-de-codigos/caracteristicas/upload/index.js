@@ -2,7 +2,6 @@ import { Formidable } from "formidable";
 import csv from "csvtojson";
 import prisma from "../../../../../../backend/prisma";
 
-
 export const config = {
   api: {
     bodyParser: false,
@@ -24,26 +23,27 @@ export default async function handler(req, res) {
     const empresaId = Number(req.query.empresaId);
     if (req.method === "POST") {
       const data = await readFile(req);
-
       const csvData = await csv().fromFile(data.files.file.filepath);
+      let count = 0;
 
       await Promise.all(
         csvData.map(async (item) => {
-          try {
-            const newRegister = await prisma.caracteristica.create({
+          await prisma.caracteristica
+            .create({
               data: {
                 empresaId,
                 codigo: item.codigo,
                 descripcion: item.descripcion,
                 abreviatura: item.abreviatura,
               },
+            })
+            .then(() => count++)
+            .catch(() => {
+              console.error(`Fallo al crear ${JSON.stringify(item)}`);
             });
-            console.log(`Nuevo registro creado con id: ${newRegister.id}`);
-          } catch (error) {
-            console.error(`Fallo al crear ${JSON.stringify(item)} ${error.message}`);
-          }
         })
       );
+      console.log(`Sincronizacion de datos terminada, registros creados: ${count}`);
 
       res.status(200).json({ message: "data sincronizada exitosamente" });
     }

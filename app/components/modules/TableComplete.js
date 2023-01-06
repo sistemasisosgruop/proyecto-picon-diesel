@@ -15,6 +15,7 @@ import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowUp, SearchNormal1 } from "icon
 import { ArrowLeftFast, ArrowRightFast } from "../elements/icons/Arrow";
 import { ButtonDelete, ButtonEdit } from "../elements/Buttons";
 import { FormContext } from "../../../contexts/form.context";
+import { axiosRequest } from "../../utils/axios-request";
 
 function GlobalFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) {
   const count = preGlobalFilteredRows.length;
@@ -67,7 +68,7 @@ fuzzyTextFilterFn.autoRemove = (val) => !val;
 
 // Our table component
 function Table({ columns, data, openModal, setIsOpenModalDelete }) {
-  const { setUpdateForm, setElementId } = useContext(FormContext);
+  const { setUpdateForm, setElementId, needRefetch, getPath } = useContext(FormContext);
   const filterTypes = useMemo(
     () => ({
       fuzzyText: fuzzyTextFilterFn,
@@ -171,12 +172,19 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                 })}
                 <TableDOptions>
                   <ButtonEdit
-                    onClick={() => {
-                      openModal(true);
+                    onClick={async () => {
                       const { id } = row.values;
-                      const currentRow = data.find((item) => item.id === id);
+                      let currentRow;
                       setElementId(id);
-                      setUpdateForm({ ...currentRow });
+                      openModal(true);
+
+                      if (needRefetch === true) {
+                        currentRow = await axiosRequest("get", `${getPath}/${id}`);
+                        setUpdateForm({ ...currentRow.data });
+                      } else {
+                        currentRow = data.find((item) => item.id === id);
+                        setUpdateForm({ ...currentRow });
+                      }
                     }}
                   />
                   <ButtonDelete onClick={() => setIsOpenModalDelete(true)} />

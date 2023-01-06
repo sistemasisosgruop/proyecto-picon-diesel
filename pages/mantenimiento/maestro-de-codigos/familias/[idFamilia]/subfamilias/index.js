@@ -152,12 +152,12 @@ export default function SubFamilias({ familia }) {
           <Input
             label="Código"
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
-            defaultValue={isEdit ? updateForm.codigo : undefined}
+            defaultValue={isEdit ? updateForm?.codigo : undefined}
           />
           <Input
             label="Descripción"
             onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
-            defaultValue={isEdit ? updateForm.descripcion : undefined}
+            defaultValue={isEdit ? updateForm?.descripcion : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />

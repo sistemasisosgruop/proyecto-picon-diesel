@@ -1,15 +1,8 @@
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
-import {
-  ButtonAdd,
-  ButtonCancel,
-  ButtonSave,
-} from "../../../../app/components/elements/Buttons";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { ButtonAdd, ButtonCancel, ButtonSave } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  ModalConfirmDelete,
-  Modal,
-} from "../../../../app/components/modules/Modal";
+import { ModalConfirmDelete, Modal } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateGeneral from "../../../../app/components/templates/mantenimiento/TemplateGeneral";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -19,7 +12,8 @@ import { useQuery } from "react-query";
 import * as yup from "yup";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -27,14 +21,8 @@ const schema = yup.object().shape({
 });
 
 export default function Paises() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
 
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
@@ -42,16 +30,37 @@ export default function Paises() {
     nombre: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId } = useContext(FormContext);
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/paises", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/paises/${elementId}`, {
+      ...form,
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/paises", {
-        ...form,
-        empresaId: parseInt(empresaId),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -63,7 +72,7 @@ export default function Paises() {
     setForm({
       codigo: null,
       nombre: null,
-    })
+    });
     refetch();
   }, [changeData]);
 
@@ -78,10 +87,7 @@ export default function Paises() {
   );
 
   const getPaises = async () => {
-    const { data } = await axiosRequest(
-      "get",
-      `/api/mantenimiento/paises?empresaId=${empresaId}`
-    );
+    const { data } = await axiosRequest("get", `/api/mantenimiento/paises?empresaId=${empresaId}`);
 
     return data;
   };
@@ -120,10 +126,12 @@ export default function Paises() {
           <Input
             label="Codigo"
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+            defaultValue={isEdit ? updateForm?.codigo : undefined}
           />
           <Input
             label="Nombre"
             onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+            defaultValue={isEdit ? updateForm?.nombre : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
@@ -131,7 +139,6 @@ export default function Paises() {
           </div>
         </form>
       </Modal>
-       
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar País"}

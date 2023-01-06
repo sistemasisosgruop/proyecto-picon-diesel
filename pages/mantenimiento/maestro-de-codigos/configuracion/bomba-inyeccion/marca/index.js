@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -7,10 +7,7 @@ import {
   ButtonSave,
 } from "../../../../../../app/components/elements/Buttons";
 import { Title } from "../../../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../../../app/components/modules/Modal";
 import TableComplete from "../../../../../../app/components/modules/TableComplete";
 import { TemplateConfiguracionBombaInyeccion } from "../../../../../../app/components/templates/mantenimiento/maestro-codigos/TemplateConfiguracionBombaInyeccion";
 import TemplateMaestroCodigos from "../../../../../../app/components/templates/mantenimiento/TemplateMaestroCodigos";
@@ -19,12 +16,10 @@ import { axiosRequest } from "../../../../../../app/utils/axios-request";
 import { useQuery } from "react-query";
 import * as yup from "yup";
 import { useLocalStorage } from "../../../../../../app/hooks/useLocalStorage";
-import {
-  errorProps,
-  successProps,
-} from "../../../../../../app/utils/alert-config";
-import {  toast } from "react-toastify";
+import { errorProps, successProps } from "../../../../../../app/utils/alert-config";
+import { toast } from "react-toastify";
 import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert";
+import { FormContext } from "../../../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -32,14 +27,8 @@ const schema = yup.object().shape({
 });
 
 export default function MarcasBombaInyeccion() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
 
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
@@ -47,20 +36,45 @@ export default function MarcasBombaInyeccion() {
     marca: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId } = useContext(FormContext);
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest(
+      "post",
+      "/api/mantenimiento/maestro-de-codigos/configuracion/marca-fabrica-sistema-inyeccion",
+      {
+        ...form,
+        empresaId: parseInt(empresaId),
+      }
+    );
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest(
+      "put",
+      `/api/mantenimiento/maestro-de-codigos/configuracion/marca-fabrica-sistema-inyeccion/${elementId}`,
+      {
+        ...form,
+      }
+    );
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest(
-        "post",
-        "/api/mantenimiento/maestro-de-codigos/configuracion/marca-fabrica-sistema-inyeccion",
-        {
-          ...form,
-          empresaId: parseInt(empresaId),
-        }
-      );
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -72,7 +86,7 @@ export default function MarcasBombaInyeccion() {
     setForm({
       codigo: null,
       marca: null,
-    })
+    });
     refetch();
   }, [changeData]);
 
@@ -94,15 +108,11 @@ export default function MarcasBombaInyeccion() {
     return data;
   };
 
-  const { data, refetch } = useQuery(
-    "marcasSistemasInyeccion",
-    getMarcasSistemaInyeccion,
-    {
-      initialData: {
-        data: [],
-      },
-    }
-  );
+  const { data, refetch } = useQuery("marcasSistemasInyeccion", getMarcasSistemaInyeccion, {
+    initialData: {
+      data: [],
+    },
+  });
 
   const marcasSistemasInyeccion = useMemo(() => data?.data, [data?.data]);
 
@@ -113,10 +123,7 @@ export default function MarcasBombaInyeccion() {
           <Title text={"Marcas de Fabricas de Sistemas de Inyeccion"}>
             <div className="flex gap-4">
               <ButtonImportData />
-              <ButtonAdd
-                text={"Nueva marca"}
-                onClick={() => openModal(false)}
-              />
+              <ButtonAdd text={"Nueva marca"} onClick={() => openModal(false)} />
             </div>
           </Title>
           {/* Table list */}
@@ -130,11 +137,7 @@ export default function MarcasBombaInyeccion() {
       </TemplateMaestroCodigos>
       {/* Modal agregar */}
       <Modal
-        title={
-          isEdit
-            ? "Editar Marca Bomba de Inyeccion"
-            : "Nueva Marca Bomba de Inyeccion"
-        }
+        title={isEdit ? "Editar Marca Bomba de Inyeccion" : "Nueva Marca Bomba de Inyeccion"}
         isOpen={isOpenModal}
         closeModal={closeModal}
       >
@@ -143,10 +146,12 @@ export default function MarcasBombaInyeccion() {
           <Input
             label="Código"
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+            defaultValue={isEdit ? updateForm?.codigo : undefined}
           />
           <Input
             label="Marca"
             onChange={(e) => setForm({ ...form, marca: e.target.value })}
+            defaultValue={isEdit ? updateForm?.marca : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
@@ -154,7 +159,7 @@ export default function MarcasBombaInyeccion() {
           </div>
         </form>
       </Modal>
-       
+
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar marca"}

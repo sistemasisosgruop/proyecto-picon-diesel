@@ -1,5 +1,6 @@
+"use client";
 import { Input, Option, Select } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -18,6 +19,7 @@ import * as yup from "yup";
 import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   nombre: yup.string().required(),
@@ -25,7 +27,7 @@ const schema = yup.object().shape({
   numeroDocumento: yup.number().required(),
   email: yup.string().email().required(),
   telefono: yup.string().required(),
-  tipo: yup.number().required(),
+  tipoClienteId: yup.number().required(),
 });
 
 export default function Clientes() {
@@ -37,21 +39,65 @@ export default function Clientes() {
     email: null,
     tipoDocumento: null,
     telefono: null,
-    tipo: null,
+    tipoClienteId: null,
     numeroDocumento: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, resetInfo, setGetPath, setNeedRefetch } = useContext(FormContext);
+
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  useEffect(() => {
+    setForm({
+      nombre: null,
+      email: null,
+      tipoDocumento: null,
+      telefono: null,
+      tipoClienteId: null,
+      numeroDocumento: null,
+    });
+  }, [resetInfo]);
+
+  useEffect(() => {
+    setGetPath("/api/mantenimiento/clientes");
+    setNeedRefetch(true);
+
+    return () => {
+      setNeedRefetch(false);
+      setGetPath(null);
+    };
+  }, []);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/clientes", {
+      ...form,
+      empresaId: parseInt(empresaId),
+      tipoClienteId: parseInt(form.tipoClienteId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    console.log(form)
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/clientes/${elementId}`, {
+      ...form,
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/clientes", {
-        ...form,
-        empresaId: parseInt(empresaId),
-        tipoClienteId: parseInt(form.tipo),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -65,7 +111,7 @@ export default function Clientes() {
       email: null,
       tipoDocumento: null,
       telefono: null,
-      tipo: null,
+      tipoClienteId: null,
       numeroDocumento: null,
     });
     refetch();
@@ -151,10 +197,12 @@ export default function Clientes() {
           <Input
             label="Nombre o Razon Social"
             onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+            defaultValue={isEdit ? updateForm?.nombre : undefined}
           />
           <div className="flex gap-5">
             <Select
               label="Tipo de documento"
+              value={isEdit ? updateForm?.tipoDocumento.toLowerCase() : undefined}
               onChange={(value) =>
                 setForm({
                   ...form,
@@ -169,6 +217,7 @@ export default function Clientes() {
               label="N° de documento"
               type="number"
               onChange={(e) => setForm({ ...form, numeroDocumento: e.target.value })}
+              defaultValue={isEdit ? updateForm?.numeroDocumento : undefined}
             />
           </div>
           <div className="flex gap-5">
@@ -176,13 +225,19 @@ export default function Clientes() {
               label="Correo"
               type="email"
               onChange={(e) => setForm({ ...form, email: e.target.value })}
+              defaultValue={isEdit ? updateForm?.email : undefined}
             />
             <Input
               label="Teléfono"
               onChange={(e) => setForm({ ...form, telefono: e.target.value })}
+              defaultValue={isEdit ? updateForm?.telefono : undefined}
             />
           </div>
-          <Select label="Tipo" onChange={(value) => setForm({ ...form, tipo: value })}>
+          <Select
+            label="Tipo"
+            onChange={(value) => setForm({ ...form, tipoClienteId: value })}
+            value={isEdit ? updateForm?.tipoClienteId : undefined}
+          >
             {tipoClientes?.data?.map((item) => {
               return (
                 <Option key={item.id} value={item.id}>
