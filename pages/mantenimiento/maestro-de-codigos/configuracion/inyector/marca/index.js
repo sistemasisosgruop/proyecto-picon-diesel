@@ -37,7 +37,7 @@ export default function MarcasInyector() {
     marca: null,
   });
   const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId } = useContext(FormContext);
+  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -123,7 +123,13 @@ export default function MarcasInyector() {
         <TemplateConfiguracionInyector>
           <Title text={"Marcas de fabricas de Inyector"}>
             <div className="flex gap-4">
-              <ButtonImportData />
+              <ButtonImportData
+                handleClick={() =>
+                  setCsvPath(
+                    `/api/mantenimiento/maestro-de-codigos/configuracion/marca-fabrica-inyector/upload?empresaId=${empresaId}`
+                  )
+                }
+              />
               <ButtonAdd text={"Nueva marca"} onClick={() => openModal(false)} />
             </div>
           </Title>

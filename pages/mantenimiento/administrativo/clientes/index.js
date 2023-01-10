@@ -82,7 +82,6 @@ export default function Clientes() {
   };
 
   const updateRegistro = async () => {
-    console.log(form)
     await schema.validate(form, { abortEarly: false });
     await axiosRequest("put", `/api/mantenimiento/clientes/${elementId}`, {
       ...form,
@@ -202,7 +201,7 @@ export default function Clientes() {
           <div className="flex gap-5">
             <Select
               label="Tipo de documento"
-              value={isEdit ? updateForm?.tipoDocumento.toLowerCase() : undefined}
+              value={isEdit ? updateForm?.tipoDocumento?.toLowerCase() : undefined}
               onChange={(value) =>
                 setForm({
                   ...form,

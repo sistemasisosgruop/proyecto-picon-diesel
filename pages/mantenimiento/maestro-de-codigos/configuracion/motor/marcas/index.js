@@ -36,7 +36,7 @@ export default function MarcasMotor() {
     marca: null,
   });
   const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId } = useContext(FormContext);
+  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -118,7 +118,11 @@ export default function MarcasMotor() {
         <TemplateConfiguracionMotor>
           <Title text={"Marcas de Motores"}>
             <div className="flex gap-4">
-              <ButtonImportData />
+              <ButtonImportData                 handleClick={() =>
+                  setCsvPath(
+                    `/api/mantenimiento/maestro-de-codigos/configuracion/marca-motor/upload?empresaId=${empresaId}`
+                  )
+                }/>
               <ButtonAdd text={"Nueva marca"} onClick={() => openModal(false)} />
             </div>
           </Title>

@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { ButtonAdd, ButtonCancel, ButtonSave } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
 import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
@@ -13,6 +13,7 @@ import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { useQuery } from "react-query";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -29,16 +30,46 @@ export default function DocumentosAdministrativos() {
     abreviatura: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  useEffect(() => {
+    setForm({
+      codigo: null,
+      nombre: null,
+      abreviatura: null,
+    });
+  }, [resetInfo]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/documentos-administrativos", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/documentos-administrativos/${elementId}`, {
+      ...form,
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/documentos-administrativos", {
-        ...form,
-        empresaId: parseInt(empresaId),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -105,12 +136,21 @@ export default function DocumentosAdministrativos() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input label="Código" onChange={(e) => setForm({ ...form, codigo: e.target.value })} />
+          <Input
+            label="Código"
+            onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+            defaultValue={isEdit ? updateForm?.codigo : undefined}
+          />
           <div className="flex gap-5">
-            <Input label="Nombre" onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
+            <Input
+              label="Nombre"
+              onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+              defaultValue={isEdit ? updateForm?.nombre : undefined}
+            />
             <Input
               label="Abreviatura"
               onChange={(e) => setForm({ ...form, abreviatura: e.target.value })}
+              defaultValue={isEdit ? updateForm?.abreviatura : undefined}
             />
           </div>
           <div className="w-full flex justify-end gap-5">

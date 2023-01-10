@@ -35,12 +35,7 @@ export default function Familias() {
     descripcion: null,
   });
   const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, setCsvPath, setUpdateForm } = useContext(FormContext);
-
-  useEffect(() => {
-    console.log('familias... ',updateForm);
-  }, []);
-
+  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
 
   const saveData = async () => {
     try {
@@ -51,7 +46,6 @@ export default function Familias() {
       }
       setChangeData(!changeData);
       closeModal();
-      setUpdateForm(null);
     } catch (error) {
       toast.error(<ToastAlert error={error} />, errorProps);
     }

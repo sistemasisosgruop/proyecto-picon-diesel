@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -18,6 +18,7 @@ import * as yup from "yup";
 import { toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   tipo: yup.string().required(),
@@ -31,17 +32,44 @@ export default function TiposClientes() {
     tipo: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  useEffect(() => {
+    setForm({
+      tipo: null,
+    });
+  }, [resetInfo]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/clientes/tipos", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/clientes/tipos/${elementId}`, {
+      ...form,
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      console.log(empresaId);
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/clientes/tipos", {
-        ...form,
-        empresaId: parseInt(empresaId),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -107,7 +135,11 @@ export default function TiposClientes() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input label="Tipo de cliente" onChange={(e) => setForm({ tipo: e.target.value })} />
+          <Input
+            label="Tipo de cliente"
+            onChange={(e) => setForm({ tipo: e.target.value })}
+            defaultValue={isEdit ? updateForm?.tipo : undefined}
+          />
 
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />

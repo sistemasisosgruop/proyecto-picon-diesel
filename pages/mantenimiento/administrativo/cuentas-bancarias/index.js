@@ -1,5 +1,5 @@
 import { Input, Option, Select } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -18,9 +18,10 @@ import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import * as yup from "yup";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
-  banco: yup.number().required(),
+  bancoId: yup.number().required(),
   numeroCuenta: yup.string().required(),
   tipoCuenta: yup.string().required(),
   moneda: yup.string().required(),
@@ -31,23 +32,64 @@ export default function CuentasBancarias() {
     useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
-    banco: null,
+    bancoId: null,
     numeroCuenta: null,
     tipoCuenta: null,
     moneda: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, resetInfo, setGetPath, setNeedRefetch } = useContext(FormContext);
+
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  useEffect(() => {
+    setForm({
+      bancoId: null,
+      numeroCuenta: null,
+      tipoCuenta: null,
+      moneda: null,
+    });
+  }, [resetInfo]);
+
+  useEffect(() => {
+    setGetPath("/api/mantenimiento/bancos/cuentas");
+    setNeedRefetch(true);
+
+    return () => {
+      setNeedRefetch(false);
+      setGetPath(null);
+    };
+  }, []);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/bancos/cuentas", {
+      ...form,
+      empresaId: parseInt(empresaId),
+      bancoId: parseInt(form.bancoId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/bancos/cuentas/${elementId}`, {
+      ...form,
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/bancos/cuentas", {
-        ...form,
-        empresaId: parseInt(empresaId),
-        bancoId: parseInt(form.banco),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -57,7 +99,7 @@ export default function CuentasBancarias() {
 
   useEffect(() => {
     setForm({
-      banco: null,
+      bancoId: null,
       numeroCuenta: null,
       tipoCuenta: null,
       moneda: null,
@@ -141,10 +183,19 @@ export default function CuentasBancarias() {
           <Input
             label="N° de cuenta"
             onChange={(e) => setForm({ ...form, numeroCuenta: e.target.value })}
+            defaultValue={isEdit ? updateForm?.numeroCuenta : undefined}
           />
-          <Input label="Tipo" onChange={(e) => setForm({ ...form, tipoCuenta: e.target.value })} />
+          <Input
+            label="Tipo"
+            onChange={(e) => setForm({ ...form, tipoCuenta: e.target.value })}
+            defaultValue={isEdit ? updateForm?.tipoCuenta : undefined}
+          />
           <div className="flex gap-5">
-            <Select label="Banco" onChange={(value) => setForm({ ...form, banco: value })}>
+            <Select
+              label="Banco"
+              onChange={(value) => setForm({ ...form, bancoId: value })}
+              value={isEdit ? updateForm?.bancoId : undefined}
+            >
               {bancos?.map((item) => {
                 return (
                   <Option key={item.id} value={item.id}>
@@ -153,7 +204,11 @@ export default function CuentasBancarias() {
                 );
               })}
             </Select>
-            <Input label="Moneda" onChange={(e) => setForm({ ...form, moneda: e.target.value })} />
+            <Input
+              label="Moneda"
+              onChange={(e) => setForm({ ...form, moneda: e.target.value })}
+              defaultValue={isEdit ? updateForm?.moneda : undefined}
+            />
           </div>
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />

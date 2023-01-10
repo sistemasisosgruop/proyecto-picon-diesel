@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { ButtonAdd, ButtonCancel, ButtonSave } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
 import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
@@ -13,6 +13,7 @@ import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { useQuery } from "react-query";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -30,16 +31,46 @@ export default function Detracciones() {
     porcentaje: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  useEffect(() => {
+    setForm({
+      codigo: null,
+      definicion: null,
+      porcentaje: null,
+    });
+  }, [resetInfo]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/detracciones", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/detracciones/${elementId}`, {
+      ...form,
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/detracciones", {
-        ...form,
-        empresaId: parseInt(empresaId),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -106,16 +137,22 @@ export default function Detracciones() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input label="Código" onChange={(e) => setForm({ ...form, codigo: e.target.value })} />
+          <Input
+            label="Código"
+            onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+            defaultValue={isEdit ? updateForm?.codigo : undefined}
+          />
           <div className="flex gap-5">
             <Input
               label="Definición"
               onChange={(e) => setForm({ ...form, definicion: e.target.value })}
+              defaultValue={isEdit ? updateForm?.definicion : undefined}
             />
             <Input
               label="Porcentaje"
               type={"number"}
               onChange={(e) => setForm({ ...form, porcentaje: e.target.value })}
+              defaultValue={isEdit ? updateForm?.porcentaje : undefined}
             />
           </div>
           <div className="w-full flex justify-end gap-5">

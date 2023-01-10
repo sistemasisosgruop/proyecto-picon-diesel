@@ -36,7 +36,7 @@ export default function FabricasMaquina() {
     fabrica: null,
   });
   const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId } = useContext(FormContext);
+  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -118,7 +118,13 @@ export default function FabricasMaquina() {
         <TemplateConfiguracionMaquinas>
           <Title text={"Fabricas de Máquinas"}>
             <div className="flex gap-4">
-              <ButtonImportData />
+              <ButtonImportData
+                handleClick={() =>
+                  setCsvPath(
+                    `/api/mantenimiento/maestro-de-codigos/configuracion/fabrica/upload?empresaId=${empresaId}`
+                  )
+                }
+              />
               <ButtonAdd text={"Nueva fabrica"} onClick={() => openModal(false)} />
             </div>
           </Title>

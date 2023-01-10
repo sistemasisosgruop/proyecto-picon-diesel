@@ -1,5 +1,5 @@
 import { Input, Textarea } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -7,10 +7,7 @@ import {
   ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateImportacion from "../../../../app/components/templates/mantenimiento/TemplateImportacion";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -18,9 +15,10 @@ import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { axiosRequest } from "../../../../app/utils/axios-request";
 import { useQuery } from "react-query";
 import * as yup from "yup";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   nombre: yup.string().required(),
@@ -30,14 +28,8 @@ const schema = yup.object().shape({
 });
 
 export default function AgenteAduanas() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     nombre: null,
@@ -46,17 +38,47 @@ export default function AgenteAduanas() {
     observaciones: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  useEffect(() => {
+    setForm({
+      nombre: null,
+      telefono: null,
+      email: null,
+      observaciones: null,
+    });
+  }, [resetInfo]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/agente-aduanas", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/agente-aduanas/${elementId}`, {
+      ...form,
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      console.log(empresaId);
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/agente-aduanas", {
-        ...form,
-        empresaId: parseInt(empresaId),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -129,23 +151,25 @@ export default function AgenteAduanas() {
           <Input
             label="Nombre"
             onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+            defaultValue={isEdit ? updateForm?.nombre : undefined}
           />
           <div className="flex gap-5">
             <Input
               label="Correo"
               type="email"
               onChange={(e) => setForm({ ...form, email: e.target.value })}
+              defaultValue={isEdit ? updateForm?.email : undefined}
             />
             <Input
               label="Teléfono"
               onChange={(e) => setForm({ ...form, telefono: e.target.value })}
+              defaultValue={isEdit ? updateForm?.telefono : undefined}
             />
           </div>
           <Textarea
             label="Observaciones"
-            onChange={(e) =>
-              setForm({ ...form, observaciones: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, observaciones: e.target.value })}
+            defaultValue={isEdit ? updateForm?.observaciones : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
@@ -153,7 +177,7 @@ export default function AgenteAduanas() {
           </div>
         </form>
       </Modal>
-       
+
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Agente de aduanas"}

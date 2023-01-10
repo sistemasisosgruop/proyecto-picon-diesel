@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -7,20 +7,18 @@ import {
   ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateInventario from "../../../../app/components/templates/mantenimiento/TemplateInventario";
 import { useModal } from "../../../../app/hooks/useModal";
 import * as yup from "yup";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { axiosRequest } from "../../../../app/utils/axios-request";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { useQuery } from "react-query";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   placa: yup.string().required(),
@@ -33,14 +31,8 @@ const schema = yup.object().shape({
 });
 
 export default function Vehiculos() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     placa: null,
@@ -52,16 +44,50 @@ export default function Vehiculos() {
     descripcion: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  useEffect(() => {
+    setForm({
+      placa: null,
+      marca: null,
+      modelo: null,
+      tipo: null,
+      color: null,
+      tarjetaPropiedad: null,
+      descripcion: null,
+    });
+  }, [resetInfo]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/vehiculos", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/vehiculos/${elementId}`, {
+      ...form,
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/vehiculos", {
-        ...form,
-        empresaId: parseInt(empresaId),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -119,10 +145,7 @@ export default function Vehiculos() {
         <Title text={"Lista Vehículos"}>
           <div className="flex gap-4">
             <ButtonImportData />
-            <ButtonAdd
-              text={"Nuevo vehículo"}
-              onClick={() => openModal(false)}
-            />
+            <ButtonAdd text={"Nuevo vehículo"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -145,37 +168,42 @@ export default function Vehiculos() {
             <Input
               label="Placa"
               onChange={(e) => setForm({ ...form, placa: e.target.value })}
+              defaultValue={isEdit ? updateForm?.placa : undefined}
             />
             <Input
               label="Marca"
               onChange={(e) => setForm({ ...form, marca: e.target.value })}
+              defaultValue={isEdit ? updateForm?.marca : undefined}
             />
           </div>
           <div className="flex gap-5">
             <Input
               label="Modelo"
               onChange={(e) => setForm({ ...form, modelo: e.target.value })}
+              defaultValue={isEdit ? updateForm?.modelo : undefined}
             />
             <Input
               label="Tipo"
               onChange={(e) => setForm({ ...form, tipo: e.target.value })}
+              defaultValue={isEdit ? updateForm?.tipo : undefined}
             />
           </div>
           <div className="flex gap-5">
             <Input
               label="Color"
               onChange={(e) => setForm({ ...form, color: e.target.value })}
+              defaultValue={isEdit ? updateForm?.color : undefined}
             />
             <Input
               label="Tarjeta de propiedad"
-              onChange={(e) =>
-                setForm({ ...form, tarjetaPropiedad: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, tarjetaPropiedad: e.target.value })}
+              defaultValue={isEdit ? updateForm?.tarjetaPropiedad : undefined}
             />
           </div>
           <Input
             label="Descripción"
             onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+            defaultValue={isEdit ? updateForm?.descripcion : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
@@ -183,7 +211,7 @@ export default function Vehiculos() {
           </div>
         </form>
       </Modal>
-       
+
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Vehículo"}

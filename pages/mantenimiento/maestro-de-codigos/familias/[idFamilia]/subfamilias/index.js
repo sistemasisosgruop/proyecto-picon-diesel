@@ -22,6 +22,7 @@ import { errorProps, successProps } from "../../../../../../app/utils/alert-conf
 import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert";
 import axios from "axios";
 import { FormContext } from "../../../../../../contexts/form.context";
+import { useLocalStorage } from "../../../../../../app/hooks/useLocalStorage";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -32,13 +33,13 @@ export default function SubFamilias({ familia }) {
   const { codigo, id } = familia;
   const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
     useModal();
-
+  const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     codigo: null,
     descripcion: null,
   });
   const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId } = useContext(FormContext);
+  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -125,7 +126,13 @@ export default function SubFamilias({ familia }) {
         </Link>
         <Title text={"Lista Subfamilias"}>
           <div className="flex gap-4">
-            <ButtonImportData />
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(
+                  `/api/mantenimiento/maestro-de-codigos/familias/subfamilias/upload?empresaId=${empresaId}`
+                )
+              }
+            />
             <ButtonAdd text={"Nueva subfamilia"} onClick={() => openModal(false)} />
           </div>
         </Title>

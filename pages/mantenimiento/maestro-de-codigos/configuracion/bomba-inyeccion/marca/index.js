@@ -36,7 +36,7 @@ export default function MarcasBombaInyeccion() {
     marca: null,
   });
   const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId } = useContext(FormContext);
+  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -122,7 +122,13 @@ export default function MarcasBombaInyeccion() {
         <TemplateConfiguracionBombaInyeccion>
           <Title text={"Marcas de Fabricas de Sistemas de Inyeccion"}>
             <div className="flex gap-4">
-              <ButtonImportData />
+              <ButtonImportData
+                handleClick={() =>
+                  setCsvPath(
+                    `/api/mantenimiento/maestro-de-codigos/configuracion/marca-fabrica-sistema-inyeccion/upload?empresaId=${empresaId}`
+                  )
+                }
+              />
               <ButtonAdd text={"Nueva marca"} onClick={() => openModal(false)} />
             </div>
           </Title>

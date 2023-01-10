@@ -1,5 +1,5 @@
 import { Input, Textarea } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -7,10 +7,7 @@ import {
   ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateImportacion from "../../../../app/components/templates/mantenimiento/TemplateImportacion";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -18,9 +15,10 @@ import * as yup from "yup";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { axiosRequest } from "../../../../app/utils/axios-request";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { useQuery } from "react-query";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   nombre: yup.string().required(),
@@ -29,14 +27,8 @@ const schema = yup.object().shape({
 });
 
 export default function Incoterms() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     nombre: null,
@@ -44,16 +36,47 @@ export default function Incoterms() {
     descripcion: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  useEffect(() => {
+    setForm({
+      nombre: null,
+      codigo: null,
+      descripcion: null,
+    });
+  }, [resetInfo]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/incoterms", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/incoterms/${elementId}`, {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/incoterms", {
-        ...form,
-        empresaId: parseInt(empresaId),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -124,14 +147,17 @@ export default function Incoterms() {
           <Input
             label="Código"
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+            defaultValue={isEdit ? updateForm?.codigo : undefined}
           />
           <Input
             label="Nombre"
             onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+            defaultValue={isEdit ? updateForm?.nombre : undefined}
           />
           <Textarea
             label="Descripción"
             onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+            defaultValue={isEdit ? updateForm?.descripcion : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
@@ -139,7 +165,7 @@ export default function Incoterms() {
           </div>
         </form>
       </Modal>
-       
+
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Item de Incoterms"}

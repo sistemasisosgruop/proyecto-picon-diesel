@@ -173,6 +173,7 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                 <TableDOptions>
                   <ButtonEdit
                     onClick={async () => {
+                      setUpdateForm();
                       const { id } = row.values;
                       let currentRow;
                       setElementId(id);

@@ -36,7 +36,7 @@ export default function DescripcionBombaInyeccion() {
     descripcion: null,
   });
   const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId } = useContext(FormContext);
+  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -122,7 +122,13 @@ export default function DescripcionBombaInyeccion() {
         <TemplateConfiguracionBombaInyeccion>
           <Title text={"Descripcion de bomba de Inyeccion"}>
             <div className="flex gap-4">
-              <ButtonImportData />
+              <ButtonImportData
+                handleClick={() =>
+                  setCsvPath(
+                    `/api/mantenimiento/maestro-de-codigos/configuracion/bomba-inyeccion/upload?empresaId=${empresaId}`
+                  )
+                }
+              />
               <ButtonAdd text={"Nueva descripcion"} onClick={() => openModal(false)} />
             </div>
           </Title>

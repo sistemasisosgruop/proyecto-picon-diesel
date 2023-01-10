@@ -43,10 +43,6 @@ export default function Caracteristicas() {
     setForm(updateForm);
   }, [updateForm]);
 
-  useEffect(() => {
-    console.log('caracteristicas... ',updateForm);
-  }, []);
-
   const createRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
     await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/caracteristicas", {

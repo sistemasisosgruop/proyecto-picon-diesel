@@ -3,11 +3,24 @@ import { generateCodePresupuestoMaterial } from "../../utils/codes";
 
 export class MaterialPresupuestoService {
   static async create(body) {
-    const { empresaId, ...data } = body;
+    const { empresaId, familiaId, subFamiliaId, ...data } = body;
+    const familia = await prisma.familiaPresupuesto.findUnique({
+      where: {
+        id: parseInt(familiaId),
+      },
+    });
+
+    const subFamilia = await prisma.subFamiliaPresupuesto.findUnique({
+      where: {
+        id: parseInt(subFamiliaId),
+      },
+    });
+
     const material = await prisma.materialPresupuesto.create({
       data: {
         ...data,
-        empresaId,
+        empresaId: parseInt(empresaId),
+        correlativo: `${familia.codigo}${subFamilia.codigo}`,
       },
     });
 
@@ -22,12 +35,26 @@ export class MaterialPresupuestoService {
   }
 
   static async update(id, body) {
+    const { familiaId, subFamiliaId, ...data } = body;
+    const familia = await prisma.familiaPresupuesto.findUnique({
+      where: {
+        id: parseInt(familiaId),
+      },
+    });
+
+    const subFamilia = await prisma.subFamiliaPresupuesto.findUnique({
+      where: {
+        id: parseInt(subFamiliaId),
+      },
+    });
+
     const material = await prisma.materialPresupuesto.update({
       where: {
         id,
       },
       data: {
-        ...body,
+        ...data,
+        correlativo: `${familia.codigo}${subFamilia.codigo}`,
       },
     });
 
@@ -64,10 +91,10 @@ export class MaterialPresupuestoService {
     });
   }
 
-  static async get(codigo) {
+  static async get(id) {
     const material = await prisma.materialPresupuesto.findUnique({
       where: {
-        codigo,
+        id,
       },
     });
 

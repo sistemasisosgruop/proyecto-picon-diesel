@@ -53,13 +53,11 @@ export class CuentasBancariasService {
   }
 
   static async getCuentaBancaria(id) {
-    const cuentaBancaria = await prisma.cuentaBancaria.findUnique({
+    return prisma.cuentaBancaria.findUnique({
       where: {
         id,
       },
     });
-
-    return cuentaBancaria;
   }
 
   static async getCuentasBancarias(empresaId) {

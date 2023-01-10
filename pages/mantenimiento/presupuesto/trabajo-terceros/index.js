@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -20,6 +20,7 @@ import * as yup from "yup";
 import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -43,21 +44,57 @@ export default function TrabajoTerceros() {
     precio: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  useEffect(() => {
+    setForm({
+      codigo: null,
+      definicion: null,
+      precio: null,
+    });
+  }, [resetInfo]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest(
+      "post",
+      "/api/mantenimiento/presupuesto/trabajo-terceros",
+      {
+        ...form,
+        empresaId: parseInt(empresaId),
+        precio: parseFloat(form.precio),
+      }
+    );
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest(
+      "put",
+      `/api/mantenimiento/presupuesto/trabajo-terceros/${elementId}`,
+      {
+        ...form,
+        precio: parseFloat(form.precio),
+      }
+    );
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest(
-        "post",
-        "/api/mantenimiento/presupuesto/trabajo-terceros",
-        {
-          ...form,
-          empresaId: parseInt(empresaId),
-          precio: parseFloat(form.precio),
-        }
-      );
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -130,15 +167,18 @@ export default function TrabajoTerceros() {
           <Input
             label="Código"
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+            defaultValue={isEdit ? updateForm?.codigo : undefined}
           />
           <Input
             label="Definición"
             onChange={(e) => setForm({ ...form, definicion: e.target.value })}
+            defaultValue={isEdit ? updateForm?.definicion : undefined}
           />
           <Input
             label="Precio"
             type={"number"}
             onChange={(e) => setForm({ ...form, precio: e.target.value })}
+            defaultValue={isEdit ? updateForm?.precio : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />

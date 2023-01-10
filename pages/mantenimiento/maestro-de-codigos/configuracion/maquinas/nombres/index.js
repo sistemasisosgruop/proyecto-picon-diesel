@@ -36,7 +36,7 @@ export default function NombresMaquina() {
     nombre: null,
   });
   const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId } = useContext(FormContext);
+  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -118,7 +118,13 @@ export default function NombresMaquina() {
         <TemplateConfiguracionMaquinas>
           <Title text={"Nombres de Máquinas"}>
             <div className="flex gap-4">
-              <ButtonImportData />
+              <ButtonImportData
+                handleClick={() =>
+                  setCsvPath(
+                    `/api/mantenimiento/maestro-de-codigos/configuracion/nombre/upload?empresaId=${empresaId}`
+                  )
+                }
+              />
               <ButtonAdd text={"Nuevo nombre"} onClick={() => openModal(false)} />
             </div>
           </Title>

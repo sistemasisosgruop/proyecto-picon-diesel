@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -7,10 +7,7 @@ import {
   ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateInventario from "../../../../app/components/templates/mantenimiento/TemplateInventario";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -20,7 +17,8 @@ import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import * as yup from "yup";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   nombre: yup.string().required(),
@@ -29,14 +27,8 @@ const schema = yup.object().shape({
 });
 
 export default function FactorInternamiento() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     nombre: null,
@@ -44,16 +36,46 @@ export default function FactorInternamiento() {
     telefono: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  useEffect(() => {
+    setForm({
+      nombre: null,
+      direccion: null,
+      telefono: null,
+    });
+  }, [resetInfo]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/almacenes", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/almacenes/${elementId}`, {
+      ...form,
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/almacenes", {
-        ...form,
-        empresaId: parseInt(empresaId),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -103,10 +125,7 @@ export default function FactorInternamiento() {
         <Title text={"Lista Almacenes"}>
           <div className="flex gap-4">
             <ButtonImportData />
-            <ButtonAdd
-              text={"Nuevo almacen"}
-              onClick={() => openModal(false)}
-            />
+            <ButtonAdd text={"Nuevo almacen"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -128,14 +147,17 @@ export default function FactorInternamiento() {
           <Input
             label="Nombre"
             onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+            defaultValue={isEdit ? updateForm?.nombre : undefined}
           />
           <Input
             label="Dirección"
             onChange={(e) => setForm({ ...form, direccion: e.target.value })}
+            defaultValue={isEdit ? updateForm?.direccion : undefined}
           />
           <Input
             label="Teléfono"
             onChange={(e) => setForm({ ...form, telefono: e.target.value })}
+            defaultValue={isEdit ? updateForm?.telefono : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
@@ -143,7 +165,7 @@ export default function FactorInternamiento() {
           </div>
         </form>
       </Modal>
-       
+
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Almacen"}

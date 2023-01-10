@@ -1,5 +1,5 @@
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { ButtonAdd, ButtonCancel, ButtonSave } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
 import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
@@ -13,6 +13,7 @@ import * as yup from "yup";
 import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -30,17 +31,48 @@ export default function Servicios() {
     precio: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  useEffect(() => {
+    setForm({
+      codigo: null,
+      definicion: null,
+      precio: null,
+    });
+  }, [resetInfo]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/presupuesto/servicios", {
+      ...form,
+      empresaId: parseInt(empresaId),
+      precio: parseFloat(form.precio),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/presupuesto/servicios/${elementId}`, {
+      ...form,
+      precio: parseFloat(form.precio),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/presupuesto/servicios", {
-        ...form,
-        empresaId: parseInt(empresaId),
-        precio: parseFloat(form.precio),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -107,15 +139,21 @@ export default function Servicios() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input label="Código" onChange={(e) => setForm({ ...form, codigo: e.target.value })} />
+          <Input
+            label="Código"
+            onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+            defaultValue={isEdit ? updateForm?.codigo : undefined}
+          />
           <Input
             label="Definición"
             onChange={(e) => setForm({ ...form, definicion: e.target.value })}
+            defaultValue={isEdit ? updateForm?.definicion : undefined}
           />
           <Input
             label="Precio"
             type={"number"}
             onChange={(e) => setForm({ ...form, precio: e.target.value })}
+            defaultValue={isEdit ? updateForm?.precio : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />

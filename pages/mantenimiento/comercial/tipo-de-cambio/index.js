@@ -1,15 +1,8 @@
 import { Input } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
-import {
-  ButtonAdd,
-  ButtonCancel,
-  ButtonSave,
-} from "../../../../app/components/elements/Buttons";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { ButtonAdd, ButtonCancel, ButtonSave } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateComercial from "../../../../app/components/templates/mantenimiento/TemplateComercial";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -19,7 +12,8 @@ import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import * as yup from "yup";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   de: yup.string().required(),
@@ -29,14 +23,8 @@ const schema = yup.object().shape({
 });
 
 export default function TipoDeCambio() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     de: null,
@@ -45,18 +33,51 @@ export default function TipoDeCambio() {
     fecha: null,
   });
   const [changeData, setChangeData] = useState(false);
+  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  useEffect(() => {
+    setForm(updateForm);
+  }, [updateForm]);
+
+  useEffect(() => {
+    setForm({
+      de: null,
+      a: null,
+      valor: null,
+      fecha: null,
+    });
+  }, [resetInfo]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/tipo-de-cambio", {
+      ...form,
+      fecha: new Date(form.fecha).toISOString(),
+      valor: parseFloat(form.valor),
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/tipo-de-cambio/${elementId}`, {
+      ...form,
+      fecha: new Date(form.fecha).toISOString(),
+      valor: parseFloat(form.valor),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
 
   const saveData = async () => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/tipo-de-cambio", {
-        ...form,
-        fecha: new Date(form.fecha).toISOString(),
-        valor: parseFloat(form.valor),
-        empresaId: parseInt(empresaId),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -115,10 +136,7 @@ export default function TipoDeCambio() {
       <TemplateComercial>
         <Title text={"Lista Tipo de Cambio"}>
           <div className="flex gap-4">
-            <ButtonAdd
-              text={"Nuevo tipo de cambio"}
-              onClick={() => openModal(false)}
-            />
+            <ButtonAdd text={"Nuevo tipo de cambio"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -141,10 +159,12 @@ export default function TipoDeCambio() {
             <Input
               label="De"
               onChange={(e) => setForm({ ...form, de: e.target.value })}
+              defaultValue={isEdit ? updateForm?.de : undefined}
             />
             <Input
               label="A"
               onChange={(e) => setForm({ ...form, a: e.target.value })}
+              defaultValue={isEdit ? updateForm?.a : undefined}
             />
           </div>
           <div className="flex gap-5">
@@ -152,11 +172,13 @@ export default function TipoDeCambio() {
               label="Valor"
               type="number"
               onChange={(e) => setForm({ ...form, valor: e.target.value })}
+              defaultValue={isEdit ? updateForm?.valor : undefined}
             />
             <Input
               label="Fecha"
               type="date"
               onChange={(e) => setForm({ ...form, fecha: e.target.value })}
+              defaultValue={isEdit ? updateForm?.fecha : undefined}
             />
           </div>
           <div className="w-full flex justify-end gap-5">
@@ -165,7 +187,7 @@ export default function TipoDeCambio() {
           </div>
         </form>
       </Modal>
-       
+
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Tipo de cambio"}
