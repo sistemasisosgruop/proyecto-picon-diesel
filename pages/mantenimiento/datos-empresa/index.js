@@ -9,7 +9,13 @@ import {
 } from "../../../app/components/elements/Buttons";
 import { Container } from "../../../app/components/elements/Containers";
 import { Title } from "../../../app/components/elements/Title";
-import { Table, TableD, TableDOptions, TableH, TableRH } from "../../../app/components/elements/Table";
+import {
+  Table,
+  TableD,
+  TableDOptions,
+  TableH,
+  TableRH,
+} from "../../../app/components/elements/Table";
 import { ModalConfirmDelete, ModalLg } from "../../../app/components/modules/Modal";
 import { Group, GroupInputs } from "../../../app/components/elements/Form";
 import { Input } from "@material-tailwind/react";
@@ -18,13 +24,14 @@ import { useModal } from "../../../app/hooks/useModal";
 import { useTable } from "react-table";
 import { axiosRequest } from "../../../app/utils/axios-request";
 import { useAuthState } from "../../../contexts/auth.context";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useContext } from "react";
 import { useQuery } from "react-query";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as yup from "yup";
 import { ToastAlert } from "../../../app/components/elements/ToastAlert";
 import { errorProps, successProps } from "../../../app/utils/alert-config";
+import { FormContext } from "../../../contexts/form.context";
 
 const fileTypes = ["JPEG", "PNG"];
 
@@ -38,7 +45,8 @@ const schema = yup.object().shape({
 });
 
 export default function DatosEmpresa() {
-  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [file, setFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
   const [empresaForm, setEmpresaForm] = useState({
@@ -53,25 +61,12 @@ export default function DatosEmpresa() {
   const [changeData, setChangeData] = useState(false);
   const auth = useAuthState();
   const [empresaToUpdateId, setEmpresaToUpdateId] = useState(null);
+  const { elementId, setElementId } = useContext(FormContext);
 
   const getEmpresas = async () => {
     const { data } = await axiosRequest("get", `/api/mantenimiento/empresas?adminId=${auth.id}`);
 
     return data;
-  };
-
-  const saveData = async () => {
-    try {
-      if (isEdit) {
-        await updateEmpresa();
-      } else {
-        await createEmpresa();
-      }
-      setChangeData(!changeData);
-      closeModal();
-    } catch (error) {
-      toast.error(<ToastAlert error={error} />, errorProps);
-    }
   };
 
   const handleChange = (file) => {
@@ -115,7 +110,10 @@ export default function DatosEmpresa() {
 
   const empresas = useMemo(() => data.data, [data.data]);
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data: empresas });
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
+    columns,
+    data: empresas,
+  });
 
   const updateEmpresa = async () => {
     await schema.validate(empresaForm, { abortEarly: false });
@@ -134,6 +132,31 @@ export default function DatosEmpresa() {
     });
 
     toast.success(`🦄 Empresa ${data.nombre} registrada exitosamente!`, successProps);
+  };
+
+  const saveData = async () => {
+    try {
+      if (isEdit) {
+        await updateEmpresa();
+      } else {
+        await createEmpresa();
+      }
+      setChangeData(!changeData);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
+  };
+
+  const deleteEmpresa = async () => {
+    try {
+      const { data } = await axiosRequest("delete", `/api/mantenimiento/empresas/${elementId}`);
+      toast.success(`🦄 Empresa ${data.nombre} eliminada exitosamente!`, successProps);
+      setChangeData(!changeData);
+      setIsOpenModalDelete(false);
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   return (
@@ -194,7 +217,12 @@ export default function DatosEmpresa() {
                           setEmpresaForm({ ...currentRow });
                         }}
                       />
-                      <ButtonDelete onClick={() => setIsOpenModalDelete(true)} />
+                      <ButtonDelete
+                        onClick={() => {
+                          setElementId(row.values.id);
+                          setIsOpenModalDelete(true);
+                        }}
+                      />
                     </TableDOptions>
                   </tr>
                 );
@@ -204,9 +232,19 @@ export default function DatosEmpresa() {
         )}
       </Container>
       {/* Modal agregar */}
-      <ModalLg title={isEdit ? "Editar Empresa" : "Nueva Empresa"} isOpen={isOpenModal} closeModal={closeModal}>
+      <ModalLg
+        title={isEdit ? "Editar Empresa" : "Nueva Empresa"}
+        isOpen={isOpenModal}
+        closeModal={closeModal}
+      >
         <Group title={"Logo de la empresa"}>
-          <FileUploader multiple={false} handleChange={handleChange} name="file" types={fileTypes} accept={fileTypes}>
+          <FileUploader
+            multiple={false}
+            handleChange={handleChange}
+            name="file"
+            types={fileTypes}
+            accept={fileTypes}
+          >
             <div className="flex justify-center items-center rounded-md border-2 border-dashed border-primary-200 py-10 bg-primary-50">
               <div className="space-y-1 text-center flex flex-col items-center">
                 <Logo className="text-primary-200" />
@@ -222,7 +260,8 @@ export default function DatosEmpresa() {
           <p>
             {file ? (
               <div className=" w-full flex gap-2 text-xs items-center">
-                <Image alt="logo" src={logoPreview} width={100} height={20} /> {`Nombre del archivo: ${file.name}`}
+                <Image alt="logo" src={logoPreview} width={100} height={20} />{" "}
+                {`Nombre del archivo: ${file.name}`}
               </div>
             ) : (
               ""
@@ -285,10 +324,10 @@ export default function DatosEmpresa() {
           <ButtonSave onClick={saveData} />
         </div>
       </ModalLg>
-       
+
       {/* Modal Eliminar */}
       <ModalConfirmDelete
-        onClick={undefined}
+        onClick={deleteEmpresa}
         title={"Eliminar Empresa"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

@@ -19,17 +19,22 @@ export class MaterialPresupuestoService {
     const material = await prisma.materialPresupuesto.create({
       data: {
         ...data,
-        empresaId: parseInt(empresaId),
-        correlativo: `${familia.codigo}${subFamilia.codigo}`,
+        empresa: {
+          id: parseInt(empresaId),
+        },
       },
     });
+
+    const codigo = generateCodePresupuestoMaterial(material.id);
+    const correlativo = `${familia.codigo}${subFamilia.codigo}${codigo}`;
 
     return prisma.materialPresupuesto.update({
       where: {
         id: material.id,
       },
       data: {
-        codigo: generateCodePresupuestoMaterial(material.id),
+        codigo,
+        correlativo,
       },
     });
   }

@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -684,8 +684,8 @@ model Material {
   subfamilia               SubFamilia?                @relation(fields: [subfamiliaId], references: [id])
   subfamiliaId             Int
   denominacion             String
-  codigoFabricante         String
-  tipoFabricante           String
+  codigoFabricante         String?
+  tipoFabricante           String?
   materialReemplazo        Json?
   materialSimilitud        Json?
   materialEquivalencia     Json?
@@ -693,6 +693,9 @@ model Material {
   caracteristicaToMaterial CaracteristicaToMaterial[]
   empresa                  Empresa?                   @relation(fields: [empresaId], references: [id])
   empresaId                Int
+  stock                    Int?                       @default(0)
+  codigoMotorOriginal      String?
+  codigoBombaInyeccion     String?
 
   @@map("material")
 }
@@ -700,10 +703,10 @@ model Material {
 model CaracteristicaToMaterial {
   id               Int             @id @default(autoincrement())
   isChecked        Boolean
-  valor            String
-  material         Material?       @relation(fields: [materialId], references: [id])
+  valor            String?
+  material         Material?       @relation(fields: [materialId], references: [id], onDelete: Cascade)
   materialId       Int
-  caracteristica   Caracteristica? @relation(fields: [caracteristicaId], references: [id])
+  caracteristica   Caracteristica? @relation(fields: [caracteristicaId], references: [id], onDelete: Cascade)
   caracteristicaId Int
 
   @@map("caracteristica_to_material")

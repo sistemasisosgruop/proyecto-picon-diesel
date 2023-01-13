@@ -1,6 +1,6 @@
 "use client";
 import { Tooltip } from "@material-tailwind/react";
-import { Add, Edit, Note, TableDocument, TrushSquare } from "iconsax-react";
+import { Add, Edit, Eye, Note, TableDocument, TrushSquare } from "iconsax-react";
 import Link from "next/link";
 import { useContext, useState, useEffect, useRef } from "react";
 import { Excel } from "./icons/Excel";
@@ -46,6 +46,20 @@ export const ButtonDelete = ({ onClick }) => {
         onClick={onClick}
       >
         <TrushSquare />
+      </button>
+    </Tooltip>
+  );
+};
+
+export const ButtonInspect = ({ onClick }) => {
+  return (
+    <Tooltip content="Ver" className="bg-white text-primary-600 shadow">
+      <button
+        type="button"
+        className="flex justify-center items-center p-[6px] bg-primary-100 shadow text-primary-500 hover:text-primary-800 rounded-lg cursor-pointer hover:bg-primary-200"
+        onClick={onClick}
+      >
+        <Eye />
       </button>
     </Tooltip>
   );

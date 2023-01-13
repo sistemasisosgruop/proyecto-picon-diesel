@@ -19,5 +19,8 @@ export async function axiosRequest(method, url, data = null, contentType = null)
     if (method === "post") {
       throw error;
     }
+    if (method === "delete") {
+      throw error;
+    }
   }
 }

@@ -1,7 +1,8 @@
 import { CloseCircle } from "iconsax-react";
-import { Fragment, useState } from "react";
+import { Fragment, useContext, useState } from "react";
 import { Divider } from "../elements/Divider";
 import { Dialog, Transition } from "@headlessui/react";
+import { MaterialesContext } from "../../../contexts/materiales.context";
 
 export const Modal = ({ title, isOpen, closeModal, children }) => {
   return (
@@ -94,7 +95,54 @@ export const ModalLg = ({ title, isOpen, closeModal, children }) => {
   );
 };
 
-export const ModalConfirmDelete = ({ title, isOpen, closeModal, onClick = undefined }) => {
+export const ModalMaterialDetalle = ({ children, title }) => {
+  const { modalInfoIsOpen, closeInfoModal } = useContext(MaterialesContext);
+  return (
+    <Transition appear show={modalInfoIsOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={() => closeInfoModal()}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black bg-opacity-25" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-[1000px] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all flex flex-col gap-5">
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg font-medium leading-6 flex justify-between items-center"
+                >
+                  {title}
+                  <CloseCircle onClick={() => closeInfoModal()} className="cursor-pointer" />
+                </Dialog.Title>
+                <Divider />
+                <Dialog.Description className="flex flex-col gap-9">{children}</Dialog.Description>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition>
+  );
+};
+
+export const ModalConfirmDelete = ({ title, isOpen, closeModal, onClick = undefined  }) => {
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
   return (
@@ -146,8 +194,8 @@ export const ModalConfirmDelete = ({ title, isOpen, closeModal, onClick = undefi
                         type="button"
                         className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-red-400 hover:bg-red-500 rounded-md"
                         onClick={() => {
-                          // onClick();
-                          setOpenConfirmDelete(true);
+                          onClick();
+                          setOpenConfirmDelete(false)
                           closeModal();
                         }}
                       >

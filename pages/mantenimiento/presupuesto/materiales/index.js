@@ -1,16 +1,9 @@
 import { Input, Option, Select } from "@material-tailwind/react";
 import { useEffect, useMemo, useState } from "react";
-import {
-  ButtonAdd,
-  ButtonCancel,
-  ButtonSave,
-} from "../../../../app/components/elements/Buttons";
+import { ButtonAdd, ButtonCancel, ButtonSave } from "../../../../app/components/elements/Buttons";
 import { GroupInputs } from "../../../../app/components/elements/Form";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplatePresupuesto from "../../../../app/components/templates/mantenimiento/TemplatePresupuesto";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -29,18 +22,19 @@ const schema = yup.object().shape({
   precio: yup.number().required(),
 });
 
+const validateCorrelativo = (correlativo) => {
+  const [, subFamilia] = correlativo.split(" + ");
+
+  if (subFamilia.length === 0) {
+    throw new Error("Debe seleccionar una subfamilia");
+  }
+};
+
 export default function Materiales() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [selectedFamilia, setSelectedFamilia] = useState("");
-  const [selectedSubfamilia, setSelectedSubfamilia] = useState("");
   const [correlativo, setCorrelativo] = useState("");
   const [form, setForm] = useState({
     familia: null,
@@ -53,6 +47,7 @@ export default function Materiales() {
 
   const saveData = async () => {
     try {
+      validateCorrelativo(correlativo);
       await schema.validate(form, { abortEarly: false });
       await axiosRequest("post", "/api/mantenimiento/presupuesto/materiales", {
         nombre: form.nombre,
@@ -60,7 +55,6 @@ export default function Materiales() {
         familiaId: parseInt(form.familia),
         subFamiliaId: parseInt(form.subFamilia),
         empresaId: parseInt(empresaId),
-        correlativo,
       });
 
       toast.success(`🦄 Registro guardado exitosamente!`, successProps);
@@ -77,7 +71,7 @@ export default function Materiales() {
       nombre: null,
       precio: null,
     });
-	setCorrelativo("");
+    setCorrelativo("");
     refetch();
   }, [changeData]);
 
@@ -112,14 +106,11 @@ export default function Materiales() {
       "get",
       `/api/mantenimiento/presupuesto/familias/subfamilias?familiaId=${familiaId}`
     );
+    
     setSubfamilias(data?.data);
-
-    return data;
   };
-  const familias = useMemo(
-    () => familiasResponse?.data,
-    [familiasResponse?.data]
-  );
+
+  const familias = useMemo(() => familiasResponse?.data, [familiasResponse?.data]);
 
   const getMateriales = async () => {
     const { data } = await axiosRequest(
@@ -150,10 +141,7 @@ export default function Materiales() {
       <TemplatePresupuesto>
         <Title text={"Lista Materiales"}>
           <div className="flex gap-4">
-            <ButtonAdd
-              text={"Nuevo material"}
-              onClick={() => openModal(false)}
-            />
+            <ButtonAdd text={"Nuevo material"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -179,7 +167,7 @@ export default function Materiales() {
                 // @ts-ignore
                 setSelectedFamilia(value.codigo);
                 // @ts-ignore
-                setCorrelativo(`${value.codigo}${selectedSubfamilia}`);
+                setCorrelativo(`${value.codigo} + `);
                 // @ts-ignore
                 getSubfamilias(value.id);
                 // @ts-ignore
@@ -200,9 +188,7 @@ export default function Materiales() {
                 // @ts-ignore
                 setForm({ ...form, subFamilia: value.id });
                 // @ts-ignore
-                setSelectedSubfamilia(value.codigo);
-                // @ts-ignore
-                setCorrelativo(`${selectedFamilia}${value.codigo}`);
+                setCorrelativo(`${selectedFamilia} + ${value.codigo}`);
               }}
             >
               {subfamilias?.map((item) => {
@@ -215,10 +201,7 @@ export default function Materiales() {
             </Select>
             <Input label="Correlativo" disabled value={correlativo} />
           </GroupInputs>
-          <Input
-            label="Nombre"
-            onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-          />
+          <Input label="Nombre" onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
           <Input
             label="Precio"
             type={"number"}

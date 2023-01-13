@@ -10,6 +10,7 @@ export const FormProvider = ({ children }) => {
   const [needRefetch, setNeedRefetch] = useState(false);
   const [getPath, setGetPath] = useState(null);
   const [resetInfo, setResetInfo] = useState(false);
+  const [changeData, setChangeData] = useState(false);
 
   return (
     <FormContext.Provider
@@ -26,6 +27,8 @@ export const FormProvider = ({ children }) => {
         setGetPath,
         resetInfo,
         setResetInfo,
+        changeData,
+        setChangeData,
       }}
     >
       {children}

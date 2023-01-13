@@ -222,7 +222,7 @@ export default function Cotizaciones() {
         </Group>
         <div className="w-full flex justify-end gap-5"> 
           <ButtonCancel onClick={closeModal} />
-          <ButtonSave onClick={() => {console.log('clic')}}  />
+          <ButtonSave onClick={saveData}  />
         </div>
       </ModalLg>
       {/* Modal Eliminar */}

@@ -38,8 +38,7 @@ export default function SubFamilias({ familia }) {
     codigo: null,
     descripcion: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
+  const { updateForm, elementId, setCsvPath, changeData } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -73,7 +72,6 @@ export default function SubFamilias({ familia }) {
       } else {
         await createRegistro();
       }
-      setChangeData(!changeData);
       closeModal();
     } catch (error) {
       toast.error(<ToastAlert error={error} />, errorProps);

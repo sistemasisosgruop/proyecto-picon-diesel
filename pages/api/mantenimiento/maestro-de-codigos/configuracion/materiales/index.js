@@ -13,7 +13,8 @@ export default async function handler(req, res) {
 
     if (req.method === "GET") {
       const empresaId = Number(req.query.empresaId);
-      const result = await MatrialesService.getMateriales(empresaId);
+      const filterName = req.query.filter;
+      const result = await MatrialesService.getMateriales(empresaId, filterName);
       return res.status(200).json({ data: result });
     }
   } catch (error) {

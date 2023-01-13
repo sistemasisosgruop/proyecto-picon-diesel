@@ -51,7 +51,7 @@ export class EmpresasService {
   }
 
   static async deleteEmpresa(id) {
-    const empresa = prisma.empresa.delete({
+    const empresa = await prisma.empresa.delete({
       where: {
         id,
       },
@@ -93,6 +93,20 @@ export class EmpresasService {
         descripcionBombaInyeccion: true,
         marcaFabricaInyector: true,
         descripcionInyector: true,
+      },
+    });
+
+    return result;
+  }
+
+  static async getInfoForMaterial(id) {
+    const result = await prisma.empresa.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        familia: true,
+        caracteristica: true,
       },
     });
 

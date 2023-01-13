@@ -1,4 +1,12 @@
 export const ToastAlert = ({ error }) => {
+  const errorDescription = error?.response?.data;
+  let customMessage = null;
+
+  if (errorDescription?.code === "P2003") {
+    customMessage =
+      "El registro no puede ser eliminado ya que tiene dependencias activas, por favor elimine primero las dependencias.";
+  }
+
   return (
     <div>
       {error?.inner ? (
@@ -10,7 +18,7 @@ export const ToastAlert = ({ error }) => {
         ))
       ) : (
         <div>
-          <span>{error?.message}</span>
+          <span>{customMessage ?? error?.message}</span>
           <br />
         </div>
       )}

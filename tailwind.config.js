@@ -8,6 +8,9 @@ module.exports = withMT({
   ],
   theme: {
     extend: {
+      borderWidth: {
+        line: '1px',
+      },
       colors: {
         primary: {
           50: "#F2F3F7",
