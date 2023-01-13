@@ -1,14 +1,52 @@
+"use client";
 import "../styles/globals.css";
+import "react-toastify/dist/ReactToastify.css";
 import { ThemeProvider } from "@material-tailwind/react";
 import LayoutDefault from "../app/components/layouts/LayoutDefault";
+import { AuthProvider } from "../contexts/auth.context";
+import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
+import { useRef } from "react";
+import * as yup from "yup";
+import { FormProvider } from "../contexts/form.context";
+import { ToastContainer } from "react-toastify";
+import { MaterialesProvider } from "../contexts/materiales.context";
+
+yup.setLocale({
+  mixed: {
+    required: "campo obligatorio",
+    notType: "campo invalido o vacio",
+  },
+  string: {
+    email: "correo invalido",
+    min: "Este campo debe tener al menos {min} caracteres",
+    max: "Este campo debe tener como máximo {max} caracteres",
+  },
+  number: {
+    min: ({ min }) => `Este campo debe ser mayor o igual a ${min}`,
+    max: ({ max }) => `Este campo debe ser menor o igual a ${max}`,
+  },
+});
 
 function MyApp({ Component, pageProps }) {
+  const queryClient = useRef(new QueryClient());
+
   return (
-    <ThemeProvider>
-      <LayoutDefault>
-        <Component {...pageProps} />
-      </LayoutDefault>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient.current}>
+      <Hydrate state={pageProps.dehydratedState}>
+        <AuthProvider>
+          <FormProvider>
+            <MaterialesProvider>
+              <ThemeProvider>
+                <LayoutDefault>
+                  <Component {...pageProps} />
+                </LayoutDefault>
+              </ThemeProvider>
+            </MaterialesProvider>
+          </FormProvider>
+        </AuthProvider>
+      </Hydrate>
+      <ToastContainer />
+    </QueryClientProvider>
   );
 }
 
