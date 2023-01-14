@@ -37,8 +37,9 @@ export default function AgenteAduanas() {
     email: null,
     observaciones: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  const { updateForm, elementId, resetInfo, changeData, setChangeData, setCsvPath } =
+    useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -70,6 +71,15 @@ export default function AgenteAduanas() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/agente-aduanas/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -128,7 +138,11 @@ export default function AgenteAduanas() {
       <TemplateImportacion>
         <Title text={"Lista Agente de aduanas"}>
           <div className="flex gap-4">
-            <ButtonImportData />
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(`/api/mantenimiento/agente-aduanas/upload?empresaId=${empresaId}`)
+              }
+            />
             <ButtonAdd text={"Nuevo agente"} onClick={() => openModal(false)} />
           </div>
         </Title>
@@ -180,6 +194,7 @@ export default function AgenteAduanas() {
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Agente de aduanas"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

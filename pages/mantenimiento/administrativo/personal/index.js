@@ -49,8 +49,8 @@ export default function Personal() {
     puesto: null,
     direccion: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+  const { updateForm, elementId, resetInfo, setCsvPath, changeData, setChangeData } =
+    useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -72,6 +72,16 @@ export default function Personal() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/personal/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -155,7 +165,11 @@ export default function Personal() {
       <TemplateAdministrativo>
         <Title text={"Lista Personal"}>
           <div className="flex gap-4">
-            <ButtonImportData />
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(`/api/mantenimiento/personal/upload?empresaId=${empresaId}`)
+              }
+            />
             <ButtonAdd text={"Nuevo personal"} onClick={() => openModal(false)} />
           </div>
         </Title>
@@ -218,6 +232,7 @@ export default function Personal() {
       </Modal>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Personal"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

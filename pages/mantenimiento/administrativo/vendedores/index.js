@@ -44,8 +44,7 @@ export default function Vendedores() {
     comision: null,
     aprovacionCotizacion: false,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+  const { updateForm, elementId, resetInfo, changeData, setChangeData, setCsvPath } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -79,6 +78,16 @@ export default function Vendedores() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/vendedores/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -152,7 +161,13 @@ export default function Vendedores() {
       <TemplateAdministrativo>
         <Title text={"Lista Vendedores"}>
           <div className="flex gap-4">
-            <ButtonImportData />
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(
+                  `/api/mantenimiento/vendedores/upload?empresaId=${empresaId}`
+                )
+              }
+            />
             <ButtonAdd text={"Nuevo vendedor"} onClick={() => openModal(false)} />
           </div>
         </Title>
@@ -217,6 +232,7 @@ export default function Vendedores() {
       </Modal>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Personal"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

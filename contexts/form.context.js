@@ -11,6 +11,7 @@ export const FormProvider = ({ children }) => {
   const [getPath, setGetPath] = useState(null);
   const [resetInfo, setResetInfo] = useState(false);
   const [changeData, setChangeData] = useState(false);
+  const [isCredito, setIsCredito] = useState(false);
 
   return (
     <FormContext.Provider
@@ -29,6 +30,8 @@ export const FormProvider = ({ children }) => {
         setResetInfo,
         changeData,
         setChangeData,
+        isCredito,
+        setIsCredito,
       }}
     >
       {children}

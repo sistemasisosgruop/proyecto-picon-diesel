@@ -103,7 +103,6 @@ export class MatrialesService {
       let updateFamiliaData;
 
       if (familiaId && subFamiliaId) {
-        console.log("hay familia");
         const familia = await PrismaClient.familia.findUnique({
           where: {
             id: Number(familiaId),
@@ -122,7 +121,6 @@ export class MatrialesService {
           correlativo,
         };
       } else {
-        console.log("no hay familia");
         correlativo = undefined;
         updateFamiliaData = {
           familiaId: undefined,

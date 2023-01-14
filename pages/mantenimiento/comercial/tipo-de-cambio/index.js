@@ -32,8 +32,7 @@ export default function TipoDeCambio() {
     valor: null,
     fecha: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+  const { updateForm, elementId, resetInfo, changeData, setChangeData } = useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -71,6 +70,15 @@ export default function TipoDeCambio() {
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
   };
 
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/tipo-de-cambio/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
+  };
   const saveData = async () => {
     try {
       if (isEdit) {
@@ -190,6 +198,7 @@ export default function TipoDeCambio() {
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Tipo de cambio"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

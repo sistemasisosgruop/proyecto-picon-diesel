@@ -161,7 +161,6 @@ export default function Materiales() {
   };
 
   const updateRegistro = async () => {
-    console.log(form);
     await updateSchema.validate(form, { abortEarly: false });
     await axiosRequest(
       "put",
@@ -192,7 +191,6 @@ export default function Materiales() {
   const saveData = async () => {
     try {
       if (isEdit) {
-        console.log(form);
         await updateRegistro();
       } else {
         await createRegistro();

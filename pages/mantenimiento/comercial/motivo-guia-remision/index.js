@@ -28,8 +28,8 @@ export default function MotivoGuiaRemision() {
     motivo: null,
     descripcion: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  const { updateForm, elementId, resetInfo, changeData, setChangeData } = useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -60,6 +60,19 @@ export default function MotivoGuiaRemision() {
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
   };
+  const deleteData = async () => {
+    try {
+      await axiosRequest(
+        "delete",
+        `/api/mantenimiento/motivo-traslado-guia-de-remision/${elementId}`
+      );
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
+  };
+
   const saveData = async () => {
     try {
       if (isEdit) {
@@ -152,6 +165,7 @@ export default function MotivoGuiaRemision() {
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Motivo"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

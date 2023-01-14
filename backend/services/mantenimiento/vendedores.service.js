@@ -48,15 +48,7 @@ export class VendedoresService {
   }
 
   static async updateVendedor(id, data) {
-    const {
-      nombre,
-      email,
-      comision,
-      password,
-      direccion,
-      aprovacionCotizacion,
-      telefono,
-    } = data;
+    const { nombre, email, comision, password, direccion, aprovacionCotizacion, telefono } = data;
     const vendedor = prisma.vendedor.update({
       where: {
         id,
@@ -76,9 +68,12 @@ export class VendedoresService {
   }
 
   static async deleteVendedor(id) {
-    const vendedor = prisma.vendedor.delete({
+    const vendedor = prisma.vendedor.update({
       where: {
         id,
+      },
+      data: {
+        estado: "Inactivo",
       },
     });
 
@@ -89,6 +84,7 @@ export class VendedoresService {
     return prisma.vendedor.findMany({
       where: {
         empresaId,
+        estado: "Activo",
       },
     });
   }

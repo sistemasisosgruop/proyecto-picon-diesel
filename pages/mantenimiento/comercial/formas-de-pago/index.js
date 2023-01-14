@@ -101,8 +101,8 @@ export default function formContadoasDePago() {
     nombre: null,
     numeroDeDias: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+  const { updateForm, elementId, resetInfo, changeData, setChangeData, isCredito } =
+    useContext(FormContext);
 
   useEffect(() => {
     setformContado(updateForm);
@@ -137,6 +137,16 @@ export default function formContadoasDePago() {
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
   };
+  const deleteDataContado = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/forma-de-pago/contado/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      setIsModalContado(false);
+      setChangeData(!changeData);
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
+  };
 
   const createRegistroCredito = async () => {
     await schemaCredito.validate(formCredito, { abortEarly: false });
@@ -157,6 +167,16 @@ export default function formContadoasDePago() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteDataCredito = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/forma-de-pago/credito/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      setChangeData(!changeData);
+      setIsModalContado(false);
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveDataContado = async () => {
@@ -286,7 +306,14 @@ export default function formContadoasDePago() {
       </Modal>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
-        title={"Eliminar formContadoa de pago"}
+        onClick={() => {
+          if (isCredito) {
+            deleteDataCredito();
+          } else {
+            deleteDataContado();
+          }
+        }}
+        title={"Eliminar forma de pago"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}
       />

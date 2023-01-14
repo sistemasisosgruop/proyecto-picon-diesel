@@ -35,8 +35,9 @@ export default function Incoterms() {
     codigo: null,
     descripcion: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  const { updateForm, elementId, resetInfo, setCsvPath, changeData, setChangeData } =
+    useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -68,6 +69,15 @@ export default function Incoterms() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/incoterms/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -124,7 +134,11 @@ export default function Incoterms() {
       <TemplateImportacion>
         <Title text={"Lista Incoterms"}>
           <div className="flex gap-4">
-            <ButtonImportData />
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(`/api/mantenimiento/incoterms/upload?empresaId=${empresaId}`)
+              }
+            />
             <ButtonAdd text={"Nuevo item"} onClick={() => openModal(false)} />
           </div>
         </Title>
@@ -168,6 +182,7 @@ export default function Incoterms() {
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Item de Incoterms"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

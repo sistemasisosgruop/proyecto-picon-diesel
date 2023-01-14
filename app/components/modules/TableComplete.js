@@ -16,6 +16,7 @@ import { ArrowLeftFast, ArrowRightFast } from "../elements/icons/Arrow";
 import { ButtonDelete, ButtonEdit } from "../elements/Buttons";
 import { FormContext } from "../../../contexts/form.context";
 import { axiosRequest } from "../../utils/axios-request";
+import { MaterialesContext } from "../../../contexts/materiales.context";
 
 function GlobalFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) {
   const count = preGlobalFilteredRows.length;
@@ -68,7 +69,9 @@ fuzzyTextFilterFn.autoRemove = (val) => !val;
 
 // Our table component
 function Table({ columns, data, openModal, setIsOpenModalDelete }) {
-  const { setUpdateForm, setElementId, needRefetch, getPath } = useContext(FormContext);
+  const { setUpdateForm, setElementId, needRefetch, getPath, setIsCredito } =
+    useContext(FormContext);
+  const { setCorrelativo } = useContext(MaterialesContext);
   const filterTypes = useMemo(
     () => ({
       fuzzyText: fuzzyTextFilterFn,
@@ -178,6 +181,7 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                       let currentRow;
                       setElementId(id);
                       openModal(true);
+                      setCorrelativo(row.original?.correlativo ?? "");
 
                       if (needRefetch === true) {
                         currentRow = await axiosRequest("get", `${getPath}/${id}`);
@@ -191,6 +195,11 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                   <ButtonDelete
                     onClick={() => {
                       setElementId(row.values.id);
+                      const pago = Object.prototype.hasOwnProperty.call(
+                        row.original,
+                        "numeroDeDias"
+                      );
+                      setIsCredito(pago);
                       setIsOpenModalDelete(true);
                     }}
                   />

@@ -31,8 +31,9 @@ export default function TiposClientes() {
   const [form, setForm] = useState({
     tipo: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  const { updateForm, elementId, resetInfo, setCsvPath, changeData, setChangeData } =
+    useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -61,6 +62,15 @@ export default function TiposClientes() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/clientes/tipos/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -115,7 +125,11 @@ export default function TiposClientes() {
       <TemplateAdministrativo>
         <Title text={"Lista Tipos de clientes"}>
           <div className="flex gap-4">
-            <ButtonImportData />
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(`/api/mantenimiento/clientes/tipos/upload?empresaId=${empresaId}`)
+              }
+            />
             <ButtonAdd text={"Nuevo tipo de cliente"} onClick={() => openModal(false)} />
           </div>
         </Title>
@@ -149,6 +163,7 @@ export default function TiposClientes() {
       </Modal>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Tipo de cliente"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

@@ -20,7 +20,7 @@ const readFile = (req) => {
 
 export default async function handler(req, res) {
   try {
-    const empresaId = Number(req.query.empresaId);
+    const familia = req.query.familia;
     if (req.method === "POST") {
       const data = await readFile(req);
 
@@ -31,7 +31,11 @@ export default async function handler(req, res) {
           try {
             const newRegister = await prisma.familia.create({
               data: {
-                empresaId,
+                familia: {
+                  connect: {
+                    codigo: familia,
+                  },
+                },
                 ...info,
               },
             });

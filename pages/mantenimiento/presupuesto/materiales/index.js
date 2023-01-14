@@ -1,5 +1,5 @@
 import { Input, Option, Select } from "@material-tailwind/react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { ButtonAdd, ButtonCancel, ButtonSave } from "../../../../app/components/elements/Buttons";
 import { GroupInputs } from "../../../../app/components/elements/Form";
 import { Title } from "../../../../app/components/elements/Title";
@@ -14,50 +14,93 @@ import * as yup from "yup";
 import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
+import { MaterialesContext } from "../../../../contexts/materiales.context";
+import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
-  familia: yup.string().required(),
-  subFamilia: yup.string().required(),
+  familiaId: yup.number().required(),
+  subFamiliaId: yup.number().required(),
   nombre: yup.string().required(),
   precio: yup.number().required(),
 });
 
-const validateCorrelativo = (correlativo) => {
-  const [, subFamilia] = correlativo.split(" + ");
-
-  if (subFamilia.length === 0) {
-    throw new Error("Debe seleccionar una subfamilia");
-  }
-};
+const updateSchema = yup.object().shape({
+  familiaId: yup.number().nullable(),
+  subFamiliaId: yup.number().nullable(),
+  nombre: yup.string().required(),
+  precio: yup.number().required(),
+});
 
 export default function Materiales() {
   const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
     useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [selectedFamilia, setSelectedFamilia] = useState("");
-  const [correlativo, setCorrelativo] = useState("");
   const [form, setForm] = useState({
-    familia: null,
-    subFamilia: null,
+    familiaId: null,
+    subFamiliaId: null,
     nombre: null,
     precio: null,
   });
   const [subfamilias, setSubfamilias] = useState([]);
-  const [changeData, setChangeData] = useState(false);
+  const { correlativo, setCorrelativo } = useContext(MaterialesContext);
+  const { changeData, setChangeData, updateForm, elementId } = useContext(FormContext);
+
+  useEffect(() => {
+    if (isEdit) {
+      setForm({
+        ...form,
+        familiaId: updateForm?.familiaId,
+        subFamiliaId: updateForm?.subFamiliaId,
+        nombre: updateForm?.nombre,
+        precio: updateForm?.precio,
+      });
+    }
+  }, [updateForm]);
+
+  const createRegistro = async () => {
+    await schema.validate(form, { abortEarly: false });
+    await axiosRequest("post", "/api/mantenimiento/presupuesto/materiales", {
+      nombre: form.nombre,
+      precio: parseFloat(form.precio),
+      familiaId: parseInt(form.familiaId),
+      subFamiliaId: parseInt(form.subFamiliaId),
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const updateRegistro = async () => {
+    await updateSchema.validate(form, { abortEarly: false });
+    await axiosRequest("put", `/api/mantenimiento/presupuesto/materiales/${elementId}`, {
+      nombre: form.nombre,
+      precio: parseFloat(form.precio),
+      familiaId: parseInt(form.familiaId),
+      subFamiliaId: parseInt(form.subFamiliaId),
+      empresaId: parseInt(empresaId),
+    });
+
+    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/presupuesto/materiales/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
+  };
 
   const saveData = async () => {
     try {
-      validateCorrelativo(correlativo);
-      await schema.validate(form, { abortEarly: false });
-      await axiosRequest("post", "/api/mantenimiento/presupuesto/materiales", {
-        nombre: form.nombre,
-        precio: parseFloat(form.precio),
-        familiaId: parseInt(form.familia),
-        subFamiliaId: parseInt(form.subFamilia),
-        empresaId: parseInt(empresaId),
-      });
-
-      toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+      if (isEdit) {
+        await updateRegistro();
+      } else {
+        await createRegistro();
+      }
       setChangeData(!changeData);
       closeModal();
     } catch (error) {
@@ -66,12 +109,11 @@ export default function Materiales() {
   };
   useEffect(() => {
     setForm({
-      familia: null,
-      subFamilia: null,
+      familiaId: null,
+      subFamiliaId: null,
       nombre: null,
       precio: null,
     });
-    setCorrelativo("");
     refetch();
   }, [changeData]);
 
@@ -106,7 +148,7 @@ export default function Materiales() {
       "get",
       `/api/mantenimiento/presupuesto/familias/subfamilias?familiaId=${familiaId}`
     );
-    
+
     setSubfamilias(data?.data);
   };
 
@@ -164,19 +206,16 @@ export default function Materiales() {
             <Select
               label="Familia"
               onChange={(value) => {
-                // @ts-ignore
-                setSelectedFamilia(value.codigo);
-                // @ts-ignore
-                setCorrelativo(`${value.codigo} + `);
-                // @ts-ignore
-                getSubfamilias(value.id);
-                // @ts-ignore
-                setForm({ ...form, familia: value.id });
+                const currentFamilia = familias?.find((item) => item.id === Number(value));
+                setSelectedFamilia(currentFamilia.codigo);
+                setCorrelativo(`${currentFamilia.codigo} + `);
+                getSubfamilias(currentFamilia.id);
+                setForm({ ...form, familiaId: currentFamilia.id });
               }}
             >
               {familias?.map((item) => {
                 return (
-                  <Option key={item.id} value={item}>
+                  <Option key={item.id} value={item.id}>
                     {item?.descripcion}
                   </Option>
                 );
@@ -185,26 +224,35 @@ export default function Materiales() {
             <Select
               label="SubFamilia"
               onChange={(value) => {
-                // @ts-ignore
-                setForm({ ...form, subFamilia: value.id });
-                // @ts-ignore
-                setCorrelativo(`${selectedFamilia} + ${value.codigo}`);
+                const currentSubFamilia = subfamilias?.find((item) => item.id === Number(value));
+                setForm({ ...form, subFamiliaId: value });
+                setCorrelativo(`${selectedFamilia} + ${currentSubFamilia.codigo}`);
               }}
             >
               {subfamilias?.map((item) => {
                 return (
-                  <Option key={item.id} value={item}>
+                  <Option key={item.id} value={item.id}>
                     {item?.descripcion}
                   </Option>
                 );
               })}
             </Select>
-            <Input label="Correlativo" disabled value={correlativo} />
+            <Input
+              label="Correlativo"
+              disabled
+              value={correlativo}
+              defaultValue={isEdit ? updateForm?.correlativo : undefined}
+            />
           </GroupInputs>
-          <Input label="Nombre" onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
+          <Input
+            label="Nombre"
+            onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+            defaultValue={isEdit ? updateForm?.nombre : undefined}
+          />
           <Input
             label="Precio"
             type={"number"}
+            defaultValue={isEdit ? updateForm?.precio : undefined}
             onChange={(e) => setForm({ ...form, precio: e.target.value })}
           />
           <div className="w-full flex justify-end gap-5">
@@ -215,6 +263,7 @@ export default function Materiales() {
       </Modal>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar material"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

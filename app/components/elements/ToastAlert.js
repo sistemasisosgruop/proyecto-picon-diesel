@@ -10,7 +10,7 @@ export const ToastAlert = ({ error }) => {
     customMessage = "El registro ya existe.";
   }
     
-  if (errorDescription?.error.includes("stock")) {
+  if (errorDescription?.error?.includes("stock")) {
     customMessage = errorDescription?.error;
   }
 
