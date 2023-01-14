@@ -188,7 +188,12 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                       }
                     }}
                   />
-                  <ButtonDelete onClick={() => setIsOpenModalDelete(true)} />
+                  <ButtonDelete
+                    onClick={() => {
+                      setElementId(row.values.id);
+                      setIsOpenModalDelete(true);
+                    }}
+                  />
                 </TableDOptions>
               </tr>
             );

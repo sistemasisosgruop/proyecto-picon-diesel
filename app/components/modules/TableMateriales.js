@@ -217,7 +217,12 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                       openModal(true);
                     }}
                   />
-                  <ButtonDelete onClick={() => setIsOpenModalDelete(true)} />
+                  <ButtonDelete
+                    onClick={() => {
+                      setElementId(row.original.id);
+                      setIsOpenModalDelete(true);
+                    }}
+                  />
                   <ButtonInspect
                     onClick={() => {
                       openInfoModal();

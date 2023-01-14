@@ -161,7 +161,7 @@ export default function Materiales() {
   };
 
   const updateRegistro = async () => {
-    console.log(form)
+    console.log(form);
     await updateSchema.validate(form, { abortEarly: false });
     await axiosRequest(
       "put",
@@ -175,6 +175,18 @@ export default function Materiales() {
     );
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest(
+        "delete",
+        `/api/mantenimiento/maestro-de-codigos/configuracion/materiales/${elementId}`
+      );
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -825,6 +837,7 @@ export default function Materiales() {
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Máquina"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

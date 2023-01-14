@@ -4,7 +4,14 @@ export const ToastAlert = ({ error }) => {
 
   if (errorDescription?.code === "P2003") {
     customMessage =
-      "El registro no puede ser eliminado ya que tiene dependencias activas, por favor elimine primero las dependencias.";
+      "El registro no puede ser eliminado ya que tiene registros asociados, por favor elimine primero los registros asociados.";
+  }
+  if (errorDescription?.code === "P2002") {
+    customMessage = "El registro ya existe.";
+  }
+    
+  if (errorDescription?.error.includes("stock")) {
+    customMessage = errorDescription?.error;
   }
 
   return (

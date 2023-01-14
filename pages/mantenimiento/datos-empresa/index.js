@@ -58,10 +58,9 @@ export default function DatosEmpresa() {
     web: null,
     logo: null,
   });
-  const [changeData, setChangeData] = useState(false);
   const auth = useAuthState();
   const [empresaToUpdateId, setEmpresaToUpdateId] = useState(null);
-  const { elementId, setElementId } = useContext(FormContext);
+  const { elementId, setElementId, changeData, setChangeData } = useContext(FormContext);
 
   const getEmpresas = async () => {
     const { data } = await axiosRequest("get", `/api/mantenimiento/empresas?adminId=${auth.id}`);

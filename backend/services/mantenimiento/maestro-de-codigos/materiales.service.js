@@ -164,11 +164,18 @@ export class MatrialesService {
   }
 
   static async deleteMaterial(id) {
-    const material = prisma.material.delete({
+    const material = await prisma.material.deleteMany({
       where: {
         id,
+        stock: {
+          equals: 0,
+        },
       },
     });
+
+    if (material.count === 0) {
+      throw new Error("No se puede eliminar el material porque tiene stock");
+    }
 
     return material;
   }
@@ -192,20 +199,17 @@ export class MatrialesService {
             {
               codigo: {
                 contains: filterName,
-                mode: "insensitive",
               },
             },
             {
               denominacion: {
                 contains: filterName,
-                mode: "insensitive",
               },
             },
             {
               familia: {
                 codigo: {
                   contains: filterName,
-                  mode: "insensitive",
                 },
               },
             },
@@ -213,7 +217,6 @@ export class MatrialesService {
               subfamilia: {
                 codigo: {
                   contains: filterName,
-                  mode: "insensitive",
                 },
               },
             },

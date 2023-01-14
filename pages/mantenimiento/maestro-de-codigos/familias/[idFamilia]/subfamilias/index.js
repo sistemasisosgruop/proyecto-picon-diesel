@@ -64,6 +64,15 @@ export default function SubFamilias({ familia }) {
 
     toast.success(`🦄 Registro actualizado exitosamente!`, successProps);
   };
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/maestro-de-codigos/familias/subfamilias/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
+  };
 
   const saveData = async () => {
     try {
@@ -172,7 +181,7 @@ export default function SubFamilias({ familia }) {
       </Modal>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
-        onClick={undefined}
+        onClick={deleteData}
         title={"Eliminar subfamilia"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

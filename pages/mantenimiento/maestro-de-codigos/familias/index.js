@@ -34,8 +34,8 @@ export default function Familias() {
     codigo: null,
     descripcion: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
+
+  const { updateForm, elementId, setCsvPath, changeData, setChangeData } = useContext(FormContext);
 
   const saveData = async () => {
     try {
@@ -70,6 +70,15 @@ export default function Familias() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/maestro-de-codigos/familias/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   useEffect(() => {
@@ -156,7 +165,7 @@ export default function Familias() {
       </Modal>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
-        onClick={undefined}
+        onClick={deleteData}
         title={"Eliminar familia"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}
