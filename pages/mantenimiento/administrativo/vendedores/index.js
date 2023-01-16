@@ -27,7 +27,6 @@ const schema = yup.object().shape({
   telefono: yup.string().required(),
   direccion: yup.string().required(),
   comision: yup.number().required(),
-  aprovacionCotizacion: yup.boolean().required(),
 });
 
 export default function Vendedores() {
@@ -44,7 +43,8 @@ export default function Vendedores() {
     comision: null,
     aprovacionCotizacion: false,
   });
-  const { updateForm, elementId, resetInfo, changeData, setChangeData, setCsvPath } = useContext(FormContext);
+  const { updateForm, elementId, resetInfo, changeData, setChangeData, setCsvPath } =
+    useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -163,9 +163,7 @@ export default function Vendedores() {
           <div className="flex gap-4">
             <ButtonImportData
               handleClick={() =>
-                setCsvPath(
-                  `/api/mantenimiento/vendedores/upload?empresaId=${empresaId}`
-                )
+                setCsvPath(`/api/mantenimiento/vendedores/upload?empresaId=${empresaId}`)
               }
             />
             <ButtonAdd text={"Nuevo vendedor"} onClick={() => openModal(false)} />
@@ -187,7 +185,11 @@ export default function Vendedores() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input label="Nombre" onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
+          <Input
+            label="Nombre"
+            defaultValue={isEdit ? updateForm?.nombre : undefined}
+            onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+          />
           <div className="flex gap-5">
             <Input
               label="Correo"

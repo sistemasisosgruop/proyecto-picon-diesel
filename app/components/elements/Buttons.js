@@ -23,6 +23,18 @@ export const ButtonAdd = ({ text, onClick }) => {
   );
 };
 
+export const ButtonLogin = ({ text, onClick }) => {
+  return (
+    <button
+      type="button"
+      className="flex justify-center items-center p-[10px] gap-1 bg-secundary text-primary rounded-lg cursor-pointer hover:bg-secundary-800"
+      onClick={onClick}
+    >
+      {text}
+    </button>
+  );
+};
+
 export const ButtonEdit = ({ onClick }) => {
   return (
     <Tooltip content="Editar" className="bg-white text-primary-800 shadow">

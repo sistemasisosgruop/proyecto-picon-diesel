@@ -9,9 +9,13 @@ export const ToastAlert = ({ error }) => {
   if (errorDescription?.code === "P2002") {
     customMessage = "El registro ya existe.";
   }
-    
+
   if (errorDescription?.error?.includes("stock")) {
     customMessage = errorDescription?.error;
+  }
+
+  if (errorDescription?.message === "Unautorized") {
+    customMessage = "Usuario o contraseña incorrectos.";
   }
 
   return (
