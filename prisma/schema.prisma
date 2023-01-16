@@ -88,7 +88,7 @@ model Sucursal {
 
 model Pais {
   id                       Int       @id @default(autoincrement())
-  codigo                   String    @unique
+  codigo                   String
   nombre                   String
   empresa                  Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId                Int?
@@ -97,6 +97,7 @@ model Pais {
   maquinasInyectores       Maquina[] @relation(name: "inyectorPais")
   maquinasMotores          Maquina[] @relation(name: "motorPais")
 
+  @@unique([codigo, empresaId])
   @@map("pais")
 }
 

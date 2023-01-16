@@ -7,7 +7,6 @@ import { matchPassword } from "../../utils/auth";
 
 export class AuthService {
   static async login(body) {
-    console.log(body)
     const { email, password } = body;
     const adminUser = await prisma.personal.findUnique({
       where: {
@@ -18,11 +17,9 @@ export class AuthService {
         role: true,
       },
     });
-    console.log(adminUser)
 
     if (adminUser) {
       const passwordMatched = await matchPassword(password, adminUser.password);
-      console.log(passwordMatched)
       if (passwordMatched) {
         const token = jwt.sign(
           {
