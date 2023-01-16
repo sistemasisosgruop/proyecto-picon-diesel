@@ -10,7 +10,10 @@ export const ProtectedRoute = ({ router, children }) => {
     if (isBrowser() && !auth.isAuthenticated) {
       router.push("/login");
     }
-    router.push("/mantenimiento/datos-empresa")
+
+    if (isBrowser() && auth.isAuthenticated) {
+      router.push("/mantenimiento/datos-empresa");
+    }
   }, []);
 
   return children;
