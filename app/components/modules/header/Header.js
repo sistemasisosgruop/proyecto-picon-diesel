@@ -2,7 +2,8 @@
 import { Menu } from "@headlessui/react";
 import { ArrowDown2, LogoutCurve, Setting, User } from "iconsax-react";
 import { Fragment, useEffect, useState } from "react";
-import { useAuthState } from "../../../../contexts/auth.context";
+import { useAuthDispatch, useAuthState } from "../../../../contexts/auth.context";
+import { useRouter } from "next/router";
 
 const itemsDropdown = [
   { name: "Profile", href: "#", icon: <User /> },
@@ -13,6 +14,8 @@ const itemsDropdown = [
 export const Header = () => {
   const [user, setUser] = useState({ nombre: "", rol: "" });
   const auth = useAuthState();
+  const authDispatch = useAuthDispatch();
+  const router = useRouter();
 
   useEffect(() => {
     setUser({ nombre: auth.nombre, rol: auth.roles[0] });
@@ -35,7 +38,12 @@ export const Header = () => {
           {itemsDropdown.map((item, index) => (
             <Menu.Item key={index} as={Fragment}>
               <a
-                ref={undefined}
+                onClick={() => {
+                  if (item.name === "Sign out") {
+                    authDispatch({ type: "logout" });
+                    router.push("/login");
+                  }
+                }}
                 className="flex gap-2 items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
                 {item.icon}
