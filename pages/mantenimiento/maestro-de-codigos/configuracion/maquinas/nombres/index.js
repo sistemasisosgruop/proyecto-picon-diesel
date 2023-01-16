@@ -35,8 +35,8 @@ export default function NombresMaquina() {
     codigo: null,
     nombre: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
+
+  const { updateForm, elementId, setCsvPath, changeData, setChangeData } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -62,6 +62,18 @@ export default function NombresMaquina() {
     );
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest(
+        "delete",
+        `/api/mantenimiento/maestro-de-codigos/configuracion/nombre/${elementId}`
+      );
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -164,6 +176,7 @@ export default function NombresMaquina() {
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Nombre"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

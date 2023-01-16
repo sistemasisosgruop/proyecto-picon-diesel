@@ -7,10 +7,7 @@ import {
   ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateInventario from "../../../../app/components/templates/mantenimiento/TemplateInventario";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -18,7 +15,7 @@ import * as yup from "yup";
 import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { axiosRequest } from "../../../../app/utils/axios-request";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { useQuery } from "react-query";
 import { FormContext } from "../../../../contexts/form.context";
@@ -28,20 +25,15 @@ const schema = yup.object().shape({
 });
 
 export default function MotivoMovimientoAlmacen() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     nombre: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  const { updateForm, elementId, resetInfo, setCsvPath, changeData, setChangeData } =
+    useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -55,29 +47,30 @@ export default function MotivoMovimientoAlmacen() {
 
   const createRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
-    await axiosRequest(
-      "post",
-      "/api/mantenimiento/almacenes/motivo-movimiento",
-      {
-        ...form,
-        empresaId: parseInt(empresaId),
-      }
-    );
+    await axiosRequest("post", "/api/mantenimiento/almacenes/motivo-movimiento", {
+      ...form,
+      empresaId: parseInt(empresaId),
+    });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
   };
 
   const updateRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
-    await axiosRequest(
-      "put",
-      `/api/mantenimiento/almacenes/motivo-movimiento/${elementId}`,
-      {
-        ...form,
-      }
-    );
+    await axiosRequest("put", `/api/mantenimiento/almacenes/motivo-movimiento/${elementId}`, {
+      ...form,
+    });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/almacenes/motivo-movimiento/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -118,15 +111,11 @@ export default function MotivoMovimientoAlmacen() {
     return data;
   };
 
-  const { data, refetch } = useQuery(
-    "getMotivoMovimiento",
-    getMotivoMovimiento,
-    {
-      initialData: {
-        data: [],
-      },
-    }
-  );
+  const { data, refetch } = useQuery("getMotivoMovimiento", getMotivoMovimiento, {
+    initialData: {
+      data: [],
+    },
+  });
 
   const motivoMovimientos = useMemo(() => data?.data, [data?.data]);
 
@@ -135,7 +124,13 @@ export default function MotivoMovimientoAlmacen() {
       <TemplateInventario>
         <Title text={"Lista Motivos movimiento almacen"}>
           <div className="flex gap-4">
-            <ButtonImportData />
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(
+                  `/api/mantenimiento/almacenes/motivo-movimiento/upload?empresaId=${empresaId}`
+                )
+              }
+            />
             <ButtonAdd text={"Nuevo motivo"} onClick={() => openModal(false)} />
           </div>
         </Title>
@@ -166,9 +161,10 @@ export default function MotivoMovimientoAlmacen() {
           </div>
         </form>
       </Modal>
-       
+
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar motivo"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

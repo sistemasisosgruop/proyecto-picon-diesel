@@ -4,24 +4,25 @@ import { generateCodePresupuestoMaterial } from "../../utils/codes";
 export class MaterialPresupuestoService {
   static async create(body) {
     const { empresaId, familiaId, subFamiliaId, ...data } = body;
+    console.log(body);
     const familia = await prisma.familiaPresupuesto.findUnique({
       where: {
-        id: parseInt(familiaId),
+        id: Number(familiaId),
       },
     });
 
     const subFamilia = await prisma.subFamiliaPresupuesto.findUnique({
       where: {
-        id: parseInt(subFamiliaId),
+        id: Number(subFamiliaId),
       },
     });
 
     const material = await prisma.materialPresupuesto.create({
       data: {
+        empresaId: Number(empresaId),
+        familiaId: Number(familiaId),
+        subFamiliaId: Number(subFamiliaId),
         ...data,
-        empresa: {
-          id: parseInt(empresaId),
-        },
       },
     });
 
@@ -41,25 +42,42 @@ export class MaterialPresupuestoService {
 
   static async update(id, body) {
     const { familiaId, subFamiliaId, ...data } = body;
-    const familia = await prisma.familiaPresupuesto.findUnique({
-      where: {
-        id: parseInt(familiaId),
-      },
-    });
+    let correlativo;
+    let updateFamiliaData;
 
-    const subFamilia = await prisma.subFamiliaPresupuesto.findUnique({
-      where: {
-        id: parseInt(subFamiliaId),
-      },
-    });
+    if (familiaId && subFamiliaId) {
+      const familia = await prisma.familiaPresupuesto.findUnique({
+        where: {
+          id: Number(familiaId),
+        },
+      });
 
+      const subFamilia = await prisma.subFamiliaPresupuesto.findUnique({
+        where: {
+          id: Number(subFamiliaId),
+        },
+      });
+      correlativo = `${familia.codigo}${subFamilia.codigo}${generateCodePresupuestoMaterial(id)}`;
+      updateFamiliaData = {
+        familiaId: Number(familiaId),
+        subFamiliaId: Number(subFamiliaId),
+        correlativo,
+      };
+    } else {
+      correlativo = undefined;
+      updateFamiliaData = {
+        familiaId: undefined,
+        subFamiliaId: undefined,
+        correlativo,
+      };
+    }
     const material = await prisma.materialPresupuesto.update({
       where: {
         id,
       },
       data: {
         ...data,
-        correlativo: `${familia.codigo}${subFamilia.codigo}`,
+        ...updateFamiliaData,
       },
     });
 

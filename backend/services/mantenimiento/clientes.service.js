@@ -1,8 +1,5 @@
 import prisma from "../../prisma";
-import {
-  generateCodeCliente,
-  generateCodeTipoCliente,
-} from "../../utils/codes";
+import { generateCodeCliente, generateCodeTipoCliente } from "../../utils/codes";
 
 export class ClienteService {
   static async createTipoCliente(data) {
@@ -71,15 +68,8 @@ export class ClienteService {
   }
 
   static async createCliente(data) {
-    const {
-      nombre,
-      tipoDocumento,
-      numeroDocumento,
-      tipoClienteId,
-      telefono,
-      email,
-      empresaId,
-    } = data;
+    const { nombre, tipoDocumento, numeroDocumento, tipoClienteId, telefono, email, empresaId } =
+      data;
     const cliente = await prisma.cliente.create({
       data: {
         nombre,
@@ -104,14 +94,7 @@ export class ClienteService {
   }
 
   static async updateCliente(id, data) {
-    const {
-      nombre,
-      tipoDocumento,
-      numeroDocumento,
-      tipoClienteId,
-      telefono,
-      email,
-    } = data;
+    const { nombre, tipoDocumento, numeroDocumento, tipoClienteId, telefono, email } = data;
     const cliente = prisma.cliente.update({
       where: {
         id,
@@ -130,9 +113,12 @@ export class ClienteService {
   }
 
   static async deleteCliente(id) {
-    const cliente = prisma.cliente.delete({
+    const cliente = prisma.cliente.update({
       where: {
         id,
+      },
+      data: {
+        estado: "Inactivo",
       },
     });
 
@@ -143,6 +129,7 @@ export class ClienteService {
     const cliente = await prisma.cliente.findMany({
       where: {
         empresaId,
+        estado: "Activo",
       },
       include: {
         tipoCliente: true,

@@ -9,13 +9,14 @@ import {
   useSortBy,
   usePagination,
 } from "react-table";
-import matchSorter from "match-sorter";
+import { matchSorter } from "match-sorter";
 import { Table as Tabla, TableD, TableDOptions, TableHOptions, TableRH } from "../elements/Table";
 import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowUp, SearchNormal1 } from "iconsax-react";
 import { ArrowLeftFast, ArrowRightFast } from "../elements/icons/Arrow";
 import { ButtonDelete, ButtonEdit } from "../elements/Buttons";
 import { FormContext } from "../../../contexts/form.context";
 import { axiosRequest } from "../../utils/axios-request";
+import { MaterialesContext } from "../../../contexts/materiales.context";
 
 function GlobalFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) {
   const count = preGlobalFilteredRows.length;
@@ -60,7 +61,7 @@ function DefaultColumnFilter({ column: { filterValue, preFilteredRows, setFilter
 }
 
 function fuzzyTextFilterFn(rows, id, filterValue) {
-  return matchSorter(rows, filterValue, { keys: [(row) => row.values[id]] });
+  return matchSorter(rows, filterValue, { keys: [...rows.map((row) => row.values[id])] });
 }
 
 // Let the table remove the filter if the string is empty
@@ -68,7 +69,9 @@ fuzzyTextFilterFn.autoRemove = (val) => !val;
 
 // Our table component
 function Table({ columns, data, openModal, setIsOpenModalDelete }) {
-  const { setUpdateForm, setElementId, needRefetch, getPath } = useContext(FormContext);
+  const { setUpdateForm, setElementId, needRefetch, getPath, setIsCredito } =
+    useContext(FormContext);
+  const { setCorrelativo } = useContext(MaterialesContext);
   const filterTypes = useMemo(
     () => ({
       fuzzyText: fuzzyTextFilterFn,
@@ -178,6 +181,7 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                       let currentRow;
                       setElementId(id);
                       openModal(true);
+                      setCorrelativo(row.original?.correlativo ?? "");
 
                       if (needRefetch === true) {
                         currentRow = await axiosRequest("get", `${getPath}/${id}`);
@@ -188,7 +192,17 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                       }
                     }}
                   />
-                  <ButtonDelete onClick={() => setIsOpenModalDelete(true)} />
+                  <ButtonDelete
+                    onClick={() => {
+                      setElementId(row.values.id);
+                      const pago = Object.prototype.hasOwnProperty.call(
+                        row.original,
+                        "numeroDeDias"
+                      );
+                      setIsCredito(pago);
+                      setIsOpenModalDelete(true);
+                    }}
+                  />
                 </TableDOptions>
               </tr>
             );

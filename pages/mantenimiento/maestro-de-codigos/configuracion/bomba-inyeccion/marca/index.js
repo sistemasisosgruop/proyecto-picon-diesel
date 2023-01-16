@@ -35,8 +35,7 @@ export default function MarcasBombaInyeccion() {
     codigo: null,
     marca: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
+  const { updateForm, elementId, setCsvPath, changeData, setChangeData } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -66,6 +65,18 @@ export default function MarcasBombaInyeccion() {
     );
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest(
+        "delete",
+        `/api/mantenimiento/maestro-de-codigos/configuracion/marca-fabrica-sistema-inyeccion/${elementId}`
+      );
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -168,6 +179,7 @@ export default function MarcasBombaInyeccion() {
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar marca"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

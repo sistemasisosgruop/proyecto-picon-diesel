@@ -1,15 +1,8 @@
 import { Input } from "@material-tailwind/react";
 import { useContext, useEffect, useMemo, useState } from "react";
-import {
-  ButtonAdd,
-  ButtonCancel,
-  ButtonSave,
-} from "../../../../app/components/elements/Buttons";
+import { ButtonAdd, ButtonCancel, ButtonSave } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplatePresupuesto from "../../../../app/components/templates/mantenimiento/TemplatePresupuesto";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -29,22 +22,16 @@ const schema = yup.object().shape({
 });
 
 export default function TrabajoTerceros() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     codigo: null,
     definicion: null,
     precio: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  const { updateForm, elementId, resetInfo, changeData, setChangeData } = useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -60,33 +47,33 @@ export default function TrabajoTerceros() {
 
   const createRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
-    await axiosRequest(
-      "post",
-      "/api/mantenimiento/presupuesto/trabajo-terceros",
-      {
-        ...form,
-        empresaId: parseInt(empresaId),
-        precio: parseFloat(form.precio),
-      }
-    );
+    await axiosRequest("post", "/api/mantenimiento/presupuesto/trabajo-terceros", {
+      ...form,
+      empresaId: parseInt(empresaId),
+      precio: parseFloat(form.precio),
+    });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
   };
 
   const updateRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
-    await axiosRequest(
-      "put",
-      `/api/mantenimiento/presupuesto/trabajo-terceros/${elementId}`,
-      {
-        ...form,
-        precio: parseFloat(form.precio),
-      }
-    );
+    await axiosRequest("put", `/api/mantenimiento/presupuesto/trabajo-terceros/${elementId}`, {
+      ...form,
+      precio: parseFloat(form.precio),
+    });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
   };
-
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/presupuesto/trabajo-terceros/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
+  };
 
   const saveData = async () => {
     try {
@@ -142,10 +129,7 @@ export default function TrabajoTerceros() {
       <TemplatePresupuesto>
         <Title text={"Lista Trabajo terceros"}>
           <div className="flex gap-4">
-            <ButtonAdd
-              text={"Nuevo trabajo"}
-              onClick={() => openModal(false)}
-            />
+            <ButtonAdd text={"Nuevo trabajo"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
@@ -188,6 +172,7 @@ export default function TrabajoTerceros() {
       </Modal>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar trabajo"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

@@ -37,8 +37,16 @@ export default function CuentasBancarias() {
     tipoCuenta: null,
     moneda: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo, setGetPath, setNeedRefetch } = useContext(FormContext);
+  const {
+    updateForm,
+    elementId,
+    resetInfo,
+    setGetPath,
+    setNeedRefetch,
+    setCsvPath,
+    changeData,
+    setChangeData,
+  } = useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -81,6 +89,15 @@ export default function CuentasBancarias() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/bancos/cuentas/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -160,7 +177,11 @@ export default function CuentasBancarias() {
       <TemplateAdministrativo>
         <Title text={"Lista Cuentas Bancarias"}>
           <div className="flex gap-4">
-            <ButtonImportData />
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(`/api/mantenimiento/bancos/cuentas/upload?empresaId=${empresaId}`)
+              }
+            />
             <ButtonAdd text={"Nueva cuenta"} onClick={() => openModal(false)} />
           </div>
         </Title>
@@ -218,6 +239,7 @@ export default function CuentasBancarias() {
       </Modal>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Cuenta Bancaria"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

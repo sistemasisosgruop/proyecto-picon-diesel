@@ -41,9 +41,7 @@ export default function ParametrosGlobales() {
     nombre: null,
     valor: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, setUpdateForm, elementId, setElementId } =
-    useContext(FormContext);
+  const { updateForm, setUpdateForm, elementId, setElementId, changeData, setChangeData } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -65,6 +63,16 @@ export default function ParametrosGlobales() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/parametros/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -140,7 +148,12 @@ export default function ParametrosGlobales() {
                       setUpdateForm({ ...currentRow });
                     }}
                   />
-                  <ButtonDelete onClick={() => setIsOpenModalDelete(true)} />
+                  <ButtonDelete
+                    onClick={() => {
+                      setElementId(id);
+                      setIsOpenModalDelete(true);
+                    }}
+                  />
                 </TableDOptions>
               </tr>
             ))}
@@ -174,6 +187,7 @@ export default function ParametrosGlobales() {
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Parámetro"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

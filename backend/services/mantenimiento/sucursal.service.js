@@ -2,11 +2,11 @@ import prisma from "../../prisma";
 import { generateCode } from "../../utils/codes";
 
 export class SucursalService {
-  static async createSucursal(data) {
-    const { nombre, empresaId } = data;
+  static async createSucursal(body) {
+    const { empresaId, ...data } = body;
     const sucursal = await prisma.sucursal.create({
       data: {
-        nombre,
+        ...data,
         empresaId,
       },
     });
@@ -62,8 +62,8 @@ export class SucursalService {
   static async getSucursales(empresaId) {
     const sucursales = prisma.sucursal.findMany({
       where: {
-        empresa:{
-          id: empresaId
+        empresa: {
+          id: empresaId,
         },
       },
     });

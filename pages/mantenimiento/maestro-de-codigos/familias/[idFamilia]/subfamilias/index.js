@@ -22,7 +22,6 @@ import { errorProps, successProps } from "../../../../../../app/utils/alert-conf
 import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert";
 import axios from "axios";
 import { FormContext } from "../../../../../../contexts/form.context";
-import { useLocalStorage } from "../../../../../../app/hooks/useLocalStorage";
 
 const schema = yup.object().shape({
   codigo: yup.string().required(),
@@ -33,7 +32,7 @@ export default function SubFamilias({ familia }) {
   const { codigo, id } = familia;
   const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
     useModal();
-  const [empresaId] = useLocalStorage("empresaId");
+
   const [form, setForm] = useState({
     codigo: null,
     descripcion: null,
@@ -63,6 +62,18 @@ export default function SubFamilias({ familia }) {
     );
 
     toast.success(`🦄 Registro actualizado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest(
+        "delete",
+        `/api/mantenimiento/maestro-de-codigos/familias/subfamilias/${elementId}`
+      );
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -127,7 +138,7 @@ export default function SubFamilias({ familia }) {
             <ButtonImportData
               handleClick={() =>
                 setCsvPath(
-                  `/api/mantenimiento/maestro-de-codigos/familias/subfamilias/upload?empresaId=${empresaId}`
+                  `/api/mantenimiento/maestro-de-codigos/familias/subfamilias/upload?familia=${codigo}`
                 )
               }
             />
@@ -172,7 +183,7 @@ export default function SubFamilias({ familia }) {
       </Modal>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
-        onClick={undefined}
+        onClick={deleteData}
         title={"Eliminar subfamilia"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

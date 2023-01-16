@@ -7,10 +7,7 @@ import {
   ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import {
-  Modal,
-  ModalConfirmDelete,
-} from "../../../../app/components/modules/Modal";
+import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -28,20 +25,15 @@ const schema = yup.object().shape({
 });
 
 export default function Bancos() {
-  const {
-    isOpenModal,
-    isOpenModalDelete,
-    isEdit,
-    setIsOpenModalDelete,
-    closeModal,
-    openModal,
-  } = useModal();
+  const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
+    useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     nombre: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  const { updateForm, elementId, resetInfo, changeData, setChangeData, setCsvPath } =
+    useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -70,7 +62,15 @@ export default function Bancos() {
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
   };
-
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/bancos/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
+  };
 
   const saveData = async () => {
     try {
@@ -102,10 +102,7 @@ export default function Bancos() {
     []
   );
   const getBancos = async () => {
-    const { data } = await axiosRequest(
-      "get",
-      `/api/mantenimiento/bancos?empresaId=${empresaId}`
-    );
+    const { data } = await axiosRequest("get", `/api/mantenimiento/bancos?empresaId=${empresaId}`);
 
     return data;
   };
@@ -122,7 +119,11 @@ export default function Bancos() {
       <TemplateAdministrativo>
         <Title text={"Lista Bancos"}>
           <div className="flex gap-4">
-            <ButtonImportData />
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(`/api/mantenimiento/centro-costos/upload?empresaId=${empresaId}`)
+              }
+            />
             <ButtonAdd text={"Nuevo banco"} onClick={() => openModal(false)} />
           </div>
         </Title>
@@ -158,7 +159,7 @@ export default function Bancos() {
         title={"Eliminar Banco"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}
-        onClick={undefined}
+        onClick={deleteData}
       />
     </>
   );

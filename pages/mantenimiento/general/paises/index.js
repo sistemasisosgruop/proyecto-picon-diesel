@@ -29,8 +29,8 @@ export default function Paises() {
     codigo: null,
     nombre: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId } = useContext(FormContext);
+
+  const { updateForm, elementId, changeData, setChangeData } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -52,6 +52,16 @@ export default function Paises() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/paises/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -141,6 +151,7 @@ export default function Paises() {
       </Modal>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar País"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

@@ -77,8 +77,15 @@ export default function Maquinas() {
     codigoTobera: null,
     tipoTobera: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, setNeedRefetch, setGetPath, resetInfo } = useContext(FormContext);
+  const {
+    updateForm,
+    elementId,
+    setNeedRefetch,
+    setGetPath,
+    resetInfo,
+    changeData,
+    setChangeData,
+  } = useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -171,6 +178,18 @@ export default function Maquinas() {
       }
     );
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest(
+        "delete",
+        `/api/mantenimiento/maestro-de-codigos/configuracion/maquinas/${elementId}`
+      );
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -590,7 +609,7 @@ export default function Maquinas() {
       </ModalLg>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
-        onClick={undefined}
+        onClick={deleteData}
         title={"Eliminar Máquina"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

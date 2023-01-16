@@ -10,6 +10,7 @@ import * as yup from "yup";
 import { FormProvider } from "../contexts/form.context";
 import { ToastContainer } from "react-toastify";
 import { MaterialesProvider } from "../contexts/materiales.context";
+import { ProtectedRoute } from "../app/components/routes/ProtectedRoute";
 
 yup.setLocale({
   mixed: {
@@ -27,22 +28,24 @@ yup.setLocale({
   },
 });
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps, router }) {
   const queryClient = useRef(new QueryClient());
 
   return (
     <QueryClientProvider client={queryClient.current}>
       <Hydrate state={pageProps.dehydratedState}>
         <AuthProvider>
-          <FormProvider>
-            <MaterialesProvider>
-              <ThemeProvider>
-                <LayoutDefault>
-                  <Component {...pageProps} />
-                </LayoutDefault>
-              </ThemeProvider>
-            </MaterialesProvider>
-          </FormProvider>
+          <ProtectedRoute router={router}>
+            <FormProvider>
+              <MaterialesProvider>
+                <ThemeProvider>
+                  <LayoutDefault>
+                    <Component {...pageProps} />
+                  </LayoutDefault>
+                </ThemeProvider>
+              </MaterialesProvider>
+            </FormProvider>
+          </ProtectedRoute>
         </AuthProvider>
       </Hydrate>
       <ToastContainer />

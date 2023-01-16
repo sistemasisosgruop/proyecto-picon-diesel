@@ -29,8 +29,7 @@ export default function DocumentosAdministrativos() {
     nombre: null,
     abreviatura: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+  const { updateForm, elementId, resetInfo, changeData, setChangeData } = useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -61,6 +60,15 @@ export default function DocumentosAdministrativos() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/documentos-administrativos/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -161,6 +169,7 @@ export default function DocumentosAdministrativos() {
       </Modal>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Documento administrativo"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

@@ -35,8 +35,7 @@ export default function MarcasMotor() {
     codigo: null,
     marca: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, setCsvPath } = useContext(FormContext);
+  const { updateForm, elementId, setCsvPath, changeData, setChangeData } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -62,6 +61,18 @@ export default function MarcasMotor() {
     );
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest(
+        "delete",
+        `/api/mantenimiento/maestro-de-codigos/configuracion/marca-motor/${elementId}`
+      );
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -118,11 +129,13 @@ export default function MarcasMotor() {
         <TemplateConfiguracionMotor>
           <Title text={"Marcas de Motores"}>
             <div className="flex gap-4">
-              <ButtonImportData                 handleClick={() =>
+              <ButtonImportData
+                handleClick={() =>
                   setCsvPath(
                     `/api/mantenimiento/maestro-de-codigos/configuracion/marca-motor/upload?empresaId=${empresaId}`
                   )
-                }/>
+                }
+              />
               <ButtonAdd text={"Nueva marca"} onClick={() => openModal(false)} />
             </div>
           </Title>
@@ -162,6 +175,7 @@ export default function MarcasMotor() {
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar marca"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

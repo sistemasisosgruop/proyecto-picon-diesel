@@ -43,8 +43,9 @@ export default function Choferes() {
     telefono: null,
     email: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  const { updateForm, elementId, resetInfo, setCsvPath, changeData, setChangeData } =
+    useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -82,6 +83,15 @@ export default function Choferes() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/choferes/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -153,7 +163,11 @@ export default function Choferes() {
       <TemplateInventario>
         <Title text={"Lista Choferes"}>
           <div className="flex gap-4">
-            <ButtonImportData />
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(`/api/mantenimiento/choferes/upload?empresaId=${empresaId}`)
+              }
+            />
             <ButtonAdd text={"Nuevo chofer"} onClick={() => openModal(false)} />
           </div>
         </Title>
@@ -224,6 +238,7 @@ export default function Choferes() {
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Chofer"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

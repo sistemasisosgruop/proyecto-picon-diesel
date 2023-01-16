@@ -33,8 +33,9 @@ export default function FactorInternamiento() {
     valor: null,
     fecha: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  const { updateForm, elementId, resetInfo, changeData, setChangeData, setCsvPath } =
+    useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -66,6 +67,15 @@ export default function FactorInternamiento() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/factor-internamiento/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -128,7 +138,11 @@ export default function FactorInternamiento() {
       <TemplateImportacion>
         <Title text={"Lista Factor de internamiento"}>
           <div className="flex gap-4">
-            <ButtonImportData />
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(`/api/mantenimiento/factor-internamiento/upload?empresaId=${empresaId}`)
+              }
+            />
             <ButtonAdd text={"Nuevo factor"} onClick={() => openModal(false)} />
           </div>
         </Title>
@@ -169,6 +183,7 @@ export default function FactorInternamiento() {
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar factor de internamiento"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

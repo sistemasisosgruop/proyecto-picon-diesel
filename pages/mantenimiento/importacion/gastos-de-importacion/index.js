@@ -33,8 +33,9 @@ export default function GastosImportacion() {
     nombre: null,
     descripcion: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  const { updateForm, elementId, resetInfo, setCsvPath, changeData, setChangeData } =
+    useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -65,6 +66,15 @@ export default function GastosImportacion() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/gastos-importacion/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -119,7 +129,11 @@ export default function GastosImportacion() {
       <TemplateImportacion>
         <Title text={"Lista Gastos de importación"}>
           <div className="flex gap-4">
-            <ButtonImportData />
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(`/api/mantenimiento/gastos-importacion/upload?empresaId=${empresaId}`)
+              }
+            />
             <ButtonAdd text={"Nuevo gasto"} onClick={() => openModal(false)} />
           </div>
         </Title>
@@ -158,6 +172,7 @@ export default function GastosImportacion() {
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Gasto de importación"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

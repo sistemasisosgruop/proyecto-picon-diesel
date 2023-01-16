@@ -8,8 +8,15 @@ module.exports = withMT({
   ],
   theme: {
     extend: {
+      width: {
+        line: "1px",
+        76: "312px",
+        "form-1": "360px",
+        "form-2": "640px",
+        "form-3": "",
+      },
       borderWidth: {
-        line: '1px',
+        line: "1px",
       },
       colors: {
         primary: {

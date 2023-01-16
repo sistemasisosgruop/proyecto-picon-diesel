@@ -66,7 +66,7 @@ async function createTipoCliente() {
         tipo: tipoCliente,
         empresa: {
           connect: {
-            id: 1,
+            ruc: rucs[0],
           },
         },
       },
@@ -74,7 +74,7 @@ async function createTipoCliente() {
         tipo: tipoCliente,
         empresa: {
           connect: {
-            id: 1,
+            ruc: rucs[0],
           },
         },
       },

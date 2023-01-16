@@ -33,8 +33,9 @@ export default function CentroCostos() {
     nombre: null,
     responsable: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  const { updateForm, elementId, resetInfo, changeData, setChangeData, setCsvPath } =
+    useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -64,6 +65,15 @@ export default function CentroCostos() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/centro-costos/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -121,7 +131,11 @@ export default function CentroCostos() {
       <TemplateAdministrativo>
         <Title text={"Lista Centro de Costos"}>
           <div className="flex gap-4">
-            <ButtonImportData />
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(`/api/mantenimiento/centro-costos/upload?empresaId=${empresaId}`)
+              }
+            />
             <ButtonAdd text={"Nuevo centro de costos"} onClick={() => openModal(false)} />
           </div>
         </Title>
@@ -161,6 +175,7 @@ export default function CentroCostos() {
       </Modal>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Centro de Costos"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

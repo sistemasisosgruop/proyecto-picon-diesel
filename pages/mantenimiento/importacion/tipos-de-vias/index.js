@@ -33,8 +33,9 @@ export default function TiposVias() {
     nombre: null,
     descripcion: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  const { updateForm, elementId, resetInfo, setCsvPath, changeData, setChangeData } =
+    useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -65,6 +66,15 @@ export default function TiposVias() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/tipo-vias/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -120,7 +130,11 @@ export default function TiposVias() {
       <TemplateImportacion>
         <Title text={"Lista Tipos de vías"}>
           <div className="flex gap-4">
-            <ButtonImportData />
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(`/api/mantenimiento/tipo-vias/upload?empresaId=${empresaId}`)
+              }
+            />
             <ButtonAdd text={"Nuevo tipo"} onClick={() => openModal(false)} />
           </div>
         </Title>
@@ -159,6 +173,7 @@ export default function TiposVias() {
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Tipo de vía"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

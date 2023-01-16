@@ -36,8 +36,9 @@ export default function SubFamilias({ familia }) {
     codigo: null,
     descripcion: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  const { updateForm, elementId, resetInfo, setCsvPath, changeData, setChangeData } =
+    useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -66,6 +67,18 @@ export default function SubFamilias({ familia }) {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest(
+        "delete",
+        `/api/mantenimiento/presupuesto/familias/subfamilias/${elementId}`
+      );
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -127,7 +140,13 @@ export default function SubFamilias({ familia }) {
         </Link>
         <Title text={"Lista Subfamilias"}>
           <div className="flex gap-4">
-            <ButtonImportData />
+            <ButtonImportData
+              handleClick={() =>
+                setCsvPath(
+                  `/api/mantenimiento/presupuesto/familias/subfamilias/upload?familia=${codigo}`
+                )
+              }
+            />
             <ButtonAdd text={"Nueva subfamilia"} onClick={() => openModal(false)} />
           </div>
         </Title>
@@ -169,6 +188,7 @@ export default function SubFamilias({ familia }) {
       </Modal>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar subfamilia"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

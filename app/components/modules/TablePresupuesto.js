@@ -9,7 +9,7 @@ import {
   usePagination,
 } from "react-table";
 
-import matchSorter from "match-sorter";
+import { matchSorter } from "match-sorter";
 
 import { Table as Tabla, TableD, TableDOptions, TableHOptions, TableRH } from "../elements/Table";
 import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowUp, SearchNormal1 } from "iconsax-react";
@@ -61,7 +61,7 @@ function DefaultColumnFilter({ column: { filterValue, preFilteredRows, setFilter
 }
 
 function fuzzyTextFilterFn(rows, id, filterValue) {
-  return matchSorter(rows, filterValue, { keys: [(row) => row.values[id]] });
+  return matchSorter(rows, filterValue, { keys: [...rows.map((row) => row.values[id])] });
 }
 
 // Let the table remove the filter if the string is empty
@@ -189,7 +189,12 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                       }
                     }}
                   />
-                  <ButtonDelete onClick={() => setIsOpenModalDelete(true)} />
+                  <ButtonDelete
+                    onClick={() => {
+                      setElementId(row.values.id);
+                      setIsOpenModalDelete(true);
+                    }}
+                  />
                 </TableDOptions>
                 <TableD>
                   <ButtonSubfamilia

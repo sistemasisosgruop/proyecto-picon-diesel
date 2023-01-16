@@ -32,8 +32,8 @@ export default function DocumentosContables() {
     nombre: null,
     abreviatura: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, resetInfo } = useContext(FormContext);
+
+  const { updateForm, elementId, resetInfo, changeData, setChangeData } = useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -65,6 +65,15 @@ export default function DocumentosContables() {
     });
 
     toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+  };
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/documentos-contables/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
   };
 
   const saveData = async () => {
@@ -175,6 +184,7 @@ export default function DocumentosContables() {
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete
+        onClick={deleteData}
         title={"Eliminar Documento contable"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

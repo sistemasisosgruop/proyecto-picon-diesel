@@ -65,9 +65,12 @@ export class PersonalService {
   }
 
   static async deletePersonal(id) {
-    const personal = prisma.personal.delete({
+    const personal = prisma.personal.update({
       where: {
         id,
+      },
+      data: {
+        estado: "Inactivo",
       },
     });
 
@@ -82,6 +85,7 @@ export class PersonalService {
             id: empresaId,
           },
         },
+        estado: "Activo",
       },
     });
 

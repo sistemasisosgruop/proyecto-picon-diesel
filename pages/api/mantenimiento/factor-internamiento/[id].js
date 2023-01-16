@@ -8,10 +8,7 @@ export default async function handler(req, res) {
 
     const id = Number(req.query.id);
     if (req.method === "PUT") {
-      const result = await FactorInternamiento.updateFactorInternamiento(
-        id,
-        req.body
-      );
+      const result = await FactorInternamiento.updateFactorInternamiento(id, req.body);
       return res.status(200).json(result);
     }
 
@@ -20,9 +17,6 @@ export default async function handler(req, res) {
       return res.status(200).json(result);
     }
   } catch (error) {
-    if (error.code === "P2025") {
-      return res.status(404).json({ error: error.meta.cause });
-    }
-    return res.status(400).json({ error: error.message });
+    return res.status(400).json({ error: error.message, code: error?.code });
   }
 }
