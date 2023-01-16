@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import "regenerator-runtime/runtime";
 import {
   useTable,
@@ -9,8 +9,7 @@ import {
   usePagination,
 } from "react-table";
 
-import matchSorter from "match-sorter";
-
+import { matchSorter } from "match-sorter";
 import { Table as Tabla, TableD, TableDOptions, TableHOptions, TableRH } from "../elements/Table";
 import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowUp, SearchNormal1 } from "iconsax-react";
 import { ArrowLeftFast, ArrowRightFast } from "../elements/icons/Arrow";
@@ -61,7 +60,7 @@ function DefaultColumnFilter({ column: { filterValue, preFilteredRows, setFilter
 }
 
 function fuzzyTextFilterFn(rows, id, filterValue) {
-  return matchSorter(rows, filterValue, { keys: [(row) => row.values[id]] });
+  return matchSorter(rows, filterValue, { keys: [...rows.map((row) => row.values[id])] });
 }
 
 // Let the table remove the filter if the string is empty

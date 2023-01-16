@@ -1,9 +1,7 @@
-import { useContext, useMemo } from "react";
+import { useMemo } from "react";
 import "regenerator-runtime/runtime";
 import { useTable, useFilters, useGlobalFilter, useSortBy, usePagination } from "react-table";
-
-import matchSorter from "match-sorter";
-
+import { matchSorter } from "match-sorter";
 import { Table as Tabla, TableD, TableHOptions, TableRH } from "../elements/Table";
 import { ArrowDown, ArrowUp } from "iconsax-react";
 
@@ -22,7 +20,7 @@ function DefaultColumnFilter({ column: { filterValue, preFilteredRows, setFilter
 }
 
 function fuzzyTextFilterFn(rows, id, filterValue) {
-  return matchSorter(rows, filterValue, { keys: [(row) => row.values[id]] });
+  return matchSorter(rows, filterValue, { keys: [...rows.map((row) => row.values[id])] });
 }
 
 // Let the table remove the filter if the string is empty
