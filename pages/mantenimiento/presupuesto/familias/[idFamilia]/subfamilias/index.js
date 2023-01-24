@@ -58,7 +58,7 @@ export default function SubFamilias({ familia }) {
       familiaId: id,
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
   const updateRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
@@ -66,7 +66,7 @@ export default function SubFamilias({ familia }) {
       ...form,
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
   const deleteData = async () => {
     try {

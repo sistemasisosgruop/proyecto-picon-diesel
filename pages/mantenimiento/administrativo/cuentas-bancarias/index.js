@@ -79,7 +79,7 @@ export default function CuentasBancarias() {
       bancoId: parseInt(form.bancoId),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const updateRegistro = async () => {
@@ -88,7 +88,7 @@ export default function CuentasBancarias() {
       ...form,
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
   const deleteData = async () => {
     try {

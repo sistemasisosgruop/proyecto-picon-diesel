@@ -157,7 +157,7 @@ export default function Materiales() {
       subFamiliaId: parseInt(form.subFamiliaId),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const updateRegistro = async () => {
@@ -173,7 +173,7 @@ export default function Materiales() {
       }
     );
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
   const deleteData = async () => {
     try {

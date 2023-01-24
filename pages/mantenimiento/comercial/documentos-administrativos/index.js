@@ -50,7 +50,7 @@ export default function DocumentosAdministrativos() {
       empresaId: parseInt(empresaId),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const updateRegistro = async () => {
@@ -59,7 +59,7 @@ export default function DocumentosAdministrativos() {
       ...form,
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
   const deleteData = async () => {
     try {

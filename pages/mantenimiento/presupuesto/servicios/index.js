@@ -52,7 +52,7 @@ export default function Servicios() {
       precio: parseFloat(form.precio),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const updateRegistro = async () => {
@@ -62,7 +62,7 @@ export default function Servicios() {
       precio: parseFloat(form.precio),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const deleteData = async () => {

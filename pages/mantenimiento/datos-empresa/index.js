@@ -120,7 +120,7 @@ export default function DatosEmpresa() {
       ...empresaForm,
     });
 
-    toast.success(`🦄 Empresa actualizada exitosamente!`, successProps);
+    toast.success(`💾 Empresa actualizada exitosamente!`, successProps);
   };
 
   const createEmpresa = async () => {
@@ -130,7 +130,7 @@ export default function DatosEmpresa() {
       adminId: auth.id,
     });
 
-    toast.success(`🦄 Empresa ${data.nombre} registrada exitosamente!`, successProps);
+    toast.success(`💾 Empresa ${data.nombre} registrada exitosamente!`, successProps);
   };
 
   const saveData = async () => {
@@ -150,7 +150,7 @@ export default function DatosEmpresa() {
   const deleteEmpresa = async () => {
     try {
       const { data } = await axiosRequest("delete", `/api/mantenimiento/empresas/${elementId}`);
-      toast.success(`🦄 Empresa ${data.nombre} eliminada exitosamente!`, successProps);
+      toast.success(`💾 Empresa ${data.nombre} eliminada exitosamente!`, successProps);
       setChangeData(!changeData);
       setIsOpenModalDelete(false);
     } catch (error) {

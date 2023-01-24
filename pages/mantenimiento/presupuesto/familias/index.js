@@ -56,7 +56,7 @@ export default function Familias() {
       empresaId: parseInt(empresaId),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
   const updateRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
@@ -64,7 +64,7 @@ export default function Familias() {
       ...form,
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
   const deleteData = async () => {
     try {

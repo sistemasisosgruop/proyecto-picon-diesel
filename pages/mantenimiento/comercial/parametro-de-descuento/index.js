@@ -33,7 +33,7 @@ export default function ParametroDescuento() {
         empresaId: parseInt(empresaId),
       });
 
-      toast.success(`🦄 Registro actualizado exitosamente!`, successProps);
+      toast.success(`💾 Registro actualizado exitosamente!`, successProps);
     } catch (error) {
       toast.error(<ToastAlert error={error} />, errorProps);
     }

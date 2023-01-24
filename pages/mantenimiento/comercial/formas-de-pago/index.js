@@ -126,7 +126,7 @@ export default function formContadoasDePago() {
       empresaId: parseInt(empresaId),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const updateRegistroContado = async () => {
@@ -135,7 +135,7 @@ export default function formContadoasDePago() {
       ...formContado,
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
   const deleteDataContado = async () => {
     try {
@@ -156,7 +156,7 @@ export default function formContadoasDePago() {
       empresaId: parseInt(empresaId),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const updateRegistroCredito = async () => {
@@ -166,7 +166,7 @@ export default function formContadoasDePago() {
       numeroDeDias: parseInt(formCredito.numeroDeDias),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
   const deleteDataCredito = async () => {
     try {

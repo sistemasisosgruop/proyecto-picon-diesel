@@ -53,7 +53,7 @@ export default function DescripcionInyector() {
       }
     );
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const updateRegistro = async () => {
@@ -66,7 +66,7 @@ export default function DescripcionInyector() {
       }
     );
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const saveData = async () => {

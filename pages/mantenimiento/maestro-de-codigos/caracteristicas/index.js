@@ -49,7 +49,7 @@ export default function Caracteristicas() {
       empresaId: parseInt(empresaId),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
   const updateRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
@@ -61,7 +61,7 @@ export default function Caracteristicas() {
       }
     );
 
-    toast.success(`🦄 Registro actualizado exitosamente!`, successProps);
+    toast.success(`💾 Registro actualizado exitosamente!`, successProps);
   };
 
   const deleteData = async () => {
