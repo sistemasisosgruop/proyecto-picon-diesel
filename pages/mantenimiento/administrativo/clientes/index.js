@@ -78,7 +78,7 @@ export default function Clientes() {
       tipoClienteId: parseInt(form.tipoClienteId),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const updateRegistro = async () => {
@@ -87,7 +87,7 @@ export default function Clientes() {
       ...form,
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const saveData = async () => {

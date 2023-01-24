@@ -56,7 +56,7 @@ export default function TipoDeCambio() {
       empresaId: parseInt(empresaId),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const updateRegistro = async () => {
@@ -67,7 +67,7 @@ export default function TipoDeCambio() {
       valor: parseFloat(form.valor),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const deleteData = async () => {

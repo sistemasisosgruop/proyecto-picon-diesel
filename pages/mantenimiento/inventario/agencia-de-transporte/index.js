@@ -67,7 +67,7 @@ export default function AgenciaTransporte() {
       empresaId: parseInt(empresaId),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const updateRegistro = async () => {
@@ -76,7 +76,7 @@ export default function AgenciaTransporte() {
       ...form,
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const deleteData = async () => {

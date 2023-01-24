@@ -193,10 +193,11 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                     onClick={() => {
                       const initialCaracteristicas = [];
                       row.original.caracteristicaToMaterial.forEach(
-                        ({ caracteristica, isChecked }) => {
+                        ({ caracteristica, isChecked, valor }) => {
                           const data = {
                             caracteristicaId: caracteristica.id,
                             isChecked,
+                            valor,
                           };
                           initialCaracteristicas.push(data);
                         }

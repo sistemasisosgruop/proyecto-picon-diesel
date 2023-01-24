@@ -43,7 +43,7 @@ export default function Login() {
           }}
         ></Input>
         <Input
-          label="Constraseña"
+          label="Contraseña"
           type={"password"}
           onChange={(e) => {
             setuser({ ...user, password: e.target.value });

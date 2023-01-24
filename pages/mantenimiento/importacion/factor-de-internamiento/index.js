@@ -56,7 +56,7 @@ export default function FactorInternamiento() {
       empresaId: parseInt(empresaId),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
   const updateRegistro = async () => {
@@ -66,7 +66,7 @@ export default function FactorInternamiento() {
       fecha: new Date(form.fecha).toISOString(),
     });
 
-    toast.success(`🦄 Registro guardado exitosamente!`, successProps);
+    toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
   const deleteData = async () => {
     try {

@@ -101,7 +101,7 @@ export default function DatosEmpresa() {
       ...sucursalForm,
     });
 
-    toast.success(`🦄 Empresa actualizada exitosamente!`, successProps);
+    toast.success(`💾 Empresa actualizada exitosamente!`, successProps);
   };
 
   const createSucursal = async () => {
@@ -111,7 +111,7 @@ export default function DatosEmpresa() {
       empresaId: Number(empresaId),
     });
 
-    toast.success(`🦄 Sucursal ${data.nombre} registrada exitosamente!`, successProps);
+    toast.success(`💾 Sucursal ${data.nombre} registrada exitosamente!`, successProps);
   };
 
   const saveData = async () => {
@@ -131,7 +131,7 @@ export default function DatosEmpresa() {
   const deleteSucursal = async () => {
     try {
       const { data } = await axiosRequest("delete", `/api/mantenimiento/sucursales/${elementId}`);
-      toast.success(`🦄 Sucursal ${data.nombre} eliminada exitosamente!`, successProps);
+      toast.success(`💾 Sucursal ${data.nombre} eliminada exitosamente!`, successProps);
       setChangeData(!changeData);
       setIsOpenModalDelete(false);
     } catch (error) {

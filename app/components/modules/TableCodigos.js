@@ -178,6 +178,7 @@ function Table({ columns, data }) {
                 <TableDOptions>
                   <ButtonDelete
                     onClick={() => {
+                      console.log("delete", row.original.tipoCodigo);
                       const { tipoCodigo, id } = row.original;
                       let filterCodigos;
                       switch (tipoCodigo) {
@@ -202,9 +203,9 @@ function Table({ columns, data }) {
                           setCodigos({ ...codigos, equivalencia: filterCodigos });
 
                           break;
-                        case "aplicacionMaquina":
+                        default:
                           filterCodigos = codigos.aplicacionMaquina.filter(
-                            (material) => material.id !== id
+                            (maquina) => maquina.id !== id
                           );
                           setCodigos({ ...codigos, aplicacionMaquina: filterCodigos });
 

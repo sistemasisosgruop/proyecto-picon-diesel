@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import prisma from "../../../prisma";
 import { generateCode } from "../../../utils/codes";
 
@@ -16,12 +17,14 @@ export class MatrialesService {
         ...props
       } = data;
 
-      const setMaterialSimilutud = materialSimilitud.length > 0 ? materialSimilitud : undefined;
+      const setMaterialSimilutud =
+        materialSimilitud?.length > 0 ? materialSimilitud : Prisma.JsonNull;
       const setMaterialEquivalencia =
-        materialEquivalencia.length > 0 ? materialEquivalencia : undefined;
-      const setMaterialReemplazo = materialReemplazo.length > 0 ? materialReemplazo : undefined;
+        materialEquivalencia?.length > 0 ? materialEquivalencia : Prisma.JsonNull;
+      const setMaterialReemplazo =
+        materialReemplazo?.length > 0 ? materialReemplazo : Prisma.JsonNull;
       const setAplicacionDeMaquina =
-        aplicacionDeMaquina.length > 0 ? aplicacionDeMaquina : undefined;
+        aplicacionDeMaquina?.length > 0 ? aplicacionDeMaquina : Prisma.JsonNull;
 
       const material = await PrismaClient.material.create({
         data: {
@@ -93,12 +96,15 @@ export class MatrialesService {
         caracteristicas,
         ...props
       } = data;
-      const setMaterialSimilutud = materialSimilitud.length > 0 ? materialSimilitud : undefined;
+      const setMaterialSimilutud =
+        materialSimilitud?.length > 0 ? materialSimilitud : Prisma.JsonNull;
       const setMaterialEquivalencia =
-        materialEquivalencia.length > 0 ? materialEquivalencia : undefined;
-      const setMaterialReemplazo = materialReemplazo.length > 0 ? materialReemplazo : undefined;
+        materialEquivalencia?.length > 0 ? materialEquivalencia : Prisma.JsonNull;
+      const setMaterialReemplazo =
+        materialReemplazo?.length > 0 ? materialReemplazo : Prisma.JsonNull;
       const setAplicacionDeMaquina =
-        aplicacionDeMaquina.length > 0 ? aplicacionDeMaquina : undefined;
+        aplicacionDeMaquina?.length > 0 ? aplicacionDeMaquina : Prisma.JsonNull;
+
       let correlativo;
       let updateFamiliaData;
 
@@ -194,6 +200,11 @@ export class MatrialesService {
         empresaId,
         ...(filterName && {
           OR: [
+            {
+              codigoFabricante: {
+                contains: filterName,
+              },
+            },
             {
               codigo: {
                 contains: filterName,
