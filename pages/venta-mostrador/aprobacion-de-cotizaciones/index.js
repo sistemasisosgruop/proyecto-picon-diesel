@@ -42,7 +42,7 @@ export default function DatosEmpresa() {
       </Container>
       {/* Modal agregar */}
       <ModalLg
-        title={isEdit ? "Editar Empresa" : "Nueva Empresa"}
+        title={isEdit ? "Editar Cotizavion" : "Nueva Cotizacion"}
         isOpen={isOpenModal}
         closeModal={closeModal}
       >

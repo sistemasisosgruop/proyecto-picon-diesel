@@ -5,50 +5,15 @@ import { ModalConfirmDelete, ModalLg } from "../../../app/components/modules/Mod
 import { Group, GroupInputs } from "../../../app/components/elements/Form";
 import { Input, Option, Select, Textarea } from "@material-tailwind/react";
 import { useModal } from "../../../app/hooks/useModal";
-import { axiosRequest } from "../../../app/utils/axios-request";
-import { useAuthState } from "../../../contexts/auth.context";
-import { useMemo, useState, useEffect, useContext } from "react";
-import { useQuery } from "react-query";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import * as yup from "yup";
-import { ToastAlert } from "../../../app/components/elements/ToastAlert";
-import { errorProps, successProps } from "../../../app/utils/alert-config";
-import { FormContext } from "../../../contexts/form.context";
 import TableComplete from "../../../app/components/modules/TableComplete";
 import TableMaterialesForm from "../../../app/components/modules/TableMaterialesForm";
 import { Divider } from "../../../app/components/elements/Divider";
-
-const schema = yup.object().shape({
-  ruc: yup.number().required(),
-  nombre: yup.string().required(),
-  direccion: yup.string().required(),
-  telefono: yup.string().required(),
-  email: yup.string().nullable().email(),
-  web: yup.string().nullable(),
-});
+import { useMemo } from "react";
 
 export default function DatosEmpresa() {
   const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
     useModal();
-  const [empresaForm, setEmpresaForm] = useState({
-    ruc: null,
-    direccion: null,
-    telefono: null,
-    email: null,
-    nombre: null,
-    web: null,
-    logo: null,
-  });
-  const auth = useAuthState();
-  const [empresaToUpdateId, setEmpresaToUpdateId] = useState(null);
-  const { elementId, setElementId, changeData, setChangeData } = useContext(FormContext);
-
-  const getEmpresas = async () => {
-    const { data } = await axiosRequest("get", `/api/mantenimiento/empresas?adminId=${auth.id}`);
-
-    return data;
-  };
 
   const columns = useMemo(
     () => [
@@ -77,87 +42,19 @@ export default function DatosEmpresa() {
     []
   );
 
-  useEffect(() => {
-    setEmpresaForm({
-      ruc: null,
-      direccion: null,
-      telefono: null,
-      email: null,
-      nombre: null,
-      web: null,
-      logo: null,
-    });
-    refetch();
-  }, [changeData]);
-
-  const { data, isLoading, refetch } = useQuery("empresas", getEmpresas, {
-    initialData: {
-      data: [],
-    },
-  });
-
-  const updateEmpresa = async () => {
-    await schema.validate(empresaForm, { abortEarly: false });
-    await axiosRequest("put", `/api/mantenimiento/empresas/${empresaToUpdateId}`, {
-      ...empresaForm,
-    });
-
-    toast.success(`🦄 Empresa actualizada exitosamente!`, successProps);
-  };
-
-  const createEmpresa = async () => {
-    await schema.validate(empresaForm, { abortEarly: false });
-    const { data } = await axiosRequest("post", "/api/mantenimiento/empresas", {
-      ...empresaForm,
-      adminId: auth.id,
-    });
-
-    toast.success(`🦄 Empresa ${data.nombre} registrada exitosamente!`, successProps);
-  };
-
-  const saveData = async () => {
-    try {
-      if (isEdit) {
-        await updateEmpresa();
-      } else {
-        await createEmpresa();
-      }
-      setChangeData(!changeData);
-      closeModal();
-    } catch (error) {
-      toast.error(<ToastAlert error={error} />, errorProps);
-    }
-  };
-
-  const deleteEmpresa = async () => {
-    try {
-      const { data } = await axiosRequest("delete", `/api/mantenimiento/empresas/${elementId}`);
-      toast.success(`🦄 Empresa ${data.nombre} eliminada exitosamente!`, successProps);
-      setChangeData(!changeData);
-      setIsOpenModalDelete(false);
-    } catch (error) {
-      toast.error(<ToastAlert error={error} />, errorProps);
-    }
-  };
-
   return (
     <>
       <Container whiteColor={true}>
         <Title text={"Cotizaciones"}>
           <ButtonAdd text={"Nueva cotizacion"} onClick={() => openModal(false)} />
         </Title>
-
         {/* Table List */}
-        {isLoading ? (
-          <span>Loading...</span>
-        ) : (
-          <TableComplete
-            columns={columns}
-            data={[]}
-            openModal={openModal}
-            setIsOpenModalDelete={setIsOpenModalDelete}
-          />
-        )}
+        <TableComplete
+          columns={columns}
+          data={[]}
+          openModal={openModal}
+          setIsOpenModalDelete={setIsOpenModalDelete}
+        />
       </Container>
       {/* Modal agregar */}
       <ModalLg
@@ -288,20 +185,20 @@ export default function DatosEmpresa() {
                 </div>
               </div>
             </GroupInputs>
-            <Divider/>
+            <Divider />
           </Group>
 
           <div className="w-full flex justify-center gap-5">
             <ButtonCancel onClick={closeModal} />
-            <ButtonSave label={"Guardar y enviar"} onClick={saveData} />
+            <ButtonSave label={"Guardar y enviar"} onClick={undefined} />
           </div>
         </form>
       </ModalLg>
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete
-        onClick={deleteEmpresa}
-        title={"Eliminar Empresa"}
+        onClick={undefined}
+        title={"Eliminar Cotizacion"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}
       />
