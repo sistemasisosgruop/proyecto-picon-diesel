@@ -83,7 +83,6 @@ export class MatrialesService {
   }
 
   static async updateMaterial(id, data) {
-    console.log(data.caracteristicas);
     const responseTransaction = await prisma.$transaction(async (PrismaClient) => {
       const {
         empresaId,

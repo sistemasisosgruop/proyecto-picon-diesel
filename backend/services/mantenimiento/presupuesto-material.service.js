@@ -4,7 +4,6 @@ import { generateCodePresupuestoMaterial } from "../../utils/codes";
 export class MaterialPresupuestoService {
   static async create(body) {
     const { empresaId, familiaId, subFamiliaId, ...data } = body;
-    console.log(body);
     const familia = await prisma.familiaPresupuesto.findUnique({
       where: {
         id: Number(familiaId),

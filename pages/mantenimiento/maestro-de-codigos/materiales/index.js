@@ -239,6 +239,69 @@ export default function Materiales() {
     []
   );
 
+  const maquinasColums = useMemo(
+    () => [
+      { Header: "#", accessor: "id" },
+      { Header: "Codigo", accessor: "codigo" },
+      { Header: "Fábrica Máquina", accessor: "fabricaMaquina" },
+      { Header: "Modelo Máquina", accessor: "modeloMaquina" },
+      { Header: "Nombre Máquina", accessor: "nombreMaquina" },
+      { Header: "Procedencia Máquina", accessor: "procedencia" },
+      {
+        Header: "Código Original del Motor",
+        accessor: "codigoOriginalMotor",
+      },
+      { Header: "Modelo del Motor", accessor: "modeloMotor" },
+      { Header: "Marca del Motor", accessor: "marcaMotor" },
+      { Header: "Procedencia del Motor", accessor: "procedenciaMotor" },
+      { Header: "N° de cilindros", accessor: "numeroCilindros" },
+      {
+        Header: "Código fábrica Bomba de Inyeccion",
+        accessor: "codigoFabricaBombaInyeccion",
+      },
+      {
+        Header: "Tipo de Bomba de Inyeccion",
+        accessor: "tipoBombaInyeccion",
+      },
+      {
+        Header: "Marca fábrica de Sistema deInyeccion",
+        accessor: "marcaFabricaSistemaInyeccion",
+      },
+      {
+        Header: "Descripción de Bomba de Inyeccion",
+        accessor: "descripcionBombasInyeccion",
+      },
+      {
+        Header: "Procedencia Bomba de Inyeccion",
+        accessor: "procedenciaBombaInyeccion",
+      },
+      {
+        Header: "Código Original de Bomba de Inyección",
+        accessor: "codigoOriginalBombaInyeccion",
+      },
+      {
+        Header: "Código fábrica de Inyector",
+        accessor: "codigoFabricaInyector",
+      },
+      {
+        Header: "Tipo fábrica de Inyector",
+        accessor: "tipoFabricaInyector",
+      },
+      {
+        Header: "Marca fábrica de Inyector",
+        accessor: "marcaFabricaInyector",
+      },
+      { Header: "Descripción Inyector", accessor: "descripcionInyector" },
+      {
+        Header: "Código Original de Inyector",
+        accessor: "codigoOriginalInyector",
+      },
+      { Header: "Código Tobera", accessor: "codigoTobera" },
+      { Header: "Tipo Tobera", accessor: "tipoTobera" },
+    ],
+    []
+  );
+
   const getMateriales = async () => {
     const { data } = await axiosRequest(
       "get",
@@ -274,6 +337,15 @@ export default function Materiales() {
         setAplicacionMaquinas(data?.data);
         break;
     }
+  };
+
+  const handleSearchMaquina = async ({ target }) => {
+    const { data } = await axiosRequest(
+      "get",
+      `/api/mantenimiento/maestro-de-codigos/configuracion/maquinas?empresaId=${empresaId}&filter=${target.value}`
+    );
+
+    setAplicacionMaquinas(data?.data);
   };
 
   const materiales = useMemo(
@@ -344,11 +416,38 @@ export default function Materiales() {
   );
   const codigosAplicacionMaquina = useMemo(
     () =>
-      codigos?.aplicacionMaquina.map(({ familia, subfamilia, ...info }) => ({
-        ...info,
-        familia: familia.codigo,
-        subFamilia: subfamilia.codigo,
-      })),
+      codigos?.aplicacionMaquina.map((maquina) => {
+        return {
+          id: maquina.id,
+          codigo: maquina.codigo,
+          fabricaMaquina: maquina.fabricaMaquina.fabrica,
+          modeloMaquina: maquina.modeloMaquina.modelo,
+          nombreMaquina: maquina.nombreMaquina.nombre,
+          procedencia: maquina.procedencia.nombre,
+
+          modeloMotor: maquina.modeloMotor,
+          marcaMotor: maquina.marcaMotor.marca,
+          procedenciaMotor: maquina.procedenciaMotor.nombre,
+          numeroCilindros: maquina.numeroCilindros,
+          codigoOriginalMotor: maquina.codigoOriginal,
+
+          codigoFabricaBombaInyeccion: maquina.codigoFabricaBombaInyeccion,
+          tipoBombaInyeccion: maquina.tipoBombaInyeccion,
+          marcaFabricaSistemaInyeccion: maquina.marcaFabricaSistemaInyeccion.marca,
+          descripcionBombasInyeccion: maquina.descripcionBombaInyeccion.descripcion,
+          procedenciaBombaInyeccion: maquina.procedenciaBombaInyeccion.nombre,
+          codigoOriginalBombaInyeccion: maquina.codigoOriginalBombaInyeccion,
+
+          codigoFabricaInyector: maquina.codigoFabricaInyector,
+          tipoFabricaInyector: maquina.tipoFabricaInyector,
+          marcaFabricaInyector: maquina.marcaFabricaInyector.marca,
+          codigoOriginalInyector: maquina.codigoOriginalInyector,
+          descripcionInyector: maquina.descripcionInyector.descripcion,
+
+          codigoTobera: maquina.codigoTobera,
+          tipoTobera: maquina.tipoTobera,
+        };
+      }),
 
     [codigos]
   );
@@ -357,11 +456,38 @@ export default function Materiales() {
 
   const detalleAplicacionMaquina = useMemo(
     () =>
-      materialInfo?.aplicacionDeMaquina?.map(({ familia, subfamilia, ...info }) => ({
-        ...info,
-        familia: familia.codigo,
-        subFamilia: subfamilia.codigo,
-      })) ?? [],
+      materialInfo?.aplicacionDeMaquina?.map((maquina) => {
+        return {
+          id: maquina.id,
+          codigo: maquina.codigo,
+          fabricaMaquina: maquina.fabricaMaquina.fabrica,
+          modeloMaquina: maquina.modeloMaquina.modelo,
+          nombreMaquina: maquina.nombreMaquina.nombre,
+          procedencia: maquina.procedencia.nombre,
+
+          modeloMotor: maquina.modeloMotor,
+          marcaMotor: maquina.marcaMotor.marca,
+          procedenciaMotor: maquina.procedenciaMotor.nombre,
+          numeroCilindros: maquina.numeroCilindros,
+          codigoOriginalMotor: maquina.codigoOriginal,
+
+          codigoFabricaBombaInyeccion: maquina.codigoFabricaBombaInyeccion,
+          tipoBombaInyeccion: maquina.tipoBombaInyeccion,
+          marcaFabricaSistemaInyeccion: maquina.marcaFabricaSistemaInyeccion.marca,
+          descripcionBombasInyeccion: maquina.descripcionBombaInyeccion.descripcion,
+          procedenciaBombaInyeccion: maquina.procedenciaBombaInyeccion.nombre,
+          codigoOriginalBombaInyeccion: maquina.codigoOriginalBombaInyeccion,
+
+          codigoFabricaInyector: maquina.codigoFabricaInyector,
+          tipoFabricaInyector: maquina.tipoFabricaInyector,
+          marcaFabricaInyector: maquina.marcaFabricaInyector.marca,
+          codigoOriginalInyector: maquina.codigoOriginalInyector,
+          descripcionInyector: maquina.descripcionInyector.descripcion,
+
+          codigoTobera: maquina.codigoTobera,
+          tipoTobera: maquina.tipoTobera,
+        };
+      }) ?? [],
     [materialInfo]
   );
   const detalleMaterialEquivalencia = useMemo(
@@ -455,7 +581,7 @@ export default function Materiales() {
       </TemplateMaestroCodigos>
       {/* Modal agregar */}
       <ModalLg
-        title={isEdit ? "Editar Material" : "Nueva Material"}
+        title={isEdit ? "Editar Material" : "Nuevo Material"}
         isOpen={isOpenModal}
         closeModal={closeModal}
       >
@@ -720,9 +846,7 @@ export default function Materiales() {
           <Group title={"Aplicación de la máquina"}>
             <Search
               onFocus={() => setIsOpenCodigos({ ...isOpenCodigos, aplicacionMaquina: true })}
-              onChange={(event) => {
-                handleSearch(event, "aplicacionMaquina");
-              }}
+              onChange={handleSearchMaquina}
             />
             <Dropdown isOpen={isOpenCodigos.aplicacionMaquina} elements={aplicacionMaquinas.length}>
               {aplicacionMaquinas?.map((aplicacionMaquina) => {
@@ -744,13 +868,13 @@ export default function Materiales() {
                       setIsOpenCodigos({ ...isOpenCodigos, aplicacionMaquina: false });
                     }}
                     key={aplicacionMaquina.id}
-                    name={`COD: ${aplicacionMaquina?.codigo} - COD Fabricante: ${aplicacionMaquina?.codigoFabricante} - 
-                    Tipo de fabricante: ${aplicacionMaquina?.tipoFabricante} - Correlativo: ${aplicacionMaquina?.correlativo}`}
+                    name={`COD: ${aplicacionMaquina?.codigo} - COD. Fabrica: ${aplicacionMaquina?.fabricaMaquina.fabrica} - 
+                    Modelo de maquina: ${aplicacionMaquina?.modeloMaquina.modelo} - COD. Motor: ${aplicacionMaquina?.codigoOriginal}`}
                   />
                 );
               })}
             </Dropdown>
-            <TableCodigos columns={columns} data={codigosAplicacionMaquina} />
+            <TableCodigos columns={maquinasColums} data={codigosAplicacionMaquina} />
           </Group>
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
@@ -829,7 +953,7 @@ export default function Materiales() {
           </div>
         </div>
         <Group title={"Aplicacion de la maquina"}>
-          <TableCodigosDetalle columns={columns} data={detalleAplicacionMaquina} />
+          <TableCodigosDetalle columns={maquinasColums} data={detalleAplicacionMaquina} />
         </Group>
       </ModalMaterialDetalle>
 

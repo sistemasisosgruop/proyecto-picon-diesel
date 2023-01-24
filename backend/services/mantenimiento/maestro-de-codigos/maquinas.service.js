@@ -47,10 +47,46 @@ export class MaquinaService {
     return maquina;
   }
 
-  static async getMaquinas(empresaId) {
+  static async getMaquinas(empresaId, filterName) {
     return prisma.maquina.findMany({
       where: {
         empresaId,
+        ...(filterName && {
+          OR: [
+            {
+              codigo: {
+                contains: filterName,
+              },
+            },
+            {
+              codigoOriginal: {
+                contains: filterName,
+              },
+            },
+            {
+              modeloMotor: {
+                contains: filterName,
+              },
+            },
+            {
+              fabricaMaquina: {
+                codigo: {
+                  contains: filterName,
+                },
+              },
+            },
+            {
+              codigoFabricaBombaInyeccion: {
+                contains: filterName,
+              },
+            },
+            {
+              codigoFabricaInyector: {
+                contains: filterName,
+              },
+            },
+          ],
+        }),
       },
       include: {
         fabricaMaquina: {
@@ -113,7 +149,6 @@ export class MaquinaService {
             nombre: true,
           },
         },
-        
       },
     });
   }
