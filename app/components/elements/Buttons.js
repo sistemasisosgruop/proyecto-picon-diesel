@@ -1,6 +1,6 @@
 "use client";
 import { Tooltip } from "@material-tailwind/react";
-import { Add, Edit, Eye, Note, TableDocument, TrushSquare } from "iconsax-react";
+import { Add, Edit, Eye, Note, Sms, TableDocument, TrushSquare } from "iconsax-react";
 import Link from "next/link";
 import { useContext, useState, useEffect, useRef } from "react";
 import { Excel } from "./icons/Excel";
@@ -91,14 +91,14 @@ export const ButtonPDF = ({ onClick }) => {
   );
 };
 
-export const ButtonSave = ({ onClick }) => {
+export const ButtonSave = ({ onClick, label = null }) => {
   return (
     <button
       type="button"
       className="flex justify-center items-center p-[10px] gap-1 bg-secundary text-primary rounded-lg cursor-pointer hover:bg-secundary-800 shadow-md"
       onClick={onClick}
     >
-      Guardar
+      {label ?? "Guardar"}
     </button>
   );
 };

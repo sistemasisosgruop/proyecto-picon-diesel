@@ -37,8 +37,7 @@ export default function Caracteristicas() {
     descripcion: null,
     abreviatura: null,
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, elementId, setCsvPath, setUpdateForm } = useContext(FormContext);
+  const { updateForm, elementId, setCsvPath, setUpdateForm, changeData, setChangeData } = useContext(FormContext);
   useEffect(() => {
     setForm(updateForm);
   }, [updateForm]);
@@ -64,6 +63,17 @@ export default function Caracteristicas() {
 
     toast.success(`🦄 Registro actualizado exitosamente!`, successProps);
   };
+
+  const deleteData = async () => {
+    try {
+      await axiosRequest("delete", `/api/mantenimiento/maestro-de-codigos/caracteristicas/${elementId}`);
+      toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
+      closeModal();
+    } catch (error) {
+      toast.error(<ToastAlert error={error} />, errorProps);
+    }
+  };
+
 
   const saveData = async () => {
     try {
@@ -185,7 +195,7 @@ export default function Caracteristicas() {
       </Modal>
       {/* Modal Eliminar */}
       <ModalConfirmDelete
-        onClick={undefined}
+        onClick={deleteData}
         title={"Eliminar Característica"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}

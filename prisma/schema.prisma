@@ -66,6 +66,9 @@ model Empresa {
   material                     Material[]
   FamiliaPresupuesto           FamiliaPresupuesto[]
   MaterialPresupuesto          MaterialPresupuesto[]
+  Cotizacion                   Cotizacion[]
+  GuiaDeRemision               GuiaDeRemision[]
+  Factura                      Factura[]
 
   @@map("empresa")
 }
@@ -103,11 +106,12 @@ model Pais {
 
 model ParametroGlobal {
   id        Int      @id @default(autoincrement())
-  nombre    String
+  nombre    String   @unique
   valor     String
   empresa   Empresa? @relation(fields: [empresaId], references: [id])
   empresaId Int?
 
+  @@unique([nombre, empresaId])
   @@map("parametro_global")
 }
 
@@ -173,36 +177,42 @@ model FactorInternamiento {
 
 // AREA ADMINISTRATIVA
 model Personal {
-  id                Int        @id @default(autoincrement())
-  codigo            String?    @unique
+  id                Int              @id @default(autoincrement())
+  codigo            String?          @unique
   nombre            String
-  email             String     @unique
+  email             String           @unique
   password          String
   passwordEncrypted String?
   telefono          String
   puesto            String?
-  estado            EstadoEnum @default(Activo)
+  estado            EstadoEnum       @default(Activo)
   direccion         String
   role              Role[]
   empresa           Empresa[]
+  Cotizacion        Cotizacion[]
+  GuiaDeRemision    GuiaDeRemision[]
+  Factura           Factura[]
 
   @@map("personal")
 }
 
 model Vendedor {
-  id                   Int        @id @default(autoincrement())
-  codigo               String?    @unique
+  id                   Int              @id @default(autoincrement())
+  codigo               String?          @unique
   nombre               String
-  email                String     @unique
+  email                String           @unique
   password             String
   telefono             String
   direccion            String
-  comision             Decimal    @default(0) @db.Decimal(12, 2)
+  comision             Decimal          @default(0) @db.Decimal(12, 2)
   aprovacionCotizacion Boolean
-  estado               EstadoEnum @default(Activo)
-  empresa              Empresa?   @relation(fields: [empresaId], references: [id])
+  estado               EstadoEnum       @default(Activo)
+  empresa              Empresa?         @relation(fields: [empresaId], references: [id])
   empresaId            Int?
   role                 Role[]
+  Cotizacion           Cotizacion[]
+  GuiaDeRemision       GuiaDeRemision[]
+  Factura              Factura[]
 
   @@map("vendedor")
 }
@@ -220,6 +230,9 @@ model Cliente {
   tipoClienteId   Int?
   empresa         Empresa?          @relation(fields: [empresaId], references: [id])
   empresaId       Int?
+  Cotizacion      Cotizacion[]
+  GuiaDeRemision  GuiaDeRemision[]
+  Factura         Factura[]
 
   @@map("cliente")
 }
@@ -316,51 +329,57 @@ model AgenciaTransporte {
   email           String
   empresa         Empresa?          @relation(fields: [empresaId], references: [id])
   empresaId       Int
+  GuiaDeRemision  GuiaDeRemision[]
 
   @@map("agencia_transporte")
 }
 
 model Vehiculo {
-  id               Int      @id @default(autoincrement())
-  codigo           String?  @unique
+  id               Int              @id @default(autoincrement())
+  codigo           String?          @unique
   placa            String
   marca            String
   modelo           String
   tipo             String?
   descripcion      String?
   color            String
-  tarjetaPropiedad String   @map("tarjeta_propiedad")
-  empresa          Empresa? @relation(fields: [empresaId], references: [id])
+  tarjetaPropiedad String           @map("tarjeta_propiedad")
+  empresa          Empresa?         @relation(fields: [empresaId], references: [id])
   empresaId        Int
+  GuiaDeRemision   GuiaDeRemision[]
 
   @@map("vehiculo")
 }
 
 model Chofer {
-  id                 Int      @id @default(autoincrement())
-  codigo             String?  @unique
+  id                 Int              @id @default(autoincrement())
+  codigo             String?          @unique
   nombre             String
   dni                String
   licencia           String
   fechaVencimiento   DateTime
-  tarjetaDePropiedad String   @map("tarjeta_de_propiedad")
+  tarjetaDePropiedad String           @map("tarjeta_de_propiedad")
   email              String
   telefono           String
-  empresa            Empresa? @relation(fields: [empresaId], references: [id])
+  empresa            Empresa?         @relation(fields: [empresaId], references: [id])
   empresaId          Int
+  GuiaDeRemision     GuiaDeRemision[]
 
   @@map("chofer")
 }
 
 model TipoDeCambio {
-  id        Int      @id @default(autoincrement())
-  codigo    String?  @unique
-  de        String
-  a         String
-  valor     Decimal  @default(0) @db.Decimal(12, 2)
-  fecha     DateTime
-  empresa   Empresa? @relation(fields: [empresaId], references: [id])
-  empresaId Int
+  id             Int              @id @default(autoincrement())
+  codigo         String?          @unique
+  de             String
+  a              String
+  valor          Decimal          @default(0) @db.Decimal(12, 2)
+  fecha          DateTime
+  empresa        Empresa?         @relation(fields: [empresaId], references: [id])
+  empresaId      Int
+  Cotizacion     Cotizacion[]
+  GuiaDeRemision GuiaDeRemision[]
+  Factura        Factura[]
 
   @@map("tipo_de_cambio")
 }
@@ -376,22 +395,28 @@ model ParametroDescuento {
 }
 
 model FormaDePagoContado {
-  id        Int      @id @default(autoincrement())
-  codigo    String?  @unique
-  nombre    String
-  empresa   Empresa? @relation(fields: [empresaId], references: [id])
-  empresaId Int
+  id             Int              @id @default(autoincrement())
+  codigo         String?          @unique
+  nombre         String
+  empresa        Empresa?         @relation(fields: [empresaId], references: [id])
+  empresaId      Int
+  Cotizacion     Cotizacion[]
+  GuiaDeRemision GuiaDeRemision[]
+  Factura        Factura[]
 
   @@map("forma_de_pago_contado")
 }
 
 model FormaDePagoCredito {
-  id           Int      @id @default(autoincrement())
-  codigo       String?  @unique
-  nombre       String
-  numeroDeDias Int      @map("numero_de_dias")
-  empresa      Empresa? @relation(fields: [empresaId], references: [id])
-  empresaId    Int
+  id             Int              @id @default(autoincrement())
+  codigo         String?          @unique
+  nombre         String
+  numeroDeDias   Int              @map("numero_de_dias")
+  empresa        Empresa?         @relation(fields: [empresaId], references: [id])
+  empresaId      Int
+  Cotizacion     Cotizacion[]
+  GuiaDeRemision GuiaDeRemision[]
+  Factura        Factura[]
 
   @@map("forma_de_pago_credito")
 }
@@ -420,12 +445,13 @@ model DocumentoAdministrativo {
 }
 
 model Detraccion {
-  id         Int      @id @default(autoincrement())
-  codigo     String   @unique
+  id         Int       @id @default(autoincrement())
+  codigo     String    @unique
   definicion String
-  porcentaje Decimal  @default(0) @db.Decimal(12, 2)
-  empresa    Empresa? @relation(fields: [empresaId], references: [id])
+  porcentaje Decimal   @default(0) @db.Decimal(12, 2)
+  empresa    Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId  Int
+  Factura    Factura[]
 
   @@map("detraccion")
 }
@@ -672,6 +698,7 @@ model Maquina {
   tipoTobera                     String
   empresa                        Empresa?                      @relation(fields: [empresaId], references: [id])
   empresaId                      Int
+  Cotizacion                     Cotizacion[]
 
   @@map("maquina")
 }
@@ -697,6 +724,8 @@ model Material {
   stock                    Int?                       @default(0)
   codigoMotorOriginal      String?
   codigoBombaInyeccion     String?
+  Cotizacion               Cotizacion?                @relation(fields: [cotizacionId], references: [id])
+  cotizacionId             Int?
 
   @@map("material")
 }
@@ -711,6 +740,163 @@ model CaracteristicaToMaterial {
   caracteristicaId Int
 
   @@map("caracteristica_to_material")
+}
+
+// VENTA MOSTRADOR
+
+model Cotizacion {
+  id                     Int                   @id @default(autoincrement())
+  number                 String?               @unique
+  fechaCotizacion        DateTime
+  fechaValidez           DateTime
+  diasValidez            Int
+  referencia             String?
+  nota                   String?
+  maquina                String?
+  materiales             Material[]
+  moneda                 String?
+  subtotal               Decimal               @default(0) @db.Decimal(12, 2)
+  descuento              Decimal               @default(0) @db.Decimal(12, 2)
+  subtotalValorNeto      Decimal               @default(0) @db.Decimal(12, 2)
+  igv                    Decimal               @default(0) @db.Decimal(12, 2)
+  totalSoles             Decimal               @default(0) @db.Decimal(12, 2)
+  formaPagoContado       FormaDePagoContado?   @relation(fields: [formaPagoContadoId], references: [id])
+  formaPagoContadoId     Int?
+  formaPagoCredito       FormaDePagoCredito?   @relation(fields: [formaPagoCreditoId], references: [id])
+  formaPagoCreditoId     Int?
+  tipoDeCambio           TipoDeCambio?         @relation(fields: [tipoDeCambioId], references: [id])
+  tipoDeCambioId         Int?
+  cliente                Cliente?              @relation(fields: [clienteId], references: [id])
+  clienteId              Int?
+  vendedor               Vendedor?             @relation(fields: [vendedorId], references: [id])
+  vendedorId             Int?
+  personal               Personal?             @relation(fields: [personalId], references: [id])
+  personalId             Int?
+  empresa                Empresa?              @relation(fields: [empresaId], references: [id])
+  empresaId              Int
+  Maquina                Maquina?              @relation(fields: [maquinaId], references: [id])
+  maquinaId              Int?
+  aprovacionCotizacion   AprovacionCotizacion? @relation(fields: [aprovacionCotizacionId], references: [id])
+  aprovacionCotizacionId Int?
+
+  @@map("cotizacion")
+}
+
+model AprovacionCotizacion {
+  id                 Int               @id @default(autoincrement())
+  subtotal           Decimal           @default(0) @db.Decimal(12, 2)
+  descuento          Decimal           @default(0) @db.Decimal(12, 2)
+  subtotalValorNeto  Decimal           @default(0) @db.Decimal(12, 2)
+  igv                Decimal           @default(0) @db.Decimal(12, 2)
+  totalSoles         Decimal           @default(0) @db.Decimal(12, 2)
+  cotizaciones       Cotizacion[]
+  AprovacionPedido   AprovacionPedido? @relation(fields: [aprovacionPedidoId], references: [id])
+  aprovacionPedidoId Int?
+
+  @@map("aprovacion_cotizacion")
+}
+
+model AprovacionPedido {
+  id                   Int                    @id @default(autoincrement())
+  subtotal             Decimal                @default(0) @db.Decimal(12, 2)
+  descuento            Decimal                @default(0) @db.Decimal(12, 2)
+  subtotalValorNeto    Decimal                @default(0) @db.Decimal(12, 2)
+  igv                  Decimal                @default(0) @db.Decimal(12, 2)
+  totalSoles           Decimal                @default(0) @db.Decimal(12, 2)
+  aprovacionCotizacion AprovacionCotizacion[]
+  guiasDeRemision      GuiaDeRemision[]
+
+  @@map("aprovacion_pedido")
+}
+
+model GuiaDeRemision {
+  id                   Int                 @id @default(autoincrement())
+  tipoDeGuia           String?
+  NumeroGuiaDeRemision String?
+  serie                String?
+  fechaDeCotizacion    DateTime
+  fechaDeValidez       DateTime
+  diasDeValidez        Int
+  moneda               String?
+  estado               String?
+  numeroDeOrden        String?
+  puntoDePartida       String?
+  puntoDeLlegada       String?
+  motivoDeTraslado     String?
+  referencia           String?
+  nota                 String?
+  AprovacionPedido     AprovacionPedido?   @relation(fields: [aprovacionPedidoId], references: [id])
+  aprovacionPedidoId   Int?
+  formaPagoContado     FormaDePagoContado? @relation(fields: [formaPagoContadoId], references: [id])
+  formaPagoContadoId   Int?
+  formaPagoCredito     FormaDePagoCredito? @relation(fields: [formaPagoCreditoId], references: [id])
+  formaPagoCreditoId   Int?
+  tipoDeCambio         TipoDeCambio?       @relation(fields: [tipoDeCambioId], references: [id])
+  tipoDeCambioId       Int?
+  cliente              Cliente?            @relation(fields: [clienteId], references: [id])
+  clienteId            Int?
+  maquina              String
+  vendedor             Vendedor?           @relation(fields: [vendedorId], references: [id])
+  vendedorId           Int?
+  personal             Personal?           @relation(fields: [personalId], references: [id])
+  personalId           Int?
+  empresa              Empresa?            @relation(fields: [empresaId], references: [id])
+  empresaId            Int
+  agencia              AgenciaTransporte?  @relation(fields: [agenciaId], references: [id])
+  agenciaId            Int?
+  vehiculo             Vehiculo?           @relation(fields: [vehiculoId], references: [id])
+  vehiculoId           Int?
+  conductor            Chofer?             @relation(fields: [choferId], references: [id])
+  choferId             Int?
+  subtotal             Decimal             @default(0) @db.Decimal(12, 2)
+  descuento            Decimal             @default(0) @db.Decimal(12, 2)
+  subtotalValorNeto    Decimal             @default(0) @db.Decimal(12, 2)
+  igv                  Decimal             @default(0) @db.Decimal(12, 2)
+  totalSoles           Decimal             @default(0) @db.Decimal(12, 2)
+  factura              Factura?
+
+  @@map("guia_de_remision")
+}
+
+model Factura {
+  id                 Int                 @id @default(autoincrement())
+  numeroDeFactura    String?
+  tipoDeDocumento    TipoDocumentoEnum
+  serie              String?
+  fechaDeFactura     DateTime
+  fechaDeValidez     DateTime
+  diasDeValidez      Int
+  moneda             String?
+  formaPagoContado   FormaDePagoContado? @relation(fields: [formaPagoContadoId], references: [id])
+  formaPagoContadoId Int?
+  formaPagoCredito   FormaDePagoCredito? @relation(fields: [formaPagoCreditoId], references: [id])
+  formaPagoCreditoId Int?
+  tipoDeCambio       TipoDeCambio?       @relation(fields: [tipoDeCambioId], references: [id])
+  tipoDeCambioId     Int?
+  estado             String?
+  GuiaDeRemision     GuiaDeRemision?     @relation(fields: [guiaDeRemisionId], references: [id])
+  guiaDeRemisionId   Int?                @unique
+  cliente            Cliente?            @relation(fields: [clienteId], references: [id])
+  clienteId          Int?
+  maquina            String?
+  vendedor           Vendedor?           @relation(fields: [vendedorId], references: [id])
+  vendedorId         Int?
+  personal           Personal?           @relation(fields: [personalId], references: [id])
+  personalId         Int?
+  ordenDeCompra      String?
+  empresa            Empresa?            @relation(fields: [empresaId], references: [id])
+  empresaId          Int
+  referencia         String?
+  nota               String?
+  subtotal           Decimal             @default(0) @db.Decimal(12, 2)
+  descuento          Decimal             @default(0) @db.Decimal(12, 2)
+  subtotalValorNeto  Decimal             @default(0) @db.Decimal(12, 2)
+  igv                Decimal             @default(0) @db.Decimal(12, 2)
+  totalSoles         Decimal             @default(0) @db.Decimal(12, 2)
+  icbper             Decimal             @default(0) @db.Decimal(12, 2)
+  haveIcbper         Boolean             @default(false)
+  detraccion         Detraccion?         @relation(fields: [detraccionId], references: [id])
+  detraccionId       Int?
 }
 
 enum EstadoEnum {

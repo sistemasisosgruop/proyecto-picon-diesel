@@ -585,7 +585,7 @@ export default function Materiales() {
                       setIsOpenCodigos({ ...isOpenCodigos, reemplazo: false });
                     }}
                     key={reemplazo.id}
-                    name={`COD. ${reemplazo?.codigo} - Denominación: ${reemplazo?.denominacion} - 
+                    name={`COD: ${reemplazo?.codigo} - COD Fabricante: ${reemplazo?.codigoFabricante} - 
                     Tipo de fabricante: ${reemplazo?.tipoFabricante} - Correlativo: ${reemplazo?.correlativo}`}
                   />
                 );
@@ -618,7 +618,7 @@ export default function Materiales() {
                       setIsOpenCodigos({ ...isOpenCodigos, similitud: false });
                     }}
                     key={similitud.id}
-                    name={`COD. ${similitud?.codigo} - Denominación: ${similitud?.denominacion} - 
+                    name={`COD: ${similitud?.codigo} - COD Fabricante: ${similitud?.codigoFabricante} - 
                     Tipo de fabricante: ${similitud?.tipoFabricante} - Correlativo: ${similitud?.correlativo}`}
                   />
                 );
@@ -651,7 +651,7 @@ export default function Materiales() {
                       setIsOpenCodigos({ ...isOpenCodigos, equivalencia: false });
                     }}
                     key={equivalencia.id}
-                    name={`COD. ${equivalencia?.codigo} - Denominación: ${equivalencia?.denominacion} - 
+                    name={`COD: ${equivalencia?.codigo} - COD Fabricante: ${equivalencia?.codigoFabricante} - 
                     Tipo de fabricante: ${equivalencia?.tipoFabricante} - Correlativo: ${equivalencia?.correlativo}`}
                   />
                 );
@@ -744,7 +744,7 @@ export default function Materiales() {
                       setIsOpenCodigos({ ...isOpenCodigos, aplicacionMaquina: false });
                     }}
                     key={aplicacionMaquina.id}
-                    name={`COD. ${aplicacionMaquina?.codigo} - Denominación: ${aplicacionMaquina?.denominacion} - 
+                    name={`COD: ${aplicacionMaquina?.codigo} - COD Fabricante: ${aplicacionMaquina?.codigoFabricante} - 
                     Tipo de fabricante: ${aplicacionMaquina?.tipoFabricante} - Correlativo: ${aplicacionMaquina?.correlativo}`}
                   />
                 );

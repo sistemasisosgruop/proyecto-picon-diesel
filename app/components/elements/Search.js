@@ -1,6 +1,6 @@
 import { SearchNormal1 } from "iconsax-react";
 
-export const Search = ({ onChange, onFocus }) => {
+export const Search = ({ onChange, onFocus, onBlur = undefined }) => {
   return (
     <div className="w-full pt-2 relative mx-auto text-gray-600">
       <input
@@ -10,6 +10,7 @@ export const Search = ({ onChange, onFocus }) => {
         name="search"
         placeholder="Search"
         onFocus={onFocus}
+        onBlur={onBlur}
       />
       <button type="submit" className="absolute right-0 top-0 mt-5 mr-4">
         <SearchNormal1 size={15} />
