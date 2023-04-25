@@ -1,0 +1,41 @@
+export const personal = [
+  {
+    id: 1,
+    codigo: "0001",
+    nombre: "Juan Perez",
+    correo: "personal@gmail.com",
+    telefono: "999999999",
+    cargo: "Administrador",
+    area: "Administracion",
+    estado: "Activo",    
+  },
+  {
+    id: 2,
+    codigo: "0002",
+    nombre: "Maria Perez",
+    correo: "personal@gmail.com",
+    telefono: "999999999",
+    cargo: "Administrador",
+    area: "Administracion",
+    estado: "Activo",
+  },
+  {
+    id: 3,
+    codigo: "0003",
+    nombre: "Pedro Perez",
+    correo: "personal@gmail.com",
+    telefono: "999999999",
+    cargo: "Administrador",
+    area: "Administracion",
+    estado: "Activo",
+  },{
+    id: 4,
+    codigo: "0004",
+    nombre: "Jose Perez",
+    correo: "personal@gmail.com",
+    telefono: "999999999",
+    cargo: "Administrador",
+    area: "Administracion",
+    estado: "Activo",
+  }
+]
