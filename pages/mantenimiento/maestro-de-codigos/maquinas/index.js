@@ -538,7 +538,7 @@ export default function Maquinas() {
           <Group title={"Datos del Inyector"}>
             <GroupInputs>
               <Input
-                label={"Código fábrica"}
+                label={"Código fábrica Inyector"}
                 onChange={(e) => setForm({ ...form, codigoFabricaInyector: e.target.value })}
                 defaultValue={isEdit ? updateForm?.codigoFabricaInyector : undefined}
               />
