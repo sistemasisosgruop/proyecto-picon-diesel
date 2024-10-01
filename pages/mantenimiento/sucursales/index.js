@@ -112,6 +112,7 @@ export default function DatosEmpresa() {
     });
 
     toast.success(`💾 Sucursal ${data.nombre} registrada exitosamente!`, successProps);
+    refetch();
   };
 
   const saveData = async () => {

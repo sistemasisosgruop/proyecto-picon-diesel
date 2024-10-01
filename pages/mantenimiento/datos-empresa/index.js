@@ -33,7 +33,6 @@ import { ToastAlert } from "../../../app/components/elements/ToastAlert";
 import { errorProps, successProps } from "../../../app/utils/alert-config";
 import { FormContext } from "../../../contexts/form.context";
 
-const fileTypes = ["JPEG", "PNG"];
 
 const schema = yup.object().shape({
   ruc: yup.number().required(),
@@ -48,6 +47,7 @@ export default function DatosEmpresa() {
   const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
     useModal();
   const [file, setFile] = useState(null);
+  const [logoEmpresa,setLogoEmpresa] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
   const [empresaForm, setEmpresaForm] = useState({
     ruc: null,
@@ -70,7 +70,18 @@ export default function DatosEmpresa() {
 
   const handleChange = (file) => {
     setFile(file);
+    // console.log(file);
     setLogoPreview(URL.createObjectURL(file));
+
+    const reader =new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () =>{
+      setLogoEmpresa(reader.result);
+      // console.log(reader.result)
+      setEmpresaForm({ ...empresaForm, logo: reader.result });
+    }
+    
+    
   };
 
   // Datos de la empresa
@@ -124,6 +135,7 @@ export default function DatosEmpresa() {
   };
 
   const createEmpresa = async () => {
+    console.log('Empresa a registrar:',empresaForm)
     await schema.validate(empresaForm, { abortEarly: false });
     const { data } = await axiosRequest("post", "/api/mantenimiento/empresas", {
       ...empresaForm,
@@ -131,6 +143,8 @@ export default function DatosEmpresa() {
     });
 
     toast.success(`💾 Empresa ${data.nombre} registrada exitosamente!`, successProps);
+    window.location.reload();
+    
   };
 
   const saveData = async () => {
@@ -231,6 +245,7 @@ export default function DatosEmpresa() {
         )}
       </Container>
       {/* Modal agregar */}
+      
       <ModalLg
         title={isEdit ? "Editar Empresa" : "Nueva Empresa"}
         isOpen={isOpenModal}
@@ -241,8 +256,8 @@ export default function DatosEmpresa() {
             multiple={false}
             handleChange={handleChange}
             name="file"
-            types={fileTypes}
-            accept={fileTypes}
+            type={['jpeg', 'png']}
+  
           >
             <div className="flex justify-center items-center rounded-md border-2 border-dashed border-primary-200 py-10 bg-primary-50">
               <div className="space-y-1 text-center flex flex-col items-center">
