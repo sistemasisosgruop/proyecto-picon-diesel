@@ -18,7 +18,7 @@ export default async function loginHandler(req, res) {
 
     res.setHeader("Set-Cookie", serialized);
 
-    return res.status(200).json({ token });
+    return res.status(200).json({ token });   //
   } catch (error) {
     console.log(error)
     return res.status(401).json({ status: 401, message: "Unautorized" });

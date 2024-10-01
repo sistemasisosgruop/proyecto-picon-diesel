@@ -3,7 +3,7 @@ import { createContext, useState } from "react";
 
 export const MaterialesContext = createContext(null);
 
-export const MaterialesProvider = ({ children }) => {
+export const MaterialesProvider = ({ children }) => { //! COMPONENTE PROVEEDOR A TODOS LOS HIJOS PARA ACCEDER A SUS DATOS
   const [codigos, setCodigos] = useState({
     reemplazo: [],
     similitud: [],
@@ -16,7 +16,7 @@ export const MaterialesProvider = ({ children }) => {
   const [materialInfo, setMaterialInfo] = useState(null);
   const [caracteristicasForm, setCaracteristicasForm] = useState([]);
 
-  function openInfoModal() {
+  function openInfoModal() {      //! Cambia el estado para abir modal
     setInfoIsOpen(true);
   }
 
@@ -25,7 +25,7 @@ export const MaterialesProvider = ({ children }) => {
     subtitle.style.color = "#f00";
   }
 
-  function closeInfoModal() {
+  function closeInfoModal() {     //! Cambia el estado para cerrar modal
     setInfoIsOpen(false);
   }
 

@@ -4,8 +4,8 @@ import jwtDecode from "jwt-decode";
 const TOKEN_KEY = "token";
 const EMPRESA_ID = "empresaId";
 
-const defaultUser = {
-  email: "",
+const defaultUser = {               //! usuario por defecto si no hay token o token vencido
+  email: "",                        //! significa que el usuario no esta autenticado
   nombre: "",
   isAuthenticated: false,
   token: "",
@@ -15,65 +15,68 @@ const defaultUser = {
   empresaId: -1,
 };
 
-const setToken = (token) => {
+const setToken = (token) => {             //! Guarda el token en local storage
   if (typeof window !== "undefined") {
     localStorage.setItem(TOKEN_KEY, token);
   }
 };
 
-const getToken = () => {
+const getToken = () => {                  //! Recupera token de localstorage
   if (typeof window !== "undefined") {
     return localStorage.getItem(TOKEN_KEY) || null;
   }
 };
 
-const removeToken = () => {
+const removeToken = () => {               //! Elimina el token de localstorage
   if (typeof window !== "undefined") {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(EMPRESA_ID);
   }
 };
 
-export const authenticate = (token) => {
-  if (token) {
-    setToken(token);
-  }
 
-  const _token = token ?? getToken();
+export const authenticate = (token) => {  //!
+    if (token) {
+      setToken(token);                    //Si hay toekn entrante > set en localstorage
+    }
 
-  if (!_token) {
-    return { ...defaultUser };
-  }
+    const _token = token ?? getToken();   //Obtiene token actual
 
-  const decoded = jwtDecode(_token);
-  const currentTime = Date.now() / 1000;
+    if (!_token) {                  
+      return { ...defaultUser };          //! No token > retorna defaultUser      
+    }
 
-  if (decoded.exp < currentTime) {
-    removeToken();
-    return { ...defaultUser };
-  }
+    const decoded = jwtDecode(_token);    //Decodificar el token JWT
+    const currentTime = Date.now() / 1000;
 
-  const currentEmpresa = localStorage.getItem("empresaId");
-  
-  if (!currentEmpresa) {
-    localStorage.setItem("empresaId", decoded?.empresas[0]?.id);
-  }
+    if (decoded.exp < currentTime) {
+      removeToken();                      //! Token tiempo expirado, se elimina
+      return { ...defaultUser };          //! y retorna default user.
+    }
 
-  return {
-    email: decoded.username,
-    isAuthenticated: true,
-    id: decoded.id,
-    token: _token,
-    nombre: decoded.name,
-    empresas: decoded?.empresas,
-    roles: decoded?.roles,
-    empresaId: decoded?.empresas[0]?.id,
-  };
+    const currentEmpresa = localStorage.getItem("empresaId"); //Obtiene de localstorage empresa
+    
+    if (!currentEmpresa) {            // Si no hay empresa la guarda en localStorage
+      localStorage.setItem("empresaId", decoded?.empresas[0]?.id);
+    }
+
+    return {                              // Si está todo autenticado, retorna datos decodificados
+      email: decoded.username,
+      isAuthenticated: true,      
+      id: decoded.id,
+      token: _token,
+      nombre: decoded.name,
+      empresas: decoded?.empresas,
+      roles: decoded?.roles,
+      empresaId: decoded?.empresas[0]?.id,
+    };
 };
 
-export const logout = () => {
+
+//! Funcion logout para cierre de sesión
+export const logout = () => {           //! Elimina del localStorage token
   removeToken();
 
-  return { ...defaultUser };
+  return { ...defaultUser };            //Retorna el defauluser
 };
 
