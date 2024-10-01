@@ -23,11 +23,11 @@ export default function Login() {
 
   const handleLogin = async () => {   //* Ejecutado cuando se apreta botón de login
     try {
-      const { data } = await axiosRequest("post", "api/auth/login", user);  // Se hace una solicitud al back y devuelve data, envia los datos alamcenados en user desde el form //Si hay un error en datos de login, habrá error,fin de try //! Cambiar aqui el endpoint
+      //! Cambiar aqui el endpoint !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      const { data } = await axiosRequest("post", "api/auth/login", user);  // Se hace una solicitud al back y devuelve data, envia los datos alamcenados en user desde el form //Si hay un error en datos de login, habrá error,fin de try 
       authDispatch({ type: "login", token: data?.token });                  // Accede a data solo si existe, else, undefined se pasará a authDispatch
       router.push("/mantenimiento/datos-empresa");
     } catch (error) {
-      
       toast.error(<ToastAlert error={error} />, errorProps);
     }
   };

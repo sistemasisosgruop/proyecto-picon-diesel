@@ -66,15 +66,18 @@ export const SelectEmpresas = () => {
   };
 
   return (
-    <Popover placement="right-end">
-      <PopoverHandler>
+    <Popover placement="right-end" >
+      <PopoverHandler  >
+      
         <button
           type="button"
-          className="flex gap-3 p-2 h-[40px] w-[40px] hover:bg-secundary rounded-[10px] hover:text-primary z-50 justify-center items-center"
-        >
+          className="flex flex-col gap-1 p-2 h-[auto] w-[auto] hover:bg-secundary rounded-[10px] hover:text-primary z-50 justify-center items-center margin-left:0">
           <Building4 />
+          <h1 className="text-center text-sm"> {selectedEmpresa.name} </h1>
         </button>
       </PopoverHandler>
+
+
       <PopoverContent className="z-50 flex flex-col gap-4">
         <div className="flex gap-3 justify-center items-center">
           <div className="p-4 bg-secundary-200 text-secundary rounded">
