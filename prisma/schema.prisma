@@ -420,7 +420,7 @@ model TipoDeCambio {
   empresa        Empresa?         @relation(fields: [empresaId], references: [id])
   empresaId      Int
   Cotizacion     Cotizacion[]
-  GuiaDeRemision GuiaDeRemision[]
+  // GuiaDeRemision GuiaDeRemision[]
   Factura        Factura[]
   guiaRemisionServicios GuiaRemisionServicios[]
   facturaServicios  FacturaServicios[]
@@ -445,7 +445,7 @@ model FormaDePagoContado {
   empresa        Empresa?         @relation(fields: [empresaId], references: [id])
   empresaId      Int
   Cotizacion     Cotizacion[]
-  GuiaDeRemision GuiaDeRemision[]
+  // GuiaDeRemision GuiaDeRemision[]
   Factura        Factura[]
   guiaRemisionServicios GuiaRemisionServicios[]
   facturaServicios  FacturaServicios[]
@@ -461,7 +461,7 @@ model FormaDePagoCredito {
   empresa        Empresa?         @relation(fields: [empresaId], references: [id])
   empresaId      Int
   Cotizacion     Cotizacion[]
-  GuiaDeRemision GuiaDeRemision[]
+  // GuiaDeRemision GuiaDeRemision[]
   Factura        Factura[]
   guiaRemisionServicios GuiaRemisionServicios[]
   facturaServicios  FacturaServicios[]

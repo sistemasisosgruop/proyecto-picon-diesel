@@ -3,7 +3,7 @@ import { generateCode } from "../../utils/codes";
 
 export class EmpresasService {
   static async createEmpresa(data) {
-    const { nombre, ruc, direccion, telefono, email, web, adminId } = data;
+    const { nombre, ruc, direccion, telefono, email, web, logo, adminId } = data;
     const empresa = await prisma.empresa.create({
       data: {
         nombre,
@@ -12,6 +12,7 @@ export class EmpresasService {
         telefono,
         email,
         web,
+        logo,
         personal: {
           connect: {
             id: Number(adminId),
@@ -32,7 +33,7 @@ export class EmpresasService {
   }
 
   static async updateEmpresa(id, data) {
-    const { nombre, ruc, direccion, telefono, email, web } = data;
+    const { nombre, ruc, direccion, telefono, email, web, logo } = data;
     const empresa = prisma.empresa.update({
       where: {
         id,
@@ -44,6 +45,7 @@ export class EmpresasService {
         telefono,
         email,
         web,
+        logo,
       },
     });
 
