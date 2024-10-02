@@ -14,7 +14,7 @@ import { useAuthState } from "../../../contexts/auth.context";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 export const SelectEmpresas = () => {
-  const [empresas, setEmpresas] = useState([{ name: "Default", id: 0 }]);
+  const [empresas, setEmpresas] = useState([{ name: "Default", id: 0 ,logo:""}]);
   const [selectedEmpresa, setSelectedEmpresa] = useState({
     name: "default",
     id: 0,
@@ -25,6 +25,8 @@ export const SelectEmpresas = () => {
   // eslint-disable-next-line no-unused-vars
   const [empresaId, setEmpresaId] = useLocalStorage("empresaId");
   const [empresa, setEmpresa] = useLocalStorage("empresa");
+  const [empresaLogo, setEmpresaLogo] = useLocalStorage("empresaLogo");
+
 
   useEffect(() => {
     if (selectedEmpresa.id !== 0) {
@@ -43,8 +45,9 @@ export const SelectEmpresas = () => {
       "get",
       `/api/mantenimiento/empresas?adminId=${auth.id}`
     );
-
-    const result = data.map(({ nombre, id }) => ({ name: nombre, id }));
+   
+    const result = data.map(({ nombre, id, logo}) => ({ name: nombre, id, logo}));
+    console.log('Data entrante de selected result:',result)
     setEmpresas(result);
     const empresaPicked = empresa ?? result[0];
     setSelectedEmpresa(empresaPicked);
@@ -107,6 +110,7 @@ export const SelectEmpresas = () => {
                       onClick={() => {
                         setEmpresaId(empresa.id.toString());
                         setEmpresa(empresa)
+                        setEmpresaLogo(empresa.logo)
                         window.location.reload()
                       }}
                       className={({ active }) =>

@@ -3,6 +3,7 @@ import jwtDecode from "jwt-decode";
 
 const TOKEN_KEY = "token";
 const EMPRESA_ID = "empresaId";
+const LOGO_EMPRESA ='empresaLogo'
 
 const defaultUser = {               //! usuario por defecto si no hay token o token vencido
   email: "",                        //! significa que el usuario no esta autenticado
@@ -27,10 +28,11 @@ const getToken = () => {                  //! Recupera token de localstorage
   }
 };
 
-const removeToken = () => {               //! Elimina el token de localstorage
+const removeToken = () => {               //! Elimina el token, empresaid y logo de localstorage
   if (typeof window !== "undefined") {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(EMPRESA_ID);
+    localStorage.setItem(LOGO_EMPRESA, "");
   }
 };
 
