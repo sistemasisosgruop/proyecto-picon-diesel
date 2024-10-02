@@ -26,13 +26,23 @@ export const SelectEmpresas = () => {
   const [empresaId, setEmpresaId] = useLocalStorage("empresaId");
   const [empresa, setEmpresa] = useLocalStorage("empresa");
   const [empresaLogo, setEmpresaLogo] = useLocalStorage("empresaLogo");
-
+  const [sucursalId, setSucursalId] = useLocalStorage("sucursalId");
+  const [sucursalElegida, setSucursalElegida] = useLocalStorage("sucursalElegida");
 
   useEffect(() => {
     if (selectedEmpresa.id !== 0) {
       getSucursales(selectedEmpresa.id);
     }
   }, [selectedEmpresa]);
+
+
+  useEffect(() => {
+    const sucursalLocal = localStorage.getItem("sucursalElegida");
+    if (sucursalLocal) {
+      setSelectedSucursal(sucursalLocal.name);
+    }
+  }, []); 
+
 
   useEffect(() => {
     getEmpresas();
@@ -65,7 +75,7 @@ export const SelectEmpresas = () => {
       id: sucursal?.id ?? 0,
     }));
     setSucursales(result);
-    setSelectedSucursal(result[0]);
+    // setSelectedSucursal(result[0]);
   };
 
   return (
@@ -77,11 +87,13 @@ export const SelectEmpresas = () => {
           className="flex flex-col gap-1 p-2 h-[auto] w-[auto] hover:bg-secundary rounded-[10px] hover:text-primary z-50 justify-center items-center margin-left:0">
           <Building4 />
           <h1 className="text-center text-sm"> {selectedEmpresa.name} </h1>
+          <h1 className="text-center text-sm"> {selectedSucursal ?.name} </h1>
         </button>
       </PopoverHandler>
 
 
       <PopoverContent className="z-50 flex flex-col gap-4">
+        {/* Lista de empresas */}
         <div className="flex gap-3 justify-center items-center">
           <div className="p-4 bg-secundary-200 text-secundary rounded">
             <Buildings2 />
@@ -111,6 +123,8 @@ export const SelectEmpresas = () => {
                         setEmpresaId(empresa.id.toString());
                         setEmpresa(empresa)
                         setEmpresaLogo(empresa.logo)
+                        setSucursalId("");
+                        setSucursalElegida({})
                         window.location.reload()
                       }}
                       className={({ active }) =>
@@ -145,6 +159,9 @@ export const SelectEmpresas = () => {
             </div>
           </Listbox>
         </div>
+
+        {/* Sucursales Lista del Sidebar */}
+
         <div className="flex gap-3 justify-center items-center">
           <div className="p-4 bg-secundary-200 text-secundary rounded">
             <Building />
@@ -172,6 +189,12 @@ export const SelectEmpresas = () => {
                   {sucursales.map((sucursal, sucursalIdx) => (
                     <Listbox.Option
                       key={sucursalIdx}
+                      onClick={() => {
+                        setSucursalId(sucursal.id.toString());
+                        setSucursalElegida(sucursal)
+                        
+                        // window.location.reload()
+                      }}
                       className={({ active }) =>
                         `relative cursor-default select-none py-2 pl-10 pr-4 ${
                           active
