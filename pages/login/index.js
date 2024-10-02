@@ -27,7 +27,6 @@ export default function Login() {
       authDispatch({ type: "login", token: data?.token });
       router.push("/mantenimiento/datos-empresa");
     } catch (error) {
-      
       toast.error(<ToastAlert error={error} />, errorProps);
     }
   };
