@@ -10,7 +10,7 @@ export async function axiosRequest(method, url, data = null, contentType = null)
       headers: {
         Accept: "application/json",
         "Content-Type": contentType ?? "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,                   //!Envio de token como header
       },
     });
     return response;

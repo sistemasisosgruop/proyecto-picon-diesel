@@ -14,7 +14,7 @@ import { useAuthState } from "../../../contexts/auth.context";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 export const SelectEmpresas = () => {
-  const [empresas, setEmpresas] = useState([{ name: "Default", id: 0 }]);
+  const [empresas, setEmpresas] = useState([{ name: "Default", id: 0 ,logo:""}]);
   const [selectedEmpresa, setSelectedEmpresa] = useState({
     name: "default",
     id: 0,
@@ -25,12 +25,24 @@ export const SelectEmpresas = () => {
   // eslint-disable-next-line no-unused-vars
   const [empresaId, setEmpresaId] = useLocalStorage("empresaId");
   const [empresa, setEmpresa] = useLocalStorage("empresa");
+  const [empresaLogo, setEmpresaLogo] = useLocalStorage("empresaLogo");
+  const [sucursalId, setSucursalId] = useLocalStorage("sucursalId");
+  const [sucursalElegida, setSucursalElegida] = useLocalStorage("sucursalElegida");
 
   useEffect(() => {
     if (selectedEmpresa.id !== 0) {
       getSucursales(selectedEmpresa.id);
     }
   }, [selectedEmpresa]);
+
+
+  useEffect(() => {
+    const sucursalLocal = localStorage.getItem("sucursalElegida");
+    if (sucursalLocal) {
+      setSelectedSucursal(sucursalLocal.name);
+    }
+  }, []); 
+
 
   useEffect(() => {
     getEmpresas();
@@ -43,8 +55,9 @@ export const SelectEmpresas = () => {
       "get",
       `/api/mantenimiento/empresas?adminId=${auth.id}`
     );
-
-    const result = data.map(({ nombre, id }) => ({ name: nombre, id }));
+   
+    const result = data.map(({ nombre, id, logo}) => ({ name: nombre, id, logo}));
+    console.log('Data entrante de selected result:',result)
     setEmpresas(result);
     const empresaPicked = empresa ?? result[0];
     setSelectedEmpresa(empresaPicked);
@@ -62,20 +75,27 @@ export const SelectEmpresas = () => {
       id: sucursal?.id ?? 0,
     }));
     setSucursales(result);
-    setSelectedSucursal(result[0]);
+    // setSelectedSucursal(result[0]);        //! Antes se autoseleccionaba la primer sucursal disponible, ahora lee de localStorage
   };
 
   return (
-    <Popover placement="right-end">
-      <PopoverHandler>
+    <Popover placement="right-end" >
+      <PopoverHandler  >
+      
         <button
           type="button"
-          className="flex gap-3 p-2 h-[40px] w-[40px] hover:bg-secundary rounded-[10px] hover:text-primary z-50 justify-center items-center"
-        >
+          className="flex flex-col gap-1 p-2 h-[auto] w-[auto] hover:bg-secundary rounded-[10px] hover:text-primary z-50 justify-center items-center margin-left:0">
           <Building4 />
+          <h1 className="text-center text-sm font-bold"> {selectedEmpresa.name} </h1>
+          <hr className="border-t-1 border-white w-full my-2" />
+          <h1 className="text-center text-sm"> {selectedSucursal?.name} </h1>
+
         </button>
       </PopoverHandler>
+
+
       <PopoverContent className="z-50 flex flex-col gap-4">
+        {/* Lista de empresas */}
         <div className="flex gap-3 justify-center items-center">
           <div className="p-4 bg-secundary-200 text-secundary rounded">
             <Buildings2 />
@@ -104,6 +124,9 @@ export const SelectEmpresas = () => {
                       onClick={() => {
                         setEmpresaId(empresa.id.toString());
                         setEmpresa(empresa)
+                        setEmpresaLogo(empresa.logo)
+                        setSucursalId("");
+                        setSucursalElegida({})
                         window.location.reload()
                       }}
                       className={({ active }) =>
@@ -138,6 +161,9 @@ export const SelectEmpresas = () => {
             </div>
           </Listbox>
         </div>
+
+        {/* Sucursales Lista del Sidebar */}
+
         <div className="flex gap-3 justify-center items-center">
           <div className="p-4 bg-secundary-200 text-secundary rounded">
             <Building />
@@ -165,6 +191,12 @@ export const SelectEmpresas = () => {
                   {sucursales.map((sucursal, sucursalIdx) => (
                     <Listbox.Option
                       key={sucursalIdx}
+                      onClick={() => {
+                        setSucursalId(sucursal.id.toString());
+                        setSucursalElegida(sucursal)
+                        
+                        // window.location.reload()
+                      }}
                       className={({ active }) =>
                         `relative cursor-default select-none py-2 pl-10 pr-4 ${
                           active

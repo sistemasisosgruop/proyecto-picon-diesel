@@ -3,7 +3,7 @@ import { createContext, useState } from "react";
 
 export const MaterialesContext = createContext(null);
 
-export const MaterialesProvider = ({ children }) => {
+export const MaterialesProvider = ({ children }) => { //! COMPONENTE PROVEEDOR A TODOS LOS HIJOS PARA ACCEDER A SUS DATOS
   const [codigos, setCodigos] = useState({
     reemplazo: [],
     similitud: [],

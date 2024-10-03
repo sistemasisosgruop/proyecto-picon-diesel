@@ -33,7 +33,6 @@ import { ToastAlert } from "../../../app/components/elements/ToastAlert";
 import { errorProps, successProps } from "../../../app/utils/alert-config";
 import { FormContext } from "../../../contexts/form.context";
 
-const fileTypes = ["JPEG", "PNG"];
 
 const schema = yup.object().shape({
   ruc: yup.number().required(),
@@ -48,6 +47,7 @@ export default function DatosEmpresa() {
   const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
     useModal();
   const [file, setFile] = useState(null);
+  const [logoEmpresa,setLogoEmpresa] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
   const [empresaForm, setEmpresaForm] = useState({
     ruc: null,
@@ -63,14 +63,25 @@ export default function DatosEmpresa() {
   const { elementId, setElementId, changeData, setChangeData } = useContext(FormContext);
 
   const getEmpresas = async () => {
-    const { data } = await axiosRequest("get", `/api/mantenimiento/empresas?adminId=${auth.id}`);
+    const { data } = await axiosRequest("get", `/api/mantenimiento/empresas?adminId=${auth.id}`);   //* Obtiene datos de la empresa
 
     return data;
   };
 
   const handleChange = (file) => {
     setFile(file);
+    // console.log(file);
     setLogoPreview(URL.createObjectURL(file));
+
+    const reader =new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () =>{
+      setLogoEmpresa(reader.result);
+      // console.log(reader.result)
+      setEmpresaForm({ ...empresaForm, logo: reader.result });
+    }
+    
+    
   };
 
   // Datos de la empresa
@@ -101,19 +112,30 @@ export default function DatosEmpresa() {
     refetch();
   }, [changeData]);
 
-  const { data, isLoading, refetch } = useQuery("empresas", getEmpresas, {
-    initialData: {
+  //? "data": guarda datos de respuesta de la API, "isLoading":Booleano indica si está o no en proceso la consulta, "refetch": función a invocar para rehacer solicitud y actualizar data de tabla
+  const { data, isLoading, refetch } = useQuery("empresas", getEmpresas, {                    
+    initialData: {                //*Data inicial antes de recibir datos es una data vacía.
       data: [],
     },
   });
 
+  //Memorización optimizada, se recalcula solo cuando hay actualizaciones de las dependencias
+  //A menos que haya cambio en data.data, se devolverá empresas(guardado)
   const empresas = useMemo(() => data.data, [data.data]);
-
+  // console.log('Empresas en el memo:', empresas);
+//? "getTableProps": se encarga de generar propiedades en HTML para <table>
+//? "getTableBodyProps": propiedades para el <tbody> de la tabla
+//? "headerGroups": info necesaria para renderizar los headers, se mapea para renderizar headers.
+//? "rows": Contiene datos para renderizar cada fila de la tabla, se mapea cada <tr> y luego se mapea los <td> dentro de esta
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
-    columns,
-    data: empresas,
+    columns,    //! Aquí se define estructura y contenido de las columnas de la tabla
+    data: empresas, //! Data a mostrar en la tabla, empresas tiene la data traída de la API
   });
 
+
+
+
+  // Actualizar data de empresa con PUT
   const updateEmpresa = async () => {
     await schema.validate(empresaForm, { abortEarly: false });
     await axiosRequest("put", `/api/mantenimiento/empresas/${empresaToUpdateId}`, {
@@ -123,7 +145,9 @@ export default function DatosEmpresa() {
     toast.success(`💾 Empresa actualizada exitosamente!`, successProps);
   };
 
+  // Registrar una nueva data de empresa con POST
   const createEmpresa = async () => {
+    console.log('Empresa a registrar:',empresaForm)
     await schema.validate(empresaForm, { abortEarly: false });
     const { data } = await axiosRequest("post", "/api/mantenimiento/empresas", {
       ...empresaForm,
@@ -131,8 +155,11 @@ export default function DatosEmpresa() {
     });
 
     toast.success(`💾 Empresa ${data.nombre} registrada exitosamente!`, successProps);
+    window.location.reload();
+    
   };
-
+  
+  // Se ejecuta al apretar botón save del modal 
   const saveData = async () => {
     try {
       if (isEdit) {
@@ -146,7 +173,7 @@ export default function DatosEmpresa() {
       toast.error(<ToastAlert error={error} />, errorProps);
     }
   };
-
+// Eliminar empresa
   const deleteEmpresa = async () => {
     try {
       const { data } = await axiosRequest("delete", `/api/mantenimiento/empresas/${elementId}`);
@@ -165,8 +192,8 @@ export default function DatosEmpresa() {
           <ButtonAdd text={"Nueva empresa"} onClick={() => openModal(false)} />
         </Title>
 
-        {/* Table List */}
-        {isLoading ? (
+        {/* Table de empresas */}
+        {isLoading ? (          //! Espera a que lleguen los datos del useQuery desde el API
           <span>Loading...</span>
         ) : (
           <Table {...getTableProps()}>
@@ -182,14 +209,14 @@ export default function DatosEmpresa() {
               ))}
             </thead>
             <tbody {...getTableBodyProps()}>
-              {rows?.map((row, index) => {
-                prepareRow(row);
+              {rows?.map((row, index) => {  //! Mapea el array que contiene todas las rows
+                prepareRow(row);            //! Prepara cada fila para renderizar(ajusta props y características)
                 return (
-                  <tr key={index} {...row.getRowProps()}>
-                    {row.cells.map((cell, indexCell) => {
+                  <tr key={index} {...row.getRowProps()}> 
+                    {row.cells.map((cell, indexCell) => { //! Mapea cada celda como un <TableD> (td) y aplica propiedades de celda 
                       return (
                         <TableD key={indexCell} {...cell.getCellProps()}>
-                          {cell.column.Header === "Logo" ? (
+                          {cell.column.Header === "Logo" ? (  //* Si es logo, se renderiza <Image/>
                             <div className="flex-shrink-0 w-10 h-10">
                               <Image
                                 className="w-full h-full rounded-full"
@@ -200,7 +227,7 @@ export default function DatosEmpresa() {
                                 objectFit="cover"
                               />
                             </div>
-                          ) : (
+                          ) : (     //* Si no es logo, se rendereiza <p/>
                             <p>{cell.render("Cell")}</p>
                           )}
                         </TableD>
@@ -209,11 +236,11 @@ export default function DatosEmpresa() {
                     <TableDOptions>
                       <ButtonEdit
                         onClick={async () => {
-                          openModal(true);
-                          const { id } = row.values;
-                          const currentRow = empresas.find((empresa) => empresa.id === id);
-                          setEmpresaToUpdateId(id);
-                          setEmpresaForm({ ...currentRow });
+                          openModal(true);                        //* Abre el modal de edición 
+                          const { id } = row.values;              //* Extrae el id de la fila actual por destructuring
+                          const currentRow = empresas.find((empresa) => empresa.id === id);   //*Busca la empresa con el id coincidente en el array empresas
+                          setEmpresaToUpdateId(id);               //* Guarda el id de la empresa a editar
+                          setEmpresaForm({ ...currentRow });      //* Variable EmpresaForm se carga con los datos de la empresa con el id seleccionado.
                         }}
                       />
                       <ButtonDelete
@@ -230,7 +257,10 @@ export default function DatosEmpresa() {
           </Table>
         )}
       </Container>
+
+
       {/* Modal agregar */}
+      
       <ModalLg
         title={isEdit ? "Editar Empresa" : "Nueva Empresa"}
         isOpen={isOpenModal}
@@ -241,8 +271,8 @@ export default function DatosEmpresa() {
             multiple={false}
             handleChange={handleChange}
             name="file"
-            types={fileTypes}
-            accept={fileTypes}
+            type={['jpeg', 'png']}
+  
           >
             <div className="flex justify-center items-center rounded-md border-2 border-dashed border-primary-200 py-10 bg-primary-50">
               <div className="space-y-1 text-center flex flex-col items-center">
@@ -323,6 +353,7 @@ export default function DatosEmpresa() {
           <ButtonSave onClick={saveData} />
         </div>
       </ModalLg>
+
 
       {/* Modal Eliminar */}
       <ModalConfirmDelete

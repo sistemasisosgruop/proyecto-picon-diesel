@@ -588,7 +588,7 @@ export default function Materiales() {
         closeModal={closeModal}
       >
         {/* Form */}
-        <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-5">
+        <form onSubmit={(e) => e.preventDefault()} className="grid grid-cols-2 gap-5">
           
           <Group title={"Datos del Material"}>
             <GroupInputs>
@@ -688,6 +688,7 @@ export default function Materiales() {
               />
             </GroupInputs>
           </Group>
+          
           {/* Codigos de reemplazo */}
           <Group title={"Codigos de reemplazo"}>
             <Search

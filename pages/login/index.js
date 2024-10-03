@@ -5,26 +5,27 @@ import { useAuthDispatch, useAuthState } from "../../contexts/auth.context";
 import { axiosRequest } from "../../app/utils/axios-request";
 import { ButtonLogin } from "../../app/components/elements/Buttons";
 import { Input } from "@material-tailwind/react";
-import { toast } from "react-toastify";
+import { toast } from "react-toastify";                              //* Alertas visuales en interfaz
 import { errorProps } from "../../app/utils/alert-config";
 import { ToastAlert } from "../../app/components/elements/ToastAlert";
 
 export default function Login() {
-  const [user, setuser] = useState({ email: "", password: "" });
-  const router = useRouter();
-  const authDispatch = useAuthDispatch();
-  const auth = useAuthState();
+  const [user, setuser] = useState({ email: "", password: "" });    //* Estado inicial del usuario
+  const router = useRouter();                                       //* Router de NextJs
+  const authDispatch = useAuthDispatch();   //! Permite dispatch de acciones login/logout
+  const auth = useAuthState();  //! Retorna estado de usuario actual si está autenticado o no
 
-  useEffect(() => {
-    if (auth.isAuthenticated) {
-      router.push("/mantenimiento/datos-empresa");
+  useEffect(() => {               //* Ejecutado después que el componente se renderiza
+    if (auth.isAuthenticated) {   //Verifica que la prop .isAuthenticated = true, (false en defaultUser no logeado)
+      router.push("/mantenimiento/datos-empresa");  // if authenticated -> router.push
     }
   }, []);
 
-  const handleLogin = async () => {
+  const handleLogin = async () => {   //* Ejecutado cuando se apreta botón de login
     try {
-      const { data } = await axiosRequest("post", "api/auth/login", user);
-      authDispatch({ type: "login", token: data?.token });
+      //! Cambiar aqui el endpoint !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      const { data } = await axiosRequest("post", "api/auth/login", user);  // Se hace una solicitud al back y devuelve data, envia los datos alamcenados en user desde el form //Si hay un error en datos de login, habrá error,fin de try 
+      authDispatch({ type: "login", token: data?.token });                  // Accede a data solo si existe, else, undefined se pasará a authDispatch
       router.push("/mantenimiento/datos-empresa");
     } catch (error) {
       toast.error(<ToastAlert error={error} />, errorProps);

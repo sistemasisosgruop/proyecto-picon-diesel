@@ -34,6 +34,7 @@ const schema = yup.object().shape({
   codigoOriginalInyector: yup.string().required(),
   codigoTobera: yup.string().required(),
   tipoTobera: yup.string().required(),
+  // codigoOriginalTobera: yup.string().required(),    //Se agregó a modal
   fabricaMaquinaId: yup.number().required(),
   modeloMaquinaId: yup.number().required(),
   nombreMaquinaId: yup.number().required(),
@@ -76,6 +77,7 @@ export default function Maquinas() {
     codigoOriginalInyector: null,
     codigoTobera: null,
     tipoTobera: null,
+    // codigoOriginalTobera:null
   });
   const {
     updateForm,
@@ -116,6 +118,7 @@ export default function Maquinas() {
       codigoOriginalInyector: null,
       codigoTobera: null,
       tipoTobera: null,
+      // codigoOriginalTobera:null
     });
   }, [resetInfo]);
 
@@ -154,6 +157,7 @@ export default function Maquinas() {
       codigoOriginalInyector: null,
       codigoTobera: null,
       tipoTobera: null,
+      // codigoOriginalTobera:null
     });
     refetch();
   }, [changeData]);
@@ -267,6 +271,7 @@ export default function Maquinas() {
       },
       { Header: "Código Tobera", accessor: "codigoTobera" },
       { Header: "Tipo Tobera", accessor: "tipoTobera" },
+
     ],
     []
   );
@@ -316,6 +321,7 @@ export default function Maquinas() {
 
           codigoTobera: maquina.codigoTobera,
           tipoTobera: maquina.tipoTobera,
+          // codigoOriginalTobera:maquina.codigoOriginalTobera
         };
       }),
     [maquinasResponse?.data]
@@ -366,249 +372,259 @@ export default function Maquinas() {
       </TemplateMaestroCodigos>
       {/* Modal agregar */}
       <ModalLg
-        title={isEdit ? "Editar Máquina" : "Nueva Máquina"}
-        isOpen={isOpenModal}
-        closeModal={closeModal}
-      >
-        {/* Form */}
-        <form className="flex flex-col gap-5">
-          {/* Datos de la maquina */}
-          <Group title={"Datos de la Máquina"}>
-            <GroupInputs>
-              <Select
-                label={"Fábrica Máquina"}
-                onChange={(value) => setForm({ ...form, fabricaMaquinaId: value })}
-                value={isEdit ? updateForm?.fabricaMaquinaId : undefined}
-              >
-                {fabricaMaquinas?.map(({ id, fabrica }) => (
-                  <Option key={id} value={id}>
-                    {fabrica}
-                  </Option>
-                ))}
-              </Select>
-              <Select
-                label={"Modelo de la Máquina"}
-                onChange={(value) => setForm({ ...form, modeloMaquinaId: value })}
-                value={isEdit ? updateForm?.modeloMaquinaId : undefined}
-              >
-                {modeloMaquinas?.map(({ id, modelo }) => (
-                  <Option key={id} value={id}>
-                    {modelo}
-                  </Option>
-                ))}
-              </Select>
-            </GroupInputs>
-            <GroupInputs>
-              <Select
-                label={"Nombre de Máquina"}
-                onChange={(value) => setForm({ ...form, nombreMaquinaId: value })}
-                value={isEdit ? updateForm?.nombreMaquinaId : undefined}
-              >
-                {nombreMaquinas?.map(({ id, nombre }) => (
-                  <Option key={id} value={id}>
-                    {nombre}
-                  </Option>
-                ))}
-              </Select>
-              <Select
-                label={"Procedencia"}
-                onChange={(value) => setForm({ ...form, paisId: value })}
-                value={isEdit ? updateForm?.paisId : undefined}
-              >
-                {paises?.map(({ id, nombre }) => (
-                  <Option key={id} value={id}>
-                    {nombre}
-                  </Option>
-                ))}
-              </Select>
-            </GroupInputs>
-          </Group>
-          {/* Datos del motor */}
-          <Group title={"Datos del Motor"}>
-            <GroupInputs>
-              <Input
-                label={"Código Original del Motor"}
-                onChange={(e) => setForm({ ...form, codigoOriginal: e.target.value })}
-                defaultValue={isEdit ? updateForm?.codigoOriginal : undefined}
-              />
-              <Input
-                label={"Modelo del Motor"}
-                onChange={(e) => setForm({ ...form, modeloMotor: e.target.value })}
-                defaultValue={isEdit ? updateForm?.modeloMotor : undefined}
-              />
-            </GroupInputs>
-            <GroupInputs>
-              <Select
-                label={"Marca del Motor"}
-                onChange={(value) => setForm({ ...form, marcaMotorId: value })}
-                value={isEdit ? updateForm?.marcaMotorId : undefined}
-              >
-                {marcaMotores?.map(({ id, marca }) => (
-                  <Option key={id} value={id}>
-                    {marca}
-                  </Option>
-                ))}
-              </Select>
-              <Select
-                label={"Procedencia"}
-                onChange={(value) => setForm({ ...form, motorPaisId: value })}
-                value={isEdit ? updateForm?.motorPaisId : undefined}
-              >
-                {paises?.map(({ id, nombre }) => (
-                  <Option key={id} value={id}>
-                    {nombre}
-                  </Option>
-                ))}
-              </Select>
-              <Input
-                label={"N° de cilindros"}
-                onChange={(e) => setForm({ ...form, numeroCilindros: e.target.value })}
-                defaultValue={isEdit ? updateForm?.numeroCilindros : undefined}
-              />
-            </GroupInputs>
-          </Group>
-          {/* Datos de la Bomba de inyeccion */}
-          <Group title={"Datos de la bomba de Inyección"}>
-            <GroupInputs>
-              <Input
-                label={"Código fábrica"}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    codigoFabricaBombaInyeccion: e.target.value,
-                  })
-                }
-                defaultValue={isEdit ? updateForm?.codigoFabricaBombaInyeccion : undefined}
-              />
-              <Input
-                label={"Tipo de bomba de inyeccion"}
-                onChange={(e) => setForm({ ...form, tipoBombaInyeccion: e.target.value })}
-                defaultValue={isEdit ? updateForm?.tipoBombaInyeccion : undefined}
-              />
-            </GroupInputs>
-            <GroupInputs>
-              <Select
-                label={"Marca fábrica de Sistema de Inyección"}
-                onChange={(value) => setForm({ ...form, marcaFabricaSistemaInyeccionId: value })}
-                value={isEdit ? updateForm?.marcaFabricaSistemaInyeccionId : undefined}
-              >
-                {marcaFabricaSistemaInyeccion?.map(({ id, marca }) => (
-                  <Option key={id} value={id}>
-                    {marca}
-                  </Option>
-                ))}
-              </Select>
-              <Select
-                label={"Descripción de Bomba de Inyección"}
-                onChange={(value) => setForm({ ...form, descripcionBombaInyeccionId: value })}
-                value={isEdit ? updateForm?.descripcionBombaInyeccionId : undefined}
-              >
-                {descripcionBombasInyeccion?.map(({ id, descripcion }) => (
-                  <Option key={id} value={id}>
-                    {descripcion}
-                  </Option>
-                ))}
-              </Select>
-            </GroupInputs>
-            <GroupInputs>
-              <Select
-                label={"Procedencia"}
-                value={isEdit ? updateForm?.bombaInyeccionPaisId : undefined}
-                onChange={(value) => setForm({ ...form, bombaInyeccionPaisId: value })}
-              >
-                {paises?.map(({ id, nombre }) => (
-                  <Option key={id} value={id}>
-                    {nombre}
-                  </Option>
-                ))}
-              </Select>
-              <Input
-                label={"Código original de Bomba de Inyección"}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    codigoOriginalBombaInyeccion: e.target.value,
-                  })
-                }
-                defaultValue={isEdit ? updateForm?.codigoOriginalBombaInyeccion : undefined}
-              />
-            </GroupInputs>
-          </Group>
-          {/* Datos del inyector */}
-          <Group title={"Datos del Inyector"}>
-            <GroupInputs>
-              <Input
-                label={"Código fábrica Inyector"}
-                onChange={(e) => setForm({ ...form, codigoFabricaInyector: e.target.value })}
-                defaultValue={isEdit ? updateForm?.codigoFabricaInyector : undefined}
-              />
-              <Input
-                label={"Tipo fábrica Inyector"}
-                onChange={(e) => setForm({ ...form, tipoFabricaInyector: e.target.value })}
-                defaultValue={isEdit ? updateForm?.tipoFabricaInyector : undefined}
-              />
-            </GroupInputs>
-            <GroupInputs>
-              <Select
-                label={"Marca fábrica del Inyector"}
-                value={isEdit ? updateForm?.marcaFabricaInyectorId : undefined}
-                onChange={(value) => setForm({ ...form, marcaFabricaInyectorId: value })}
-              >
-                {marcaFabricaInyector?.map(({ id, marca }) => (
-                  <Option key={id} value={id}>
-                    {marca}
-                  </Option>
-                ))}
-              </Select>
-              <Select
-                label={"Descripción del Inyector"}
-                value={isEdit ? updateForm?.descripcionInyectorId : undefined}
-                onChange={(value) => setForm({ ...form, descripcionInyectorId: value })}
-              >
-                {descripcionInyector?.map(({ id, descripcion }) => (
-                  <Option key={id} value={id}>
-                    {descripcion}
-                  </Option>
-                ))}
-              </Select>
-            </GroupInputs>
-            <GroupInputs>
-              <Select
-                label={"Procedencia"}
-                value={isEdit ? updateForm?.inyectorPaisId : undefined}
-                onChange={(value) => setForm({ ...form, inyectorPaisId: value })}
-              >
-                {paises?.map(({ id, nombre }) => (
-                  <Option key={id} value={id}>
-                    {nombre}
-                  </Option>
-                ))}
-              </Select>
-              <Input
-                label={"Código original del Inyector"}
-                defaultValue={isEdit ? updateForm?.codigoOriginalInyector : undefined}
-                onChange={(e) => setForm({ ...form, codigoOriginalInyector: e.target.value })}
-              />
-            </GroupInputs>
-            <GroupInputs>
-              <Input
-                label={"Código Tobera"}
-                defaultValue={isEdit ? updateForm?.codigoTobera : undefined}
-                onChange={(e) => setForm({ ...form, codigoTobera: e.target.value })}
-              />
-              <Input
-                label={"Tipo Tobera"}
-                defaultValue={isEdit ? updateForm?.tipoTobera : undefined}
-                onChange={(e) => setForm({ ...form, tipoTobera: e.target.value })}
-              />
-            </GroupInputs>
-          </Group>
-          <div className="w-full flex justify-end gap-5">
-            <ButtonCancel onClick={closeModal} />
-            <ButtonSave onClick={saveData} />
-          </div>
-        </form>
+          title={isEdit ? "Editar Máquina" : "Nueva Máquina"}
+          isOpen={isOpenModal}
+          closeModal={closeModal}
+        >
+          {/* Form */}
+          <form className="grid grid-cols-2 gap-5">
+            {/* Datos de la maquina */}
+            <Group title={"Datos de la Máquina"}>
+              <GroupInputs>
+                <Select
+                  label={"Fábrica Máquina"}
+                  onChange={(value) => setForm({ ...form, fabricaMaquinaId: value })}
+                  value={isEdit ? updateForm?.fabricaMaquinaId : undefined}
+                >
+                  {fabricaMaquinas?.map(({ id, fabrica }) => (
+                    <Option key={id} value={id}>
+                      {fabrica}
+                    </Option>
+                  ))}
+                </Select>
+                <Select
+                  label={"Modelo de la Máquina"}
+                  onChange={(value) => setForm({ ...form, modeloMaquinaId: value })}
+                  value={isEdit ? updateForm?.modeloMaquinaId : undefined}
+                >
+                  {modeloMaquinas?.map(({ id, modelo }) => (
+                    <Option key={id} value={id}>
+                      {modelo}
+                    </Option>
+                  ))}
+                </Select>
+              </GroupInputs>
+              <GroupInputs>
+                <Select
+                  label={"Nombre de Máquina"}
+                  onChange={(value) => setForm({ ...form, nombreMaquinaId: value })}
+                  value={isEdit ? updateForm?.nombreMaquinaId : undefined}
+                >
+                  {nombreMaquinas?.map(({ id, nombre }) => (
+                    <Option key={id} value={id}>
+                      {nombre}
+                    </Option>
+                  ))}
+                </Select>
+                <Select
+                  label={"Procedencia"}
+                  onChange={(value) => setForm({ ...form, paisId: value })}
+                  value={isEdit ? updateForm?.paisId : undefined}
+                >
+                  {paises?.map(({ id, nombre }) => (
+                    <Option key={id} value={id}>
+                      {nombre}
+                    </Option>
+                  ))}
+                </Select>
+              </GroupInputs>
+            </Group>
+            {/* Datos del motor */}
+            <Group title={"Datos del Motor"}>
+              <GroupInputs>
+                <Input
+                  label={"Código Original del Motor"}
+                  onChange={(e) => setForm({ ...form, codigoOriginal: e.target.value })}
+                  defaultValue={isEdit ? updateForm?.codigoOriginal : undefined}
+                />
+                <Input
+                  label={"Modelo del Motor"}
+                  onChange={(e) => setForm({ ...form, modeloMotor: e.target.value })}
+                  defaultValue={isEdit ? updateForm?.modeloMotor : undefined}
+                />
+              </GroupInputs>
+              <GroupInputs>
+                <Select
+                  label={"Marca del Motor"}
+                  onChange={(value) => setForm({ ...form, marcaMotorId: value })}
+                  value={isEdit ? updateForm?.marcaMotorId : undefined}
+                >
+                  {marcaMotores?.map(({ id, marca }) => (
+                    <Option key={id} value={id}>
+                      {marca}
+                    </Option>
+                  ))}
+                </Select>
+                <Select
+                  label={"Procedencia"}
+                  onChange={(value) => setForm({ ...form, motorPaisId: value })}
+                  value={isEdit ? updateForm?.motorPaisId : undefined}
+                >
+                  {paises?.map(({ id, nombre }) => (
+                    <Option key={id} value={id}>
+                      {nombre}
+                    </Option>
+                  ))}
+                </Select>
+                <Input
+                  label={"N° de cilindros"}
+                  onChange={(e) => setForm({ ...form, numeroCilindros: e.target.value })}
+                  defaultValue={isEdit ? updateForm?.numeroCilindros : undefined}
+                />
+              </GroupInputs>
+            </Group>
+            {/* Datos de la Bomba de inyección */}
+            <Group title={"Datos de la bomba de Inyección"}>
+              <GroupInputs>
+                <Input
+                  label={"Código fábrica"}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      codigoFabricaBombaInyeccion: e.target.value,
+                    })
+                  }
+                  defaultValue={isEdit ? updateForm?.codigoFabricaBombaInyeccion : undefined}
+                />
+                <Input
+                  label={"Tipo de bomba de inyección"}
+                  onChange={(e) => setForm({ ...form, tipoBombaInyeccion: e.target.value })}
+                  defaultValue={isEdit ? updateForm?.tipoBombaInyeccion : undefined}
+                />
+              </GroupInputs>
+              <GroupInputs>
+                <Select
+                  label={"Marca fábrica de Sistema de Inyección"}
+                  onChange={(value) => setForm({ ...form, marcaFabricaSistemaInyeccionId: value })}
+                  value={isEdit ? updateForm?.marcaFabricaSistemaInyeccionId : undefined}
+                >
+                  {marcaFabricaSistemaInyeccion?.map(({ id, marca }) => (
+                    <Option key={id} value={id}>
+                      {marca}
+                    </Option>
+                  ))}
+                </Select>
+                <Select
+                  label={"Descripción de Bomba de Inyección"}
+                  onChange={(value) => setForm({ ...form, descripcionBombaInyeccionId: value })}
+                  value={isEdit ? updateForm?.descripcionBombaInyeccionId : undefined}
+                >
+                  {descripcionBombasInyeccion?.map(({ id, descripcion }) => (
+                    <Option key={id} value={id}>
+                      {descripcion}
+                    </Option>
+                  ))}
+                </Select>
+              </GroupInputs>
+              <GroupInputs>
+                <Select
+                  label={"Procedencia"}
+                  value={isEdit ? updateForm?.bombaInyeccionPaisId : undefined}
+                  onChange={(value) => setForm({ ...form, bombaInyeccionPaisId: value })}
+                >
+                  {paises?.map(({ id, nombre }) => (
+                    <Option key={id} value={id}>
+                      {nombre}
+                    </Option>
+                  ))}
+                </Select>
+                <Input
+                  label={"Código original de Bomba de Inyección"}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      codigoOriginalBombaInyeccion: e.target.value,
+                    })
+                  }
+                  defaultValue={isEdit ? updateForm?.codigoOriginalBombaInyeccion : undefined}
+                />
+              </GroupInputs>
+            </Group>
+            {/* Datos del inyector */}
+            <Group title={"Datos del Inyector"}>
+              <GroupInputs>
+                <Input
+                  label={"Código fábrica Inyector"}
+                  onChange={(e) => setForm({ ...form, codigoFabricaInyector: e.target.value })}
+                  defaultValue={isEdit ? updateForm?.codigoFabricaInyector : undefined}
+                />
+                <Input
+                  label={"Tipo fábrica Inyector"}
+                  onChange={(e) => setForm({ ...form, tipoFabricaInyector: e.target.value })}
+                  defaultValue={isEdit ? updateForm?.tipoFabricaInyector : undefined}
+                />
+              </GroupInputs>
+              <GroupInputs>
+                <Select
+                  label={"Marca fábrica del Inyector"}
+                  value={isEdit ? updateForm?.marcaFabricaInyectorId : undefined}
+                  onChange={(value) => setForm({ ...form, marcaFabricaInyectorId: value })}
+                >
+                  {marcaFabricaInyector?.map(({ id, marca }) => (
+                    <Option key={id} value={id}>
+                      {marca}
+                    </Option>
+                  ))}
+                </Select>
+                <Select
+                  label={"Descripción del Inyector"}
+                  value={isEdit ? updateForm?.descripcionInyectorId : undefined}
+                  onChange={(value) => setForm({ ...form, descripcionInyectorId: value })}
+                >
+                  {descripcionInyector?.map(({ id, descripcion }) => (
+                    <Option key={id} value={id}>
+                      {descripcion}
+                    </Option>
+                  ))}
+                </Select>
+              </GroupInputs>
+              <GroupInputs>
+                <Select
+                  label={"Procedencia"}
+                  value={isEdit ? updateForm?.inyectorPaisId : undefined}
+                  onChange={(value) => setForm({ ...form, inyectorPaisId: value })}
+                >
+                  {paises?.map(({ id, nombre }) => (
+                    <Option key={id} value={id}>
+                      {nombre}
+                    </Option>
+                  ))}
+                </Select>
+                <Input
+                  label={"Código original del Inyector"}
+                  defaultValue={isEdit ? updateForm?.codigoOriginalInyector : undefined}
+                  onChange={(e) => setForm({ ...form, codigoOriginalInyector: e.target.value })}
+                />
+              </GroupInputs>
+
+            </Group>
+            <Group title={"Datos de Tobera"}>
+              <GroupInputs>
+                <Input
+                  label={"Código Tobera"}
+                  defaultValue={isEdit ? updateForm?.codigoTobera : undefined}
+                  onChange={(e) => setForm({ ...form, codigoTobera: e.target.value })}
+                />
+                <Input
+                  label={"Tipo Tobera"}
+                  defaultValue={isEdit ? updateForm?.tipoTobera : undefined}
+                  onChange={(e) => setForm({ ...form, tipoTobera: e.target.value })}
+                />
+                {/* <Input
+                  label={"Código Original Tobera"}
+                  defaultValue={isEdit ? updateForm?.codigoOriginalTobera : undefined}
+                  onChange={(e) => setForm({ ...form, codigoOriginalTobera: e.target.value })}
+                /> */}
+              </GroupInputs>
+            </Group>
+            
+            <div className="w-full flex justify-end gap-5">
+              <ButtonCancel onClick={closeModal} />
+              <ButtonSave onClick={saveData} />
+            </div>
+          </form>
       </ModalLg>
+
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         onClick={deleteData}

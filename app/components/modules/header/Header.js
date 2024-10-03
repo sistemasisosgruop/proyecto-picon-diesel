@@ -18,13 +18,13 @@ export const Header = () => {
   const router = useRouter();
 
   useEffect(() => {
-    setUser({ nombre: auth.nombre, rol: auth.roles[0] });
+    setUser({ nombre: auth.nombre, rol: auth.roles[0] });   //Busca el nombre y rol del usuario logeado actualmente.
   }, []);
 
   return (
     <header className="flex items-center justify-end px-8 py-3 bg-white shadow-lg">
       <Menu as="div" className="relative select-none">
-        <Menu.Button className="flex items-center text-primary gap-4">
+        <Menu.Button className="flex items-center text-primary gap-4 ">
           <div className="rounded-full w-[50px] h-[50px] bg-gray-300 text-gray-400 flex justify-center items-center">
             <User />
           </div>
@@ -34,15 +34,17 @@ export const Header = () => {
           </div>
           <ArrowDown2 />
         </Menu.Button>
-        <Menu.Items className="absolute right-0 z-10 mt-2 w-48 rounded-md bg-white py-1 shadow-lg">
+        <Menu.Items className="absolute right-0 z-10 mt-2 w-48 rounded-md bg-white py-1 shadow-lg cursor-pointer">
           {itemsDropdown.map((item, index) => (
             <Menu.Item key={index} as={Fragment}>
               <a
-                onClick={() => {
+                onClick={() => {      //! Agrgar acciones de cada botón del header acá
                   if (item.name === "Sign out") {
                     authDispatch({ type: "logout" });
                     router.push("/login");
                   }
+
+
                 }}
                 className="flex gap-2 items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >

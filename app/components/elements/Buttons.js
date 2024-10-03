@@ -1,6 +1,6 @@
 "use client";
 import { Tooltip } from "@material-tailwind/react";
-import { Add, Edit, Eye, Note, TableDocument, TrushSquare } from "iconsax-react";
+import { Add, Edit, Eye, Note, Sms, TableDocument, TrushSquare } from "iconsax-react";
 import Link from "next/link";
 import { useContext, useState, useEffect, useRef } from "react";
 import { Excel } from "./icons/Excel";
