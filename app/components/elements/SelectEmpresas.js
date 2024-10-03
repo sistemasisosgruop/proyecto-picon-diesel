@@ -75,7 +75,7 @@ export const SelectEmpresas = () => {
       id: sucursal?.id ?? 0,
     }));
     setSucursales(result);
-    // setSelectedSucursal(result[0]);
+    // setSelectedSucursal(result[0]);        //! Antes se autoseleccionaba la primer sucursal disponible, ahora lee de localStorage
   };
 
   return (
@@ -86,8 +86,10 @@ export const SelectEmpresas = () => {
           type="button"
           className="flex flex-col gap-1 p-2 h-[auto] w-[auto] hover:bg-secundary rounded-[10px] hover:text-primary z-50 justify-center items-center margin-left:0">
           <Building4 />
-          <h1 className="text-center text-sm"> {selectedEmpresa.name} </h1>
-          <h1 className="text-center text-sm"> {selectedSucursal ?.name} </h1>
+          <h1 className="text-center text-sm font-bold"> {selectedEmpresa.name} </h1>
+          <hr className="border-t-1 border-white w-full my-2" />
+          <h1 className="text-center text-sm"> {selectedSucursal?.name} </h1>
+
         </button>
       </PopoverHandler>
 
