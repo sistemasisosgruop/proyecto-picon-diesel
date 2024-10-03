@@ -83,9 +83,9 @@ export class SubFamiliaService {
       if (!Number(currentCorrelative)) {
         throw new Error("Verificar correlativo anterior");
       }
-      newSubFamiliaCodigo = familia.codigo + String(currentCorrelative).padStart(4, "0");
+      newSubFamiliaCodigo = String(currentCorrelative).padStart(4, "0");
     } else {
-      newSubFamiliaCodigo = familia.codigo + "0001";
+      newSubFamiliaCodigo = "0001";
     }
 
     return newSubFamiliaCodigo;
