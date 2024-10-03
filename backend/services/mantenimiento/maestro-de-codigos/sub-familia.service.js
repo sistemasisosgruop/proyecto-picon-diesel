@@ -92,6 +92,3 @@ export class SubFamiliaService {
   }
 }
 
-    return subFamilia;
-  }
-}
