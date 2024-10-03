@@ -589,7 +589,7 @@ export default function Materiales() {
       >
         {/* Form */}
         <form onSubmit={(e) => e.preventDefault()} className="grid grid-cols-2 gap-5">
-          
+        <div className="space-y-6">
           <Group title={"Datos del Material"}>
             <GroupInputs>
               <Select
@@ -689,39 +689,7 @@ export default function Materiales() {
             </GroupInputs>
           </Group>
           
-          {/* Codigos de reemplazo */}
-          <Group title={"Codigos de reemplazo"}>
-            <Search
-              onFocus={() => setIsOpenCodigos({ ...isOpenCodigos, reemplazo: true })}
-              onChange={(event) => {
-                handleSearch(event, "reemplazo");
-              }}
-            />
-            <Dropdown isOpen={isOpenCodigos.reemplazo} elements={reemplazos.length}>
-              {reemplazos?.map((reemplazo) => {
-                return (
-                  <DropdownItem
-                    handleClick={() => {
-                      const currentCodigos = codigos.reemplazo;
-                      const findCodigo = currentCodigos.some(
-                        (material) => material.id === reemplazo.id
-                      );
-                      if (!findCodigo) {
-                        currentCodigos.push({ ...reemplazo, tipoCodigo: "reemplazo" });
-                      }
-
-                      setCodigos({ ...codigos, reemplazo: currentCodigos });
-                      setIsOpenCodigos({ ...isOpenCodigos, reemplazo: false });
-                    }}
-                    key={reemplazo.id}
-                    name={`COD: ${reemplazo?.codigo} - COD Fabricante: ${reemplazo?.codigoFabricante} - 
-                    Tipo de fabricante: ${reemplazo?.tipoFabricante} - Correlativo: ${reemplazo?.correlativo}`}
-                  />
-                );
-              })}
-            </Dropdown>
-            <TableCodigos columns={columns} data={codigosReemplazo} />
-          </Group>
+          
           {/* Codigos similitud */}
           <Group title={"Codigos de similitud"}>
             <Search
@@ -754,6 +722,40 @@ export default function Materiales() {
               })}
             </Dropdown>
             <TableCodigos columns={columns} data={codigosSimilitud} />
+          </Group>
+
+          {/* Codigos de reemplazo */}
+          <Group title={"Codigos de reemplazo"}>
+            <Search
+              onFocus={() => setIsOpenCodigos({ ...isOpenCodigos, reemplazo: true })}
+              onChange={(event) => {
+                handleSearch(event, "reemplazo");
+              }}
+            />
+            <Dropdown isOpen={isOpenCodigos.reemplazo} elements={reemplazos.length}>
+              {reemplazos?.map((reemplazo) => {
+                return (
+                  <DropdownItem
+                    handleClick={() => {
+                      const currentCodigos = codigos.reemplazo;
+                      const findCodigo = currentCodigos.some(
+                        (material) => material.id === reemplazo.id
+                      );
+                      if (!findCodigo) {
+                        currentCodigos.push({ ...reemplazo, tipoCodigo: "reemplazo" });
+                      }
+
+                      setCodigos({ ...codigos, reemplazo: currentCodigos });
+                      setIsOpenCodigos({ ...isOpenCodigos, reemplazo: false });
+                    }}
+                    key={reemplazo.id}
+                    name={`COD: ${reemplazo?.codigo} - COD Fabricante: ${reemplazo?.codigoFabricante} - 
+                    Tipo de fabricante: ${reemplazo?.tipoFabricante} - Correlativo: ${reemplazo?.correlativo}`}
+                  />
+                );
+              })}
+            </Dropdown>
+            <TableCodigos columns={columns} data={codigosReemplazo} />
           </Group>
           {/* Codigos equivalencia */}
           <Group title={"Codigos de equivalencia"}>
@@ -788,100 +790,108 @@ export default function Materiales() {
             </Dropdown>
             <TableCodigos columns={columns} data={codigosEquivalencia} />
           </Group>
-          {/* Caracteristicas */}
-          <Group title={"Seleccionar caracteristicas"}>
-            {currentCaracteristicas()?.map((caracteristica) => (
-              <div
-                key={caracteristica.id}
-                className="flex flex-row gap-5 items-center justify-between"
-              >
-                <Checkbox
-                  onChange={(e) => {
-                    const newCaracteristicas = caracteristicasForm;
-                    const caracteristicaIndex = newCaracteristicas.findIndex(
-                      (item) => item.caracteristicaId === caracteristica.id
-                    );
-                    if (caracteristicaIndex !== -1) {
-                      newCaracteristicas[caracteristicaIndex] = {
-                        ...caracteristicasForm[caracteristicaIndex],
-                        isChecked: e.target.checked,
-                      };
-                    } else {
-                      newCaracteristicas.push({
-                        caracteristicaId: caracteristica.id,
-                        isChecked: e.target.checked,
-                      });
-                    }
-                    setCaracteristicasForm(newCaracteristicas);
-                  }}
-                  id={caracteristica.id.toString()}
-                  label={caracteristica.descripcion}
-                  defaultChecked={!!caracteristica?.isChecked}
-                />
-                <div className="w-72">
-                  <Input
-                    onChange={(e) => {
-                      const newCaracteristicas = caracteristicasForm;
-                      const caracteristicaIndex = newCaracteristicas.findIndex(
-                        (item) => item.caracteristicaId === caracteristica.id
-                      );
-                      if (caracteristicaIndex !== -1) {
-                        newCaracteristicas[caracteristicaIndex] = {
-                          ...caracteristicasForm[caracteristicaIndex],
-                          valor: e.target.value,
-                        };
-                      } else {
-                        newCaracteristicas.push({
-                          caracteristicaId: caracteristica.id,
-                          valor: e.target.value,
-                        });
-                      }
-                      setCaracteristicasForm(newCaracteristicas);
-                    }}
-                    label={"Valor"}
-                    defaultValue={caracteristica?.valor ?? undefined}
-                  />
-                </div>
-              </div>
-            ))}
-          </Group>
-          {/* Aplicación de la maquina */}
-          <Group title={"Aplicación de la máquina"}>
-            <Search
-              onFocus={() => setIsOpenCodigos({ ...isOpenCodigos, aplicacionMaquina: true })}
-              onChange={handleSearchMaquina}
-            />
-            <Dropdown isOpen={isOpenCodigos.aplicacionMaquina} elements={aplicacionMaquinas.length}>
-              {aplicacionMaquinas?.map((aplicacionMaquina) => {
-                return (
-                  <DropdownItem
-                    handleClick={() => {
-                      const currentCodigos = codigos.aplicacionMaquina;
-                      const findCodigo = currentCodigos.some(
-                        (material) => material.id === aplicacionMaquina.id
-                      );
-                      if (!findCodigo) {
-                        currentCodigos.push({
-                          ...aplicacionMaquina,
-                          tipoCodigo: "aplicacionMaquina",
-                        });
-                      }
+          </div>
 
-                      setCodigos({ ...codigos, aplicacionMaquina: currentCodigos });
-                      setIsOpenCodigos({ ...isOpenCodigos, aplicacionMaquina: false });
-                    }}
-                    key={aplicacionMaquina.id}
-                    name={`COD: ${aplicacionMaquina?.codigo} - COD. Fabrica: ${aplicacionMaquina?.fabricaMaquina.fabrica} - 
-                    Modelo de maquina: ${aplicacionMaquina?.modeloMaquina.modelo} - COD. Motor: ${aplicacionMaquina?.codigoOriginal}`}
-                  />
-                );
-              })}
-            </Dropdown>
-            <TableCodigos columns={maquinasColums} data={codigosAplicacionMaquina} />
-          </Group>
-          <div className="w-full flex justify-end gap-5">
-            <ButtonCancel onClick={closeModal} />
-            <ButtonSave onClick={saveData} />
+              {/* Segunda Columna */}
+          <div className="space-y-6">
+
+          
+              {/* Aplicación de la maquina */}
+              <Group title={"Aplicación de la máquina"}>
+                <Search
+                  onFocus={() => setIsOpenCodigos({ ...isOpenCodigos, aplicacionMaquina: true })}
+                  onChange={handleSearchMaquina}
+                />
+                <Dropdown isOpen={isOpenCodigos.aplicacionMaquina} elements={aplicacionMaquinas.length}>
+                  {aplicacionMaquinas?.map((aplicacionMaquina) => {
+                    return (
+                      <DropdownItem
+                        handleClick={() => {
+                          const currentCodigos = codigos.aplicacionMaquina;
+                          const findCodigo = currentCodigos.some(
+                            (material) => material.id === aplicacionMaquina.id
+                          );
+                          if (!findCodigo) {
+                            currentCodigos.push({
+                              ...aplicacionMaquina,
+                              tipoCodigo: "aplicacionMaquina",
+                            });
+                          }
+
+                          setCodigos({ ...codigos, aplicacionMaquina: currentCodigos });
+                          setIsOpenCodigos({ ...isOpenCodigos, aplicacionMaquina: false });
+                        }}
+                        key={aplicacionMaquina.id}
+                        name={`COD: ${aplicacionMaquina?.codigo} - COD. Fabrica: ${aplicacionMaquina?.fabricaMaquina.fabrica} - 
+                        Modelo de maquina: ${aplicacionMaquina?.modeloMaquina.modelo} - COD. Motor: ${aplicacionMaquina?.codigoOriginal}`}
+                      />
+                    );
+                  })}
+                </Dropdown>
+                <TableCodigos columns={maquinasColums} data={codigosAplicacionMaquina} />
+              </Group>
+
+              {/* Caracteristicas */}
+              <Group title={"Seleccionar caracteristicas"}>
+                {currentCaracteristicas()?.map((caracteristica) => (
+                  <div
+                    key={caracteristica.id}
+                    className="flex flex-row gap-5 items-center justify-between"
+                  >
+                    <Checkbox
+                      onChange={(e) => {
+                        const newCaracteristicas = caracteristicasForm;
+                        const caracteristicaIndex = newCaracteristicas.findIndex(
+                          (item) => item.caracteristicaId === caracteristica.id
+                        );
+                        if (caracteristicaIndex !== -1) {
+                          newCaracteristicas[caracteristicaIndex] = {
+                            ...caracteristicasForm[caracteristicaIndex],
+                            isChecked: e.target.checked,
+                          };
+                        } else {
+                          newCaracteristicas.push({
+                            caracteristicaId: caracteristica.id,
+                            isChecked: e.target.checked,
+                          });
+                        }
+                        setCaracteristicasForm(newCaracteristicas);
+                      }}
+                      id={caracteristica.id.toString()}
+                      label={caracteristica.descripcion}
+                      defaultChecked={!!caracteristica?.isChecked}
+                    />
+                    <div className="w-72">
+                      <Input
+                        onChange={(e) => {
+                          const newCaracteristicas = caracteristicasForm;
+                          const caracteristicaIndex = newCaracteristicas.findIndex(
+                            (item) => item.caracteristicaId === caracteristica.id
+                          );
+                          if (caracteristicaIndex !== -1) {
+                            newCaracteristicas[caracteristicaIndex] = {
+                              ...caracteristicasForm[caracteristicaIndex],
+                              valor: e.target.value,
+                            };
+                          } else {
+                            newCaracteristicas.push({
+                              caracteristicaId: caracteristica.id,
+                              valor: e.target.value,
+                            });
+                          }
+                          setCaracteristicasForm(newCaracteristicas);
+                        }}
+                        label={"Valor"}
+                        defaultValue={caracteristica?.valor ?? undefined}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </Group>
+            <div className="w-full flex justify-center gap-2">
+              <ButtonCancel onClick={closeModal} />
+              <ButtonSave onClick={saveData} />
+            </div>
           </div>
         </form>
       </ModalLg>
