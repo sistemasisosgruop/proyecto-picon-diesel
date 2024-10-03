@@ -20,6 +20,7 @@ export class FamiliaService {
     } else {
       codigo = "01";
     }
+
     const familia = await prisma.familia.create({
       data: {
         codigo,

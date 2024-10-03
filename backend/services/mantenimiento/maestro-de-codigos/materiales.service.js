@@ -4,80 +4,82 @@ import { generateCode } from "../../../utils/codes";
 
 export class MatrialesService {
   static async createMaterial(data) {
-    const responseTransaction = await prisma.$transaction(async (PrismaClient) => {
-      const {
-        materialSimilitud,
-        materialEquivalencia,
-        materialReemplazo,
-        aplicacionDeMaquina,
-        empresaId,
-        familiaId,
-        subFamiliaId,
-        caracteristicas,
-        ...props
-      } = data;
+    const {
+      materialSimilitud,
+      materialEquivalencia,
+      materialReemplazo,
+      aplicacionDeMaquina,
+      empresaId,
+      familiaId,
+      subFamiliaId,
+      caracteristicas,
+    } = data;
 
-      const setMaterialSimilutud =
-        materialSimilitud?.length > 0 ? materialSimilitud : Prisma.JsonNull;
-      const setMaterialEquivalencia =
-        materialEquivalencia?.length > 0 ? materialEquivalencia : Prisma.JsonNull;
-      const setMaterialReemplazo =
-        materialReemplazo?.length > 0 ? materialReemplazo : Prisma.JsonNull;
-      const setAplicacionDeMaquina =
-        aplicacionDeMaquina?.length > 0 ? aplicacionDeMaquina : Prisma.JsonNull;
+    const setMaterialSimilutud =
+      materialSimilitud?.length > 0 ? materialSimilitud : Prisma.JsonNull;
+    const setMaterialEquivalencia =
+      materialEquivalencia?.length > 0 ? materialEquivalencia : Prisma.JsonNull;
+    const setMaterialReemplazo =
+      materialReemplazo?.length > 0 ? materialReemplazo : Prisma.JsonNull;
+    const setAplicacionDeMaquina =
+      aplicacionDeMaquina?.length > 0 ? aplicacionDeMaquina : Prisma.JsonNull;
 
-      const material = await PrismaClient.material.create({
-        data: {
-          ...props,
-          empresaId: Number(empresaId),
-          familiaId: Number(familiaId),
-          subfamiliaId: Number(subFamiliaId),
-          materialSimilitud: setMaterialSimilutud,
-          materialEquivalencia: setMaterialEquivalencia,
-          materialReemplazo: setMaterialReemplazo,
-          aplicacionDeMaquina: setAplicacionDeMaquina,
-          ...(caracteristicas && {
-            caracteristicaToMaterial: {
-              createMany: {
-                data: caracteristicas?.map(({ valor, isChecked, caracteristicaId }) => ({
-                  caracteristicaId: Number(caracteristicaId),
-                  isChecked,
-                  valor,
-                })),
-              },
-            },
-          }),
-        },
-      });
-
-      const familia = await PrismaClient.familia.findUnique({
-        where: {
-          id: Number(familiaId),
-        },
-      });
-
-      const subFamilia = await PrismaClient.subFamilia.findUnique({
-        where: {
-          id: Number(subFamiliaId),
-        },
-      });
-
-      const codigo = generateCode(material.id);
-
-      const correlativo = `${familia.codigo}${subFamilia.codigo}${codigo}`;
-
-      const result = await PrismaClient.material.update({
-        where: {
-          id: material.id,
-        },
-        data: {
-          codigo,
-          correlativo,
-        },
-      });
-
-      return result;
+    const familia = await prisma.familia.findUnique({
+      where: {
+        id: Number(familiaId),
+      },
     });
+
+    const subFamilia = await prisma.subFamilia.findUnique({
+      where: {
+        id: Number(subFamiliaId),
+      },
+    });
+
+    const genCodigo = await this.generarCodigo(familiaId);
+    const crearMaterial = prisma.material.create({
+      data: {
+        codigo: genCodigo,
+        correlativo: `${familia.codigo}${subFamilia.codigo}${genCodigo}`,
+        empresaId: Number(empresaId),
+        familiaId: Number(familiaId),
+        subfamiliaId: Number(subFamiliaId),
+        denominacion: data.denominacion,
+        codigoBombaInyeccion: data.codigoBombaInyeccion,
+        codigoMotorOriginal: data.codigoMotorOriginal,
+        codigoFabricante: data.codigoFabricante,
+        tipoFabricante: data.tipoFabricante,
+        materialSimilitud: setMaterialSimilutud,
+        materialEquivalencia: setMaterialEquivalencia,
+        materialReemplazo: setMaterialReemplazo,
+        aplicacionDeMaquina: setAplicacionDeMaquina,
+        stock: 0,
+        ventaUnidad: 0,
+      },
+    });
+
+    const dataCaracteristicasToMat = [];
+    if (caracteristicas && caracteristicas.length > 0) {
+      for (const caracteristica of caracteristicas) {
+        dataCaracteristicasToMat.push({
+          caracteristicaId: caracteristica.caracteristicaId,
+          isChecked: true,
+          valor: caracteristica.valor,
+        });
+      }
+    }
+
+    const saveCaracteristicasToMat = prisma.caracteristicaToMaterial.createMany({
+      data: dataCaracteristicasToMat,
+    });
+
+    let responseTransaction;
+    try {
+      responseTransaction = await prisma.$transaction([crearMaterial, saveCaracteristicasToMat]);
+    } catch (error) {
+      console.error("Error en la transacción", error);
+      throw new Error("Error en la guardar transacción");
+    }
 
     return responseTransaction;
   }
@@ -185,55 +187,19 @@ export class MatrialesService {
   }
 
   static async getMaterial(id) {
-    console.log(id);
     const material = await prisma.material.findUnique({
       where: {
         id,
-      },
-      include: {
-        cotizacionToMaterial: true,
-        aprovacionCotizacionToMaterial: true,
-        familia: {
-          select: {
-            codigo: true,
-          },
-        },
-        subfamilia: {
-          select: {
-            codigo: true,
-          },
-        },
-        caracteristicaToMaterial: {
-          where: {
-            isChecked: true,
-          },
-          select: {
-            valor: true,
-            isChecked: true,
-            caracteristica: {
-              select: {
-                descripcion: true,
-                id: true,
-              },
-            },
-          },
-        },
       },
     });
 
     return material;
   }
 
-  static async getMateriales(empresaId, filterName, idMaquina) {
-    
+  static async getMateriales(empresaId, filterName) {
     const response = await prisma.material.findMany({
       where: {
         empresaId,
-        ...(idMaquina && {
-          aplicacionDeMaquina: {
-            array_contains: [{id:Number(idMaquina)}]
-          }
-        }),
         ...(filterName && {
           OR: [
             {
@@ -298,5 +264,26 @@ export class MatrialesService {
     });
 
     return response;
+  }
+
+  static async generarCodigo(familiaId) {
+    const lasMaterial = await prisma.material.findFirst({
+      orderBy: {
+        codigo: "desc",
+      },
+      select: {
+        codigo: true,
+      },
+      where: { familiaId },
+    });
+
+    let codigo;
+    if (lasMaterial) {
+      const nextCodigo = parseInt(lasMaterial.codigo, 10) + 1;
+      codigo = String(nextCodigo).padStart(4, "0");
+    } else {
+      codigo = "01";
+    }
+    return codigo;
   }
 }
