@@ -159,6 +159,7 @@ export default function Maquinas() {
   }, [changeData]);
 
   const createRegistro = async () => {
+    // console.log(form);
     await schema.validate(form, { abortEarly: false });
     await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/configuracion/maquinas", {
       ...form,
@@ -169,6 +170,7 @@ export default function Maquinas() {
   };
 
   const updateRegistro = async () => {
+    // console.log(form);
     await schema.validate(form, { abortEarly: false });
     await axiosRequest(
       "put",
@@ -536,7 +538,7 @@ export default function Maquinas() {
           <Group title={"Datos del Inyector"}>
             <GroupInputs>
               <Input
-                label={"Código fábrica"}
+                label={"Código fábrica Inyector"}
                 onChange={(e) => setForm({ ...form, codigoFabricaInyector: e.target.value })}
                 defaultValue={isEdit ? updateForm?.codigoFabricaInyector : undefined}
               />

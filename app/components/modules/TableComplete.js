@@ -194,6 +194,7 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                   />
                   <ButtonDelete
                     onClick={() => {
+                      console.log(row);
                       setElementId(row.values.id);
                       const pago = Object.prototype.hasOwnProperty.call(
                         row.original,

@@ -250,3 +250,13 @@ export function generateCodePresupuestoMaterial(number) {
 
   return `MAT${currentNumber}`;
 }
+
+export function generateGenericCode(prefijo, id) {
+  const currentId = Number(id);
+  if(currentId < 10){
+    return `${prefijo}-00${currentId}`;
+  } else if (currentId >=10 && currentId < 100){
+    return `${prefijo}-0${currentId}`;
+  }
+  return `${prefijo}-${currentId}`;
+}

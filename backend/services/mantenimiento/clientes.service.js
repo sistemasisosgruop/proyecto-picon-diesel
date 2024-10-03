@@ -125,11 +125,36 @@ export class ClienteService {
     return cliente;
   }
 
-  static async getClientes(empresaId) {
+  static async getClientes(empresaId, filterName) {
     const cliente = await prisma.cliente.findMany({
       where: {
         empresaId,
         estado: "Activo",
+        ...(filterName && {
+          OR: [
+            {
+              nombre: {
+                contains: filterName
+              }
+            },
+            {
+              codigo: {
+                contains: filterName,
+              }
+            },
+            {
+              numeroDocumento: {
+                contains: filterName
+              }
+            },
+            {
+              telefono:{
+                contains: filterName
+              }
+            }
+            
+          ]
+        })
       },
       include: {
         tipoCliente: true,

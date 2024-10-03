@@ -113,11 +113,18 @@ export class AuthService {
   }
 
   static AdministradorAndVendedorFeatures(roles) {
-    if (!roles.includes("Vendedor") || !roles.includes("Administrador")) {
-      return new NextResponse(JSON.stringify({ message: "Unauthorized" }), {
-        status: 401,
-        headers: { "content-type": "application/json" },
-      });
+    if (typeof roles === 'object') {
+      roles = Object.values(roles);
+    }
+    const containRole = roles.includes("Administrador") || roles.includes("Vendedor");
+    if(!containRole) {
+      return new NextResponse(
+        JSON.stringify({message: "Unauthorized, solo administradores o vendedores"}),
+        {
+          status: 401,
+          headers: {"content-type": "application/json"},
+        }
+      )
     }
   }
 

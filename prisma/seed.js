@@ -1,3 +1,14 @@
+// TO-DO: Colocar un index en data
+// import { caracteristicas } from "../data/caracteristicas";
+// import { familias } from "../data/familias";
+// import { subfamilias } from "../data/subfamilias";
+// import { materialesData } from "../data/materiales-data";s
+
+// const  {caracteristicas} = require("../data/caracteristicas")
+// const  {familias}  = require("../data/familias")
+// const  {subfamilias}  = require("../data/subfamilias")
+// const  {materialesData} = require("../data/materiales-data")
+
 const { PrismaClient, RolesEnum } = require("@prisma/client");
 const {
   randBrand,
@@ -14,6 +25,8 @@ const { hashSync } = require("bcrypt");
 const { DateTime } = require("luxon");
 const { EnumTipoCliente } = require("../backend/utils/enums");
 
+
+
 const prisma = new PrismaClient();
 const rucs = ["1000001", "1000002", "1000003"];
 
@@ -26,6 +39,10 @@ async function main() {
   const adminUser = await createAdminUser();
   const vendedores = await createVendedores();
   const tipoClientes = await createTipoCliente();
+  // const nuevasCaracteristicas = await createCaracteristicas();
+  // const nuevasFamilias = await createFamilias();
+  // const nuevasSubFamilias = await createSubFamilias();
+  // const nuevosMateriales = await createMaterials();
   console.log({
     roles,
     empresas,
@@ -33,6 +50,10 @@ async function main() {
     adminUser,
     vendedores,
     tipoClientes,
+    // nuevasCaracteristicas,
+    // nuevasFamilias,
+    // nuevasSubFamilias,
+    // nuevosMateriales
   });
   console.log(
     `seeds created successfully on ${(
@@ -279,3 +300,86 @@ async function createSucursal(empresaId, index) {
     },
   });
 }
+
+// async function createCaracteristicas(){
+//   // console.log(caracteristicas);
+//   try {
+//     const newCaracteristicas = await prisma.caracteristica.createMany({
+//       data: caracteristicas
+//     })
+//     return newCaracteristicas;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
+//     // const { codigo, descripcion, abreviatura, empresaId } = data;
+//     // const caracteristica = await prisma.caracteristica.create({
+//     //   data: {
+//     //     codigo,
+//     //     descripcion,
+//     //     abreviatura,
+//     //     empresaId,
+//     //   },
+//     // });
+
+//   async function createFamilias() {
+//     // console.log(familias);
+//     try {
+//       const nuevasFamilias = await prisma.familia.createMany({
+//         data: familias
+//       })
+//       return nuevasFamilias;
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+
+//   // const { codigo, descripcion, empresaId } = data;
+//   //   const familia = await prisma.familia.create({
+//   //     data: {
+//   //       codigo,
+//   //       descripcion,
+//   //       empresaId,
+//   //     },
+//   //   });
+
+//   //   return familia;
+
+//   async function createSubFamilias() {
+//     // console.log(subfamilias);
+//     try {
+//       const nuevasSubFamilias = await prisma.subFamilia.createMany({
+//         data: subfamilias
+//       })
+//       return nuevasSubFamilias;
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+
+//   // const { codigo, descripcion, familiaId } = data;
+//   //   const subFamilia = await prisma.subFamilia.create({
+//   //     data: {
+//   //       codigo,
+//   //       descripcion,
+//   //       familiaId,
+//   //     },
+//   //   });
+
+//   //   return subFamilia;
+
+
+//   // materiales
+
+//   async function createMaterials() {
+//     console.log(materialesData);
+//     try {
+//       const materiales = await prisma.material.createMany({
+//         data:materialesData
+//       })
+//       return materiales;
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }

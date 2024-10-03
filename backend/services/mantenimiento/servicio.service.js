@@ -38,10 +38,24 @@ export class ServicioService {
     return servicio;
   }
 
-  static async getAll(empresaId) {
+  static async getAll(empresaId, filterName) {
     return prisma.servicio.findMany({
       where: {
         empresaId,
+        ...(filterName && {
+          OR: [
+            {
+              codigo: {
+                contains: filterName,
+              },
+            },
+            {
+              definicion: {
+                contains: filterName,
+              },
+            }
+          ],
+        }),
       },
     });
   }

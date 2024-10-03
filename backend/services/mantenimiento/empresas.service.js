@@ -3,7 +3,7 @@ import { generateCode } from "../../utils/codes";
 
 export class EmpresasService {
   static async createEmpresa(data) {
-    const { nombre, ruc, direccion, telefono, email, web, logo, adminId } = data;         //! Se agrego logo en base64 para almacenar en campo de texto
+    const { nombre, ruc, direccion, telefono, email, web, logo, adminId } = data;
     const empresa = await prisma.empresa.create({
       data: {
         nombre,
@@ -32,8 +32,8 @@ export class EmpresasService {
     return result;
   }
 
-  static async updateEmpresa(id, data) {                                          //! Se agrego logo en base64 para almacenar en campo de texto
-    const { nombre, ruc, direccion, telefono, email, web,logo } = data;
+  static async updateEmpresa(id, data) {
+    const { nombre, ruc, direccion, telefono, email, web, logo } = data;
     const empresa = prisma.empresa.update({
       where: {
         id,
@@ -45,7 +45,7 @@ export class EmpresasService {
         telefono,
         email,
         web,
-        logo
+        logo,
       },
     });
 

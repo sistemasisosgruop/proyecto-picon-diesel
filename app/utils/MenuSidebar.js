@@ -1,4 +1,4 @@
-import { Setting3, Shop } from "iconsax-react";
+import { Setting3, Shop, TransmitSqaure2 } from "iconsax-react";
 
 export const menuSidebar = [
   {
@@ -41,7 +41,6 @@ export const menuSidebar = [
         subItem: "Presupuesto",
         href: "/mantenimiento/presupuesto/servicios",
       },
-      
     ],
   },
   {
@@ -74,6 +73,36 @@ export const menuSidebar = [
       },
     ],
   },
+  {
+    modulo: "Venta Servicio",
+    icon: <TransmitSqaure2 />,
+    submenu: [
+      {
+        subItem: "Recepción - Evaluación",
+        href: "/venta-servicio/recepcion-evaluacion",
+      },
+      {
+        subItem: "Presupuesto",
+        href: "/venta-servicio/presupuesto",
+      },
+      {
+        subItem: "Orden de Trabajo",
+        href: "/venta-servicio/orden-trabajo",
+      },
+      {
+        subItem: "Guía de Remisión",
+        href: "/venta-servicio/guia-remision",
+      },
+      {
+        subItem: "Venta - Facturación",
+        href: "/venta-servicio/venta-facturacion",
+      },
+      {
+        subItem: "Reportes y estadística",
+        href: "/venta-servicio/reportes-estadistica",
+      }
+    ]
+  }
   // {
   //   modulo: "Venta Servicio",
   //   icon: <TransmitSqaure2 />,

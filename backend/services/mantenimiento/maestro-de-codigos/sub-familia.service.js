@@ -2,7 +2,9 @@ import prisma from "../../../prisma";
 
 export class SubFamiliaService {
   static async createSubFamilia(data) {
-    const { codigo, descripcion, familiaId } = data;
+    const { descripcion, familiaId } = data;
+
+    const codigo = await this.generarCodigoSubFamilia(familiaId);
     const subFamilia = await prisma.subFamilia.create({
       data: {
         codigo,
@@ -22,7 +24,7 @@ export class SubFamiliaService {
       },
       data: {
         codigo,
-        descripcion
+        descripcion,
       },
     });
 
@@ -53,6 +55,42 @@ export class SubFamiliaService {
         id,
       },
     });
+
+    return subFamilia;
+  }
+
+  static async generarCodigoSubFamilia(familiaId) {
+    const familia = await prisma.familia.findUnique({
+      where: { id: familiaId },
+      select: { codigo: true },
+    });
+
+    if (!familia) {
+      throw new Error("Familia no encontrada");
+    }
+
+    const lastSubFamilia = await prisma.subFamilia.findFirst({
+      where: { familiaId },
+      orderBy: { codigo: "desc" },
+      select: { codigo: true },
+    });
+
+    let newSubFamiliaCodigo;
+
+    if (lastSubFamilia) {
+      const currentCorrelative =
+        parseInt(lastSubFamilia.codigo.slice(familia.codigo.length), 10) + 1;
+      if (!Number(currentCorrelative)) {
+        throw new Error("Verificar correlativo anterior");
+      }
+      newSubFamiliaCodigo = String(currentCorrelative).padStart(4, "0");
+    } else {
+      newSubFamiliaCodigo = "0001";
+    }
+
+    return newSubFamiliaCodigo;
+  }
+}
 
     return subFamilia;
   }

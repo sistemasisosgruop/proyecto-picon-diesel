@@ -38,10 +38,24 @@ export class TrabajoTercerosService {
     return trabajo;
   }
 
-  static async getAll(empresaId) {
+  static async getAll(empresaId, filterName) {
     return prisma.trabajoTerceros.findMany({
       where: {
         empresaId,
+        ...(filterName && {
+          OR: [
+            {
+              codigo: {
+                contains: filterName,
+              },
+            },
+            {
+              definicion: {
+                contains: filterName,
+              },
+            }
+          ]
+        })
       },
     });
   }
@@ -50,6 +64,7 @@ export class TrabajoTercerosService {
     const trabajo = await prisma.trabajoTerceros.findUnique({
       where: {
         id: Number(id),
+        
       },
     });
 

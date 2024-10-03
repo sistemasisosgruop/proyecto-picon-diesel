@@ -67,8 +67,20 @@ model Empresa {
   FamiliaPresupuesto           FamiliaPresupuesto[]
   MaterialPresupuesto          MaterialPresupuesto[]
   Cotizacion                   Cotizacion[]
+  AprovacionCotizacion         AprovacionCotizacion[]
+  AprovacionPedido             AprovacionPedido[]
   GuiaDeRemision               GuiaDeRemision[]
   Factura                      Factura[]
+  reportesVentas               ReporteVentas[]
+  reportesRecordClientes       ReporteRecordClientes[]
+  reportesRecordProveedores    ReporteRecordProveedores[]
+  reportesStockMinimo          ReporteStockMinimo[]
+  reportesMensualesVentas      ReporteMensualVentas[]
+  hojaRecepcion                HojaRecepcion[]
+  presupuesto                  Presupuesto[]
+  ordenTrabajo                 OrdenTrabajo[]
+  guiaRemisionServicios        GuiaRemisionServicios[]
+  facturaServicios             FacturaServicios[]
 
   @@map("empresa")
 }
@@ -82,6 +94,16 @@ model Sucursal {
   email     String?
   empresa   Empresa? @relation(fields: [empresaId], references: [id])
   empresaId Int?
+  cotizacion   Cotizacion[]
+  cotizacionAprov AprovacionCotizacion[]
+  pedidoAprov     AprovacionPedido[]
+  guiaRemisionMostrador GuiaDeRemision[]
+  facturasMostrador Factura[]
+  hojaRecepcion   HojaRecepcion[]
+  presupuesto     Presupuesto[]
+  ordenTrabajo    OrdenTrabajo[]
+  guiaRemisionServicios GuiaRemisionServicios[]
+  facturaServicios      FacturaServicios[]
 
   @@map("sucursal")
 }
@@ -99,6 +121,8 @@ model Pais {
   maquinasBombaInyecciones Maquina[] @relation(name: "bombaInyeccionPais")
   maquinasInyectores       Maquina[] @relation(name: "inyectorPais")
   maquinasMotores          Maquina[] @relation(name: "motorPais")
+  hojaRecepcion HojaRecepcion[]
+  presupuestos  Presupuesto[]
 
   @@unique([codigo, empresaId])
   @@map("pais")
@@ -192,6 +216,10 @@ model Personal {
   Cotizacion        Cotizacion[]
   GuiaDeRemision    GuiaDeRemision[]
   Factura           Factura[]
+  hojaRecepcion     HojaRecepcion[]
+  presupuestos      Presupuesto[]
+  guiaRemisionServicios GuiaRemisionServicios[]
+  facturaServicios  FacturaServicios[]
 
   @@map("personal")
 }
@@ -213,6 +241,10 @@ model Vendedor {
   Cotizacion           Cotizacion[]
   GuiaDeRemision       GuiaDeRemision[]
   Factura              Factura[]
+  hojaRecepcion        HojaRecepcion[]
+  presupuestos         Presupuesto[]
+  guiaRemisionServicios GuiaRemisionServicios[]
+  facturaServicios  FacturaServicios[]
 
   @@map("vendedor")
 }
@@ -231,8 +263,15 @@ model Cliente {
   empresa         Empresa?          @relation(fields: [empresaId], references: [id])
   empresaId       Int?
   Cotizacion      Cotizacion[]
+  cotizacionesAprov AprovacionCotizacion[]
+  pedidosAprov    AprovacionPedido[]
   GuiaDeRemision  GuiaDeRemision[]
   Factura         Factura[]
+  hojasRecepcion  HojaRecepcion[]
+  presupuestos    Presupuesto[]
+  ordenesTrabajo  OrdenTrabajo[]
+  guiaRemisionServicios GuiaRemisionServicios[]
+  facturaServicios  FacturaServicios[]
 
   @@map("cliente")
 }
@@ -330,6 +369,7 @@ model AgenciaTransporte {
   empresa         Empresa?          @relation(fields: [empresaId], references: [id])
   empresaId       Int
   GuiaDeRemision  GuiaDeRemision[]
+  guiaRemisionServicios GuiaRemisionServicios[]
 
   @@map("agencia_transporte")
 }
@@ -347,6 +387,7 @@ model Vehiculo {
   empresa          Empresa?         @relation(fields: [empresaId], references: [id])
   empresaId        Int
   GuiaDeRemision   GuiaDeRemision[]
+  guiaRemisionServicios GuiaRemisionServicios[]
 
   @@map("vehiculo")
 }
@@ -364,6 +405,7 @@ model Chofer {
   empresa            Empresa?         @relation(fields: [empresaId], references: [id])
   empresaId          Int
   GuiaDeRemision     GuiaDeRemision[]
+  guiaRemisionServicios GuiaRemisionServicios[]
 
   @@map("chofer")
 }
@@ -378,8 +420,10 @@ model TipoDeCambio {
   empresa        Empresa?         @relation(fields: [empresaId], references: [id])
   empresaId      Int
   Cotizacion     Cotizacion[]
-  GuiaDeRemision GuiaDeRemision[]
+  // GuiaDeRemision GuiaDeRemision[]
   Factura        Factura[]
+  guiaRemisionServicios GuiaRemisionServicios[]
+  facturaServicios  FacturaServicios[]
 
   @@map("tipo_de_cambio")
 }
@@ -401,8 +445,10 @@ model FormaDePagoContado {
   empresa        Empresa?         @relation(fields: [empresaId], references: [id])
   empresaId      Int
   Cotizacion     Cotizacion[]
-  GuiaDeRemision GuiaDeRemision[]
+  // GuiaDeRemision GuiaDeRemision[]
   Factura        Factura[]
+  guiaRemisionServicios GuiaRemisionServicios[]
+  facturaServicios  FacturaServicios[]
 
   @@map("forma_de_pago_contado")
 }
@@ -415,8 +461,10 @@ model FormaDePagoCredito {
   empresa        Empresa?         @relation(fields: [empresaId], references: [id])
   empresaId      Int
   Cotizacion     Cotizacion[]
-  GuiaDeRemision GuiaDeRemision[]
+  // GuiaDeRemision GuiaDeRemision[]
   Factura        Factura[]
+  guiaRemisionServicios GuiaRemisionServicios[]
+  facturaServicios  FacturaServicios[]
 
   @@map("forma_de_pago_credito")
 }
@@ -429,6 +477,8 @@ model DocumentoContable {
   abreviatura   String
   empresa       Empresa? @relation(fields: [empresaId], references: [id])
   empresaId     Int
+  facturasMostrador   Factura[]
+  facturasServicios   FacturaServicios[]
 
   @@map("documento_contable")
 }
@@ -452,6 +502,8 @@ model Detraccion {
   empresa    Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId  Int
   Factura    Factura[]
+  facturaServiciosMateriales  FacturaServicios[] @relation(name: "detraccionMaterial")
+  facturaServicios  FacturaServicios[] @relation(name: "detraccionServicio")
 
   @@map("detraccion")
 }
@@ -463,6 +515,7 @@ model MotivoTrasladoGuiaRemision {
   descripcion String?
   empresa     Empresa? @relation(fields: [empresaId], references: [id])
   empresaId   Int
+  guiasRemision GuiaDeRemision[]
 
   @@map("motivo_traslado_guia_remision")
 }
@@ -513,6 +566,10 @@ model Servicio {
   precio     Decimal  @default(0) @db.Decimal(12, 2)
   empresa    Empresa? @relation(fields: [empresaId], references: [id])
   empresaId  Int
+  hojasRecepcion  HojaRecepcionToServicio[]
+  presupuestos    PresupuestoToServicio[]
+  ordenesTrabajo  OrdenTrabajoToServicio[]
+  facturaServicio FacturaServicioToServicio[]
 
   @@map("servicio")
 }
@@ -524,6 +581,8 @@ model TrabajoTerceros {
   precio     Decimal  @default(0) @db.Decimal(12, 2)
   empresa    Empresa? @relation(fields: [empresaId], references: [id])
   empresaId  Int
+  presupuestos  PresupuestoToTrabajoTerceros[]
+  ordenesTrabajo  OrdenTrabajoToTrabajoTerceros[]
 
   @@map("trabajo_terceros")
 }
@@ -571,6 +630,8 @@ model ModeloMaquina {
   empresa   Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId Int
   Maquina   Maquina[]
+  hojaRecepcion HojaRecepcion[]
+  presupuestos  Presupuesto[]
 
   @@map("modelo_maquina")
 }
@@ -582,6 +643,8 @@ model FabricaMaquina {
   empresa   Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId Int
   Maquina   Maquina[]
+  hojaRecepcion HojaRecepcion[]
+  presupuestos  Presupuesto[]
 
   @@map("fabrica_maquina")
 }
@@ -593,6 +656,8 @@ model NombreMaquina {
   empresa   Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId Int
   Maquina   Maquina[]
+  hojaRecepcion HojaRecepcion[]
+  presupuestos  Presupuesto[]
 
   @@map("nombre_maquina")
 }
@@ -615,6 +680,8 @@ model MarcaFabricaSistemaInyeccion {
   empresa   Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId Int
   Maquina   Maquina[]
+  hojaRecepcion HojaRecepcion[]
+  presupuestos  Presupuesto[]
 
   @@map("marca_fabrica_sistema_inyeccion")
 }
@@ -699,34 +766,47 @@ model Maquina {
   empresa                        Empresa?                      @relation(fields: [empresaId], references: [id])
   empresaId                      Int
   Cotizacion                     Cotizacion[]
+  guiaRemisionServicios GuiaRemisionServicios[]
+  facturaServicios      FacturaServicios[]
 
   @@map("maquina")
 }
 
 model Material {
-  id                       Int                        @id @default(autoincrement())
-  codigo                   String?                    @unique
-  correlativo              String?                    @unique
-  familia                  Familia?                   @relation(fields: [familiaId], references: [id])
-  familiaId                Int
-  subfamilia               SubFamilia?                @relation(fields: [subfamiliaId], references: [id])
-  subfamiliaId             Int
-  denominacion             String
-  codigoFabricante         String?
-  tipoFabricante           String?
-  materialReemplazo        Json?
-  materialSimilitud        Json?
-  materialEquivalencia     Json?
-  aplicacionDeMaquina      Json?
-  caracteristicaToMaterial CaracteristicaToMaterial[]
-  empresa                  Empresa?                   @relation(fields: [empresaId], references: [id])
-  empresaId                Int
-  stock                    Int?                       @default(0)
-  codigoMotorOriginal      String?
-  codigoBombaInyeccion     String?
-  Cotizacion               Cotizacion?                @relation(fields: [cotizacionId], references: [id])
-  cotizacionId             Int?
-
+  id                                Int                        @id @default(autoincrement())
+  codigo                            String?                    @unique
+  correlativo                       String?                    @unique
+  familia                           Familia?                   @relation(fields: [familiaId], references: [id])
+  familiaId                         Int
+  subfamilia                        SubFamilia?                @relation(fields: [subfamiliaId], references: [id])
+  subfamiliaId                      Int
+  denominacion                      String
+  codigoFabricante                  String?
+  tipoFabricante                    String?
+  materialReemplazo                 Json?
+  materialSimilitud                 Json?
+  materialEquivalencia              Json?
+  aplicacionDeMaquina               Json?
+  caracteristicaToMaterial          CaracteristicaToMaterial[]
+  empresa                           Empresa?                   @relation(fields: [empresaId], references: [id])
+  empresaId                         Int
+  stock                             Int?                       @default(0)
+  codigoMotorOriginal               String?
+  codigoBombaInyeccion              String?
+  cotizacionToMaterial              CotizacionToMaterial[]
+  // Cotizacion               Cotizacion?                @relation(fields: [cotizacionId], references: [id])
+  // cotizacionId             Int?
+  aprovacionCotizacionToMaterial    AprovacionCotizacionToMaterial[]
+  aprovacionPedidoToMaterial        AprovacionPedidoToMaterial[]
+  ventaUnidad                       Decimal?  @default(0) @db.Decimal(12, 2)
+  hojasRecepcion                    HojaRecepcionToMateriales[]
+  presupuestoRepuesto               PresupuestoToRepuesto[]
+  presupuestoMaterial               PresupuestoToMaterial[]
+  ordenTrabajoRepuesto              OrdenTrabajoToRepuesto[]
+  ordenTrabajoMaterial              OrdenTrabajoToMaterial[]
+  guiaRemisionServicio              GuiaRemisionServicioToMaterial[]
+  facturaServicio                   FacturaServicioToMaterial[]
+  
   @@map("material")
 }
 
@@ -747,13 +827,14 @@ model CaracteristicaToMaterial {
 model Cotizacion {
   id                     Int                   @id @default(autoincrement())
   number                 String?               @unique
-  fechaCotizacion        DateTime
-  fechaValidez           DateTime
+  fechaCotizacion        DateTime              @default(now())
+  fechaValidez           DateTime              @default(now())
   diasValidez            Int
   referencia             String?
   nota                   String?
   maquina                String?
-  materiales             Material[]
+  estadoDelDocumento     String?
+  materiales             CotizacionToMaterial[]
   moneda                 String?
   subtotal               Decimal               @default(0) @db.Decimal(12, 2)
   descuento              Decimal               @default(0) @db.Decimal(12, 2)
@@ -774,39 +855,124 @@ model Cotizacion {
   personalId             Int?
   empresa                Empresa?              @relation(fields: [empresaId], references: [id])
   empresaId              Int
+  sucursal               Sucursal?             @relation(fields: [sucursalId], references: [id])
+  sucursalId             Int
   Maquina                Maquina?              @relation(fields: [maquinaId], references: [id])
   maquinaId              Int?
-  aprovacionCotizacion   AprovacionCotizacion? @relation(fields: [aprovacionCotizacionId], references: [id])
-  aprovacionCotizacionId Int?
+  // aprovacionCotizacion   AprovacionCotizacion? @relation(fields: [aprovacionCotizacionId], references: [id])
+  // aprovacionCotizacionId Int?
+  // aprovacionCotizaciones AprovacionCotizacion[]
+  aprovacionesCotizaciones CotizacionToAprovacionCotizacion[]
 
   @@map("cotizacion")
 }
 
+model CotizacionToMaterial {
+  id               Int             @id @default(autoincrement())
+  cantidadMateriales         Int
+  material         Material?       @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  materialId       Int
+  cotizacion       Cotizacion?     @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+  cotizacionId     Int
+
+  @@map("cotizacion_to_material")
+}
+
+model CotizacionToAprovacionCotizacion {
+  id                        Int                       @id @default(autoincrement())
+  cotizacion                Cotizacion?               @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)     
+  cotizacionId              Int
+  aprovacionCotizacion      AprovacionCotizacion?     @relation(fields: [aprovacionCotizacionId], references: [id], onDelete: Cascade)     
+  aprovacionCotizacionId    Int
+
+  @@map("cotizacion_to_aprovacion_cotizacion")
+}
+
 model AprovacionCotizacion {
   id                 Int               @id @default(autoincrement())
+  number             String?           @unique
   subtotal           Decimal           @default(0) @db.Decimal(12, 2)
   descuento          Decimal           @default(0) @db.Decimal(12, 2)
   subtotalValorNeto  Decimal           @default(0) @db.Decimal(12, 2)
   igv                Decimal           @default(0) @db.Decimal(12, 2)
   totalSoles         Decimal           @default(0) @db.Decimal(12, 2)
-  cotizaciones       Cotizacion[]
-  AprovacionPedido   AprovacionPedido? @relation(fields: [aprovacionPedidoId], references: [id])
-  aprovacionPedidoId Int?
+  fechaAprobacion    DateTime          @default(now())
+  estadoDelDocumento String?
+  cotizaciones       CotizacionToAprovacionCotizacion[]
+  aprovacionesPedidos AprovacionCotizacionToAprovacionPedido[]
+  moneda             String?
+  maquina            String?
+  // AprovacionPedido   AprovacionPedido? @relation(fields: [aprovacionPedidoId], references: [id])
+  // aprovacionPedidoId Int?
+  materiales         AprovacionCotizacionToMaterial[]
+  cliente            Cliente?          @relation(fields: [clienteId], references: [id])
+  clienteId          Int?
+  empresa            Empresa?          @relation(fields: [empresaId], references: [id])
+  empresaId          Int
+  sucursal               Sucursal?             @relation(fields: [sucursalId], references: [id])
+  sucursalId             Int
+
 
   @@map("aprovacion_cotizacion")
 }
 
+model AprovacionCotizacionToMaterial {
+  id                      Int                     @id @default(autoincrement())
+  cantidad                Int
+  material                Material?               @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  materialId              Int
+  aprovacionCotizacion    AprovacionCotizacion?   @relation(fields: [aprovacionCotizacionId], references: [id], onDelete: Cascade)
+  aprovacionCotizacionId  Int
+
+  @@map("aprovacion_cotizacion_to_material")
+}
+
+model AprovacionCotizacionToAprovacionPedido {
+  id                        Int                       @id @default(autoincrement())
+  aprovacionCotizacion      AprovacionCotizacion?     @relation(fields: [aprovacionCotizacionId], references: [id], onDelete: Cascade)     
+  aprovacionCotizacionId    Int
+  aprovacionPedido          AprovacionPedido?         @relation(fields: [aprovacionPedidoId], references: [id], onDelete: Cascade)
+  aprovacionPedidoId        Int
+
+  @@map("aprovacion_cotizacion_to_aprovacion_pedido")
+}
+
 model AprovacionPedido {
   id                   Int                    @id @default(autoincrement())
+  number               String?                @unique
   subtotal             Decimal                @default(0) @db.Decimal(12, 2)
   descuento            Decimal                @default(0) @db.Decimal(12, 2)
   subtotalValorNeto    Decimal                @default(0) @db.Decimal(12, 2)
   igv                  Decimal                @default(0) @db.Decimal(12, 2)
   totalSoles           Decimal                @default(0) @db.Decimal(12, 2)
-  aprovacionCotizacion AprovacionCotizacion[]
-  guiasDeRemision      GuiaDeRemision[]
+  fechaAprobacion      DateTime               @default(now())
+  aprovacionCotizacion AprovacionCotizacionToAprovacionPedido[]
+  moneda               String?
+  maquina              String?
+  // guiasDeRemision      GuiaDeRemision[]
+  guiaDeRemision       GuiaDeRemision?
+  estado               String?
+  materiales           AprovacionPedidoToMaterial[]
+  empresa              Empresa?               @relation(fields: [empresaId], references: [id])
+  empresaId            Int
+  sucursal             Sucursal?             @relation(fields: [sucursalId], references: [id])
+  sucursalId           Int
+  cliente              Cliente?          @relation(fields: [clienteId], references: [id])
+  clienteId            Int?
+
 
   @@map("aprovacion_pedido")
+}
+
+model AprovacionPedidoToMaterial {
+  id                      Int                     @id @default(autoincrement())
+  cantidad                Int
+  material                Material?               @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  materialId              Int
+  aprovacionPedido        AprovacionPedido?       @relation(fields: [aprovacionPedidonId], references: [id], onDelete: Cascade)
+  aprovacionPedidonId     Int
+
+  @@map("aprovacion_pedido_to_material")
 }
 
 model GuiaDeRemision {
@@ -814,25 +980,26 @@ model GuiaDeRemision {
   tipoDeGuia           String?
   NumeroGuiaDeRemision String?
   serie                String?
-  fechaDeCotizacion    DateTime
-  fechaDeValidez       DateTime
+  fechaDeCotizacion    DateTime            @default(now())
+  fechaDeValidez       DateTime            @default(now())
   diasDeValidez        Int
   moneda               String?
   estado               String?
   numeroDeOrden        String?
   puntoDePartida       String?
   puntoDeLlegada       String?
-  motivoDeTraslado     String?
+  motivoDeTraslado     MotivoTrasladoGuiaRemision? @relation(fields: [motivoDeTrasladoId], references: [id])
+  motivoDeTrasladoId   Int?
   referencia           String?
   nota                 String?
-  AprovacionPedido     AprovacionPedido?   @relation(fields: [aprovacionPedidoId], references: [id])
-  aprovacionPedidoId   Int?
-  formaPagoContado     FormaDePagoContado? @relation(fields: [formaPagoContadoId], references: [id])
-  formaPagoContadoId   Int?
-  formaPagoCredito     FormaDePagoCredito? @relation(fields: [formaPagoCreditoId], references: [id])
-  formaPagoCreditoId   Int?
-  tipoDeCambio         TipoDeCambio?       @relation(fields: [tipoDeCambioId], references: [id])
-  tipoDeCambioId       Int?
+  aprovacionPedido     AprovacionPedido?  @relation(fields:[aprovacionPedidoId], references: [id])
+  aprovacionPedidoId   Int?               @unique
+  // formaPagoContado     FormaDePagoContado? @relation(fields: [formaPagoContadoId], references: [id])
+  // formaPagoContadoId   Int?
+  // formaPagoCredito     FormaDePagoCredito? @relation(fields: [formaPagoCreditoId], references: [id])
+  // formaPagoCreditoId   Int?
+  // tipoDeCambio         TipoDeCambio?       @relation(fields: [tipoDeCambioId], references: [id])
+  // tipoDeCambioId       Int?
   cliente              Cliente?            @relation(fields: [clienteId], references: [id])
   clienteId            Int?
   maquina              String
@@ -842,6 +1009,8 @@ model GuiaDeRemision {
   personalId           Int?
   empresa              Empresa?            @relation(fields: [empresaId], references: [id])
   empresaId            Int
+  sucursal             Sucursal?           @relation(fields: [sucursalId], references: [id])
+  sucursalId           Int
   agencia              AgenciaTransporte?  @relation(fields: [agenciaId], references: [id])
   agenciaId            Int?
   vehiculo             Vehiculo?           @relation(fields: [vehiculoId], references: [id])
@@ -860,8 +1029,9 @@ model GuiaDeRemision {
 
 model Factura {
   id                 Int                 @id @default(autoincrement())
-  numeroDeFactura    String?
-  tipoDeDocumento    TipoDocumentoEnum
+  numeroDeFactura    String?             @unique
+  tipoDeDocumento    DocumentoContable?  @relation(fields: [tipoDeDocumentoId], references: [id])
+  tipoDeDocumentoId  Int?
   serie              String?
   fechaDeFactura     DateTime
   fechaDeValidez     DateTime
@@ -876,6 +1046,7 @@ model Factura {
   estado             String?
   GuiaDeRemision     GuiaDeRemision?     @relation(fields: [guiaDeRemisionId], references: [id])
   guiaDeRemisionId   Int?                @unique
+  observaciones      String?
   cliente            Cliente?            @relation(fields: [clienteId], references: [id])
   clienteId          Int?
   maquina            String?
@@ -886,6 +1057,8 @@ model Factura {
   ordenDeCompra      String?
   empresa            Empresa?            @relation(fields: [empresaId], references: [id])
   empresaId          Int
+  sucursal           Sucursal?           @relation(fields: [sucursalId], references: [id])
+  sucursalId         Int
   referencia         String?
   nota               String?
   subtotal           Decimal             @default(0) @db.Decimal(12, 2)
@@ -897,6 +1070,492 @@ model Factura {
   haveIcbper         Boolean             @default(false)
   detraccion         Detraccion?         @relation(fields: [detraccionId], references: [id])
   detraccionId       Int?
+
+  @@map("factura")
+}
+
+model ReporteVentas {
+  id                Int                  @id @default(autoincrement())
+  nroReporte        Int
+  fechaInicio       DateTime             @default(now())
+  fechaFin          DateTime             @default(now())
+  urlPdf            String
+  empresa           Empresa?             @relation(fields: [empresaId] , references: [id])
+  empresaId         Int
+
+  @@map("reporte_ventas")
+}
+
+model ReporteRecordClientes {
+  id                Int                  @id @default(autoincrement())
+  nroReporte        Int
+  fechaInicio       DateTime             @default(now())
+  fechaFin          DateTime             @default(now())
+  urlPdf            String
+  empresa           Empresa?             @relation(fields: [empresaId] , references: [id])
+  empresaId         Int
+  @@map("reporte_record_clientes")
+}
+
+model ReporteRecordProveedores {
+  id                Int                  @id @default(autoincrement())
+  nroReporte        Int
+  fechaInicio       DateTime             @default(now())
+  fechaFin          DateTime             @default(now())
+  urlPdf            String
+  empresa           Empresa?             @relation(fields: [empresaId] , references: [id])
+  empresaId         Int
+
+  @@map("reporte_record_proveedores")
+}
+
+model ReporteStockMinimo {
+  id                Int                  @id @default(autoincrement())
+  nroReporte        Int
+  fecha             DateTime             @default(now())
+  urlPdf            String
+  empresa           Empresa?             @relation(fields: [empresaId] , references: [id])
+  empresaId         Int
+
+  @@map("reporte_stock_minimo")
+}
+
+model ReporteMensualVentas {
+  id                Int                  @id @default(autoincrement())
+  nroReporte        Int
+  mes               String
+  anio              String
+  urlPdf            String
+  empresa           Empresa?             @relation(fields: [empresaId] , references: [id])
+  empresaId         Int
+
+  @@map("reporte_mensual_ventas")
+}
+
+// Venta-servicio
+
+model HojaRecepcion {
+  id                Int                  @id @default(autoincrement())
+  codigo            String?              @unique
+  denominacion      String               
+  tipoReparacion    String
+  cliente           Cliente?              @relation(fields: [clienteId], references: [id])
+  clienteId         Int?
+  fabricaMaquina    FabricaMaquina?       @relation(fields: [fabricaMaquinaId], references: [id])
+  fabricaMaquinaId  Int
+  modeloMaquina     ModeloMaquina?        @relation(fields: [modeloMaquinaId], references: [id])
+  modeloMaquinaId   Int
+  nombreMaquina     NombreMaquina?        @relation(fields: [nombreMaquinaId], references: [id])
+  nombreMaquinaId   Int
+  procedencia       Pais?                 @relation(fields: [paisId], references: [id])
+  paisId            Int
+  codigoMotorOriginal String
+  serieMotor        String
+  serieChasis       String
+  vendedor          Vendedor?             @relation(fields: [vendedorId], references: [id])
+  vendedorId        Int?
+  personal          Personal?             @relation(fields: [personalId], references: [id])
+  personalId        Int?
+  codigoBombaInyeccionOriginal  String
+  codigoBombaInyeccionFabricante String
+  tipoBombaInyeccionFabricante  String
+  marcaFabricaSistemaInyeccion   MarcaFabricaSistemaInyeccion? @relation(fields: [marcaFabricaSistemaInyeccionId], references: [id])
+  marcaFabricaSistemaInyeccionId Int
+  codigoOriginalBombaInyeccion  String
+  nombreBombaInyeccion    String
+  serieBombaInyeccion     String
+  codigoInyectorOriginal  String
+  codigoInyectorFabricante  String
+  tipoFabricanteInyector  String
+  codigoOriginalInyector  String
+  informacionCliente  String
+  conclusiones        String
+  bombaInyeccionJSON        Json?
+  inyectorElectronicoJSON   Json?
+  inyectorConvencionalJSON  Json?
+  materiales  HojaRecepcionToMateriales[]
+  servicios   HojaRecepcionToServicio[]
+  presupuesto Presupuesto?
+  empresa                Empresa?              @relation(fields: [empresaId], references: [id])
+  empresaId              Int
+  sucursal               Sucursal?             @relation(fields: [sucursalId], references: [id])
+  sucursalId             Int
+
+  @@map("hoja_recepcion")
+}
+
+model HojaRecepcionToMateriales {
+  id                      Int             @id @default(autoincrement())
+  material                Material?               @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  materialId              Int
+  hojaRecepcion           HojaRecepcion?       @relation(fields: [hojaRecepcionId], references: [id], onDelete: Cascade)
+  hojaRecepcionId         Int
+  cantidad                Int
+  diagnostico             String
+  observaciones           String?
+
+  @@map("hoja_recepcion_to_materiales")
+}
+
+model HojaRecepcionToServicio {
+  id                      Int             @id @default(autoincrement())
+  servicio                Servicio?               @relation(fields: [servicioId], references: [id], onDelete: Cascade)
+  servicioId              Int
+  hojaRecepcion           HojaRecepcion?       @relation(fields: [hojaRecepcionId], references: [id], onDelete: Cascade)
+  hojaRecepcionId         Int
+
+  @@map("hoja_recepcion_to_servicio")
+}
+
+model Presupuesto {
+  id                      Int                   @id @default(autoincrement())
+  codigo                  String?
+  hojaRecepcion           HojaRecepcion?        @relation(fields: [hojaRecepcionId], references: [id])
+  hojaRecepcionId         Int?                  @unique
+  denominacion            String
+  tipoReparacion          String
+  cliente                 Cliente?              @relation(fields: [clienteId], references: [id])
+  clienteId               Int?
+  fabricaMaquina          FabricaMaquina?       @relation(fields: [fabricaMaquinaId], references: [id])
+  fabricaMaquinaId        Int
+  modeloMaquina           ModeloMaquina?        @relation(fields: [modeloMaquinaId], references: [id])
+  modeloMaquinaId         Int
+  nombreMaquina           NombreMaquina?        @relation(fields: [nombreMaquinaId], references: [id])
+  nombreMaquinaId         Int
+  procedencia             Pais?                 @relation(fields: [paisId], references: [id])
+  paisId                  Int
+  codigoMotorOriginal     String
+  serieMotor              String
+  serieChasis             String
+  vendedor                Vendedor?             @relation(fields: [vendedorId], references: [id])
+  vendedorId              Int?
+  personal                Personal?             @relation(fields: [personalId], references: [id])
+  personalId              Int?
+  codigoBombaInyeccionOriginal  String
+  codigoBombaInyeccionFabricante String
+  tipoBombaInyeccionFabricante  String
+  marcaFabricaSistemaInyeccion   MarcaFabricaSistemaInyeccion? @relation(fields: [marcaFabricaSistemaInyeccionId], references: [id])
+  marcaFabricaSistemaInyeccionId Int
+  codigoOriginalBombaInyeccion  String
+  nombreBombaInyeccion    String
+  serieBombaInyeccion     String
+  codigoInyectorOriginal  String
+  codigoInyectorFabricante  String
+  tipoFabricanteInyector  String
+  codigoOriginalInyector  String
+  codigoInyectorOriginalOrden1  String
+  codigoInyectorOriginalOrden2  String
+  codigoInyectorOriginalOrden3  String
+  fechaIngreso            DateTime              @default(now())
+  horaIngreso             DateTime
+  fechaSalida             DateTime              @default(now())
+  horaSalida              DateTime
+  estadoOrdenTrabajo      String?
+  subtotalValorServicio   Decimal               @default(0) @db.Decimal(12, 2)
+  subtotalRepuestos       Decimal               @default(0) @db.Decimal(12, 2)
+  subtotalMateriales      Decimal               @default(0) @db.Decimal(12, 2)
+  subtotalTrabajoTerceros  Decimal              @default(0) @db.Decimal(12, 2)
+  descuento               Decimal               @default(0) @db.Decimal(12, 2)
+  igv                     Decimal               @default(0) @db.Decimal(12, 2)
+  totalPresupuesto        Decimal               @default(0) @db.Decimal(12, 2)
+  servicios               PresupuestoToServicio[]
+  repuestos               PresupuestoToRepuesto[]
+  materiales              PresupuestoToMaterial[]
+  trabajosTerceros        PresupuestoToTrabajoTerceros[]
+  ordenesTrabajo          PresupuestoToOrdenTrabajo[]
+  empresa                 Empresa?              @relation(fields: [empresaId], references: [id])
+  empresaId               Int
+  sucursal                Sucursal?             @relation(fields: [sucursalId], references: [id])
+  sucursalId              Int
+  
+
+  @@map("presupuesto")
+}
+
+model PresupuestoToServicio {
+  id                      Int                @id @default(autoincrement())
+  servicio                Servicio?          @relation(fields: [servicioId], references: [id], onDelete: Cascade)
+  servicioId              Int
+  presupuesto             Presupuesto?       @relation(fields: [presupuestoId], references: [id], onDelete: Cascade)
+  presupuestoId           Int
+  diagnostico             String
+  precio                  Decimal            @default(0) @db.Decimal(12, 2)
+  comentarios             String?
+
+  @@map("presupuesto_to_servicio")
+}
+
+model PresupuestoToRepuesto {
+  id                      Int                @id @default(autoincrement())
+  repuesto                Material?          @relation(fields: [repuestoId], references: [id], onDelete: Cascade)
+  repuestoId              Int
+  presupuesto             Presupuesto?       @relation(fields: [presupuestoId], references: [id], onDelete: Cascade)
+  presupuestoId           Int
+  cantidad                Int
+  diagnostico             String
+  precio                  Decimal            @default(0) @db.Decimal(12, 2)
+  comentarios             String?
+
+  @@map("presupuesto_to_repuesto")
+}
+
+model PresupuestoToMaterial {
+  id                      Int                @id @default(autoincrement())
+  material                Material?          @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  materialId              Int
+  presupuesto             Presupuesto?       @relation(fields: [presupuestoId], references: [id], onDelete: Cascade)
+  presupuestoId           Int
+  cantidad                Int
+  precio                  Decimal            @default(0) @db.Decimal(12, 2)
+  comentarios             String?
+
+  @@map("presupuesto_to_material")
+}
+
+model PresupuestoToTrabajoTerceros {
+  id                      Int                @id @default(autoincrement())
+  trabajoTercero          TrabajoTerceros?   @relation(fields: [trabajoTerceroId], references: [id], onDelete: Cascade)
+  trabajoTerceroId        Int
+  presupuesto             Presupuesto?       @relation(fields: [presupuestoId], references: [id], onDelete: Cascade)
+  presupuestoId           Int
+  precio                  Decimal            @default(0) @db.Decimal(12, 2)
+  comentarios             String?
+
+  @@map("presupuesto_to_trabajo_terceros")
+}
+
+model PresupuestoToOrdenTrabajo {
+  id                      Int                @id @default(autoincrement())
+  presupuesto             Presupuesto?       @relation(fields: [presupuestoId], references: [id], onDelete: Cascade)
+  presupuestoId           Int
+  ordenTrabajo            OrdenTrabajo?       @relation(fields: [ordenTrabajoId], references: [id], onDelete: Cascade)
+  ordenTrabajoId          Int
+
+  @@map("presupuesto_to_orden_trabajo")
+}
+
+model OrdenTrabajo{
+  id                      Int                @id @default(autoincrement())
+  codigo                  String?
+  cliente                 Cliente?              @relation(fields: [clienteId], references: [id])
+  clienteId               Int?
+  subtotalValorServicio   Decimal               @default(0) @db.Decimal(12, 2)
+  subtotalRepuestos       Decimal               @default(0) @db.Decimal(12, 2)
+  subtotalMateriales      Decimal               @default(0) @db.Decimal(12, 2)
+  subtotalTrabajoTerceros  Decimal              @default(0) @db.Decimal(12, 2)
+  descuento               Decimal               @default(0) @db.Decimal(12, 2)
+  igv                     Decimal               @default(0) @db.Decimal(12, 2)
+  totalPresupuesto        Decimal               @default(0) @db.Decimal(12, 2)
+  presupuestos            PresupuestoToOrdenTrabajo[]
+  servicios               OrdenTrabajoToServicio[]
+  repuestos               OrdenTrabajoToRepuesto[]
+  materiales              OrdenTrabajoToMaterial[]
+  trabajosTerceros        OrdenTrabajoToTrabajoTerceros[]
+  guiaRemisionServicio    GuiaRemisionServicios?
+  empresa                 Empresa?              @relation(fields: [empresaId], references: [id])
+  empresaId               Int
+  sucursal                Sucursal?             @relation(fields: [sucursalId], references: [id])
+  sucursalId              Int
+
+  @@map("orden_trabajo")
+}
+
+model OrdenTrabajoToServicio {
+  id                      Int                @id @default(autoincrement())
+  servicio                Servicio?          @relation(fields: [servicioId], references: [id], onDelete: Cascade)
+  servicioId              Int
+  ordenTrabajo            OrdenTrabajo?     @relation(fields: [ordenTrabajoId], references: [id], onDelete: Cascade)
+  ordenTrabajoId          Int
+  diagnostico             String?
+  precio                  Decimal            @default(0) @db.Decimal(12, 2)
+  comentarios             String?
+
+  @@map("orden_trabajo_to_servicio")
+}
+
+model OrdenTrabajoToRepuesto {
+  id                      Int                @id @default(autoincrement())
+  repuesto                Material?          @relation(fields: [repuestoId], references: [id], onDelete: Cascade)
+  repuestoId              Int
+  ordenTrabajo            OrdenTrabajo?     @relation(fields: [ordenTrabajoId], references: [id], onDelete: Cascade)
+  ordenTrabajoId          Int
+  cantidad                Int
+  diagnostico             String?
+  precio                  Decimal            @default(0) @db.Decimal(12, 2)
+  comentarios             String?
+
+  @@map("orden_trabajo_to_repuesto")
+}
+
+model OrdenTrabajoToMaterial {
+  id                      Int                @id @default(autoincrement())
+  material                Material?          @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  materialId              Int
+  ordenTrabajo            OrdenTrabajo?     @relation(fields: [ordenTrabajoId], references: [id], onDelete: Cascade)
+  ordenTrabajoId          Int
+  cantidad                Int
+  precio                  Decimal            @default(0) @db.Decimal(12, 2)
+  comentarios             String?
+
+  @@map("orden_trabajo_to_material")
+}
+
+model OrdenTrabajoToTrabajoTerceros {
+  id                      Int                @id @default(autoincrement())
+  trabajoTercero          TrabajoTerceros?   @relation(fields: [trabajoTerceroId], references: [id], onDelete: Cascade)
+  trabajoTerceroId        Int
+  ordenTrabajo            OrdenTrabajo?     @relation(fields: [ordenTrabajoId], references: [id], onDelete: Cascade)
+  ordenTrabajoId          Int
+  precio                  Decimal            @default(0) @db.Decimal(12, 2)
+  comentarios             String?
+
+  @@map("orden_trabajo_to_trabajo_terceros")
+}
+
+model GuiaRemisionServicios {
+  id                      Int                @id @default(autoincrement())
+  codigo                  String?
+  ordenTrabajo            OrdenTrabajo?      @relation(fields: [ordenTrabajoId], references: [id])
+  ordenTrabajoId          Int?               @unique
+  tipoGuia                String
+  nroGuiaRemision         String
+  fechaGuia               DateTime           @default(now())
+  diasValidez             Int
+  fechaValidez            DateTime           @default(now())
+  moneda                  String
+  formaPagoContado        FormaDePagoContado? @relation(fields: [formaPagoContadoId], references: [id])
+  formaPagoContadoId      Int?
+  formaPagoCredito        FormaDePagoCredito? @relation(fields: [formaPagoCreditoId], references: [id])
+  formaPagoCreditoId      Int?
+  tipoDeCambio            TipoDeCambio?       @relation(fields: [tipoDeCambioId], references: [id])
+  tipoDeCambioId          Int?
+  estado                  String?
+  cliente                 Cliente?            @relation(fields: [clienteId], references: [id])
+  clienteId               Int?
+  vendedor                Vendedor?           @relation(fields: [vendedorId], references: [id])
+  vendedorId              Int?
+  personal                Personal?           @relation(fields: [personalId], references: [id])
+  personalId              Int?
+  Maquina                 Maquina?            @relation(fields: [maquinaId], references: [id])
+  maquinaId               Int?
+  nroOrdenCompra          String
+  puntoPartida            String
+  puntoLlegada            String
+  motivoTraslada          String?
+  agencia                 AgenciaTransporte?  @relation(fields: [agenciaId], references: [id])
+  agenciaId               Int?
+  vehiculo                Vehiculo?           @relation(fields: [vehiculoId], references: [id])
+  vehiculoId              Int?
+  chofer                  Chofer?             @relation(fields: [choferId], references: [id])
+  choferId                Int?
+  referencia              String?
+  nota                    String?
+  materiales              GuiaRemisionServicioToMaterial[]
+  subtotal                Decimal             @default(0) @db.Decimal(12, 2)
+  descuento               Decimal             @default(0) @db.Decimal(12, 2)
+  subtotalValorNeto       Decimal             @default(0) @db.Decimal(12, 2)
+  igv                     Decimal             @default(0) @db.Decimal(12, 2)
+  totalSoles              Decimal             @default(0) @db.Decimal(12, 2)
+  factura                 FacturaServicios?
+  empresa                 Empresa?              @relation(fields: [empresaId], references: [id])
+  empresaId               Int
+  sucursal                Sucursal?             @relation(fields: [sucursalId], references: [id])
+  sucursalId              Int
+  
+
+  @@map("guia_remision_servicios")
+}
+
+model GuiaRemisionServicioToMaterial {
+  id                      Int                       @id @default(autoincrement())
+  material                Material?                 @relation(fields: [materialId], references: [id])
+  materialId              Int
+  guiaRemisionServicio    GuiaRemisionServicios?    @relation(fields: [guiaRemisionServicioId], references: [id], onDelete: Cascade)
+  guiaRemisionServicioId  Int
+  cantidad                Int
+  precio                  Decimal                    @default(0) @db.Decimal(12, 2)
+
+  @@map("guia_remision_servicio_to_material")
+}
+
+model FacturaServicios {
+  id                      Int                @id @default(autoincrement())
+  codigo                  String?
+  nroFactura              String?             @unique
+  tipoDeDocumento         DocumentoContable?  @relation(fields: [tipoDeDocumentoId], references: [id])
+  tipoDeDocumentoId       Int?
+  guiaRemision            GuiaRemisionServicios?      @relation(fields: [guiaRemisionId], references: [id])
+  guiaRemisionId          Int?               @unique
+  serie                   String
+  fechaFactura            DateTime           @default(now())
+  diasValidez             Int
+  fechaValidez            DateTime           @default(now())
+  moneda                  String
+  formaPagoContado        FormaDePagoContado? @relation(fields: [formaPagoContadoId], references: [id])
+  formaPagoContadoId      Int?
+  formaPagoCredito        FormaDePagoCredito? @relation(fields: [formaPagoCreditoId], references: [id])
+  formaPagoCreditoId      Int?
+  tipoDeCambio            TipoDeCambio?       @relation(fields: [tipoDeCambioId], references: [id])
+  tipoDeCambioId          Int?
+  estado                  String?
+  cliente                 Cliente?            @relation(fields: [clienteId], references: [id])
+  clienteId               Int?
+  vendedor                Vendedor?           @relation(fields: [vendedorId], references: [id])
+  vendedorId              Int?
+  personal                Personal?           @relation(fields: [personalId], references: [id])
+  personalId              Int?
+  Maquina                 Maquina?            @relation(fields: [maquinaId], references: [id])
+  maquinaId               Int?
+  nroOrdenCompra          String
+  referencia              String?
+  nota                    String?
+  tipoFactura             String  
+  materiales              FacturaServicioToMaterial[]
+  subtotalMateriales      Decimal             @default(0) @db.Decimal(12, 2)
+  descuentoMateriales     Decimal             @default(0) @db.Decimal(12, 2)
+  subtotalValorNetoMateriales      Decimal   @default(0) @db.Decimal(12, 2)
+  igvMateriales                    Decimal   @default(0) @db.Decimal(12, 2)
+  detraccionMaterial      Detraccion?       @relation(name: "detraccionMaterial", fields: [detraccionMaterialId], references: [id])
+  detraccionMaterialId    Int?
+  icbper                  Boolean
+  totalSolesMateriales             Decimal   @default(0) @db.Decimal(12, 2)
+  servicios               FacturaServicioToServicio[]
+  subtotalServicios                Decimal             @default(0) @db.Decimal(12, 2)
+  descuentoServicios               Decimal             @default(0) @db.Decimal(12, 2)
+  subtotalValorNetoServicios       Decimal             @default(0) @db.Decimal(12, 2)
+  igvServicios                     Decimal             @default(0) @db.Decimal(12, 2)
+  totalSolesServicios              Decimal             @default(0) @db.Decimal(12, 2)
+  detraccionServicios      Detraccion?       @relation(name: "detraccionServicio", fields: [detraccionServiciosId], references: [id])
+  detraccionServiciosId    Int?
+  empresa                  Empresa?              @relation(fields: [empresaId], references: [id])
+  empresaId                Int
+  sucursal                 Sucursal?             @relation(fields: [sucursalId], references: [id])
+  sucursalId               Int
+
+  @@map("factura_servicios")
+}
+
+model FacturaServicioToMaterial {
+  id                      Int                       @id @default(autoincrement())
+  material                Material?                 @relation(fields: [materialId], references: [id])
+  materialId              Int
+  facturaServicio         FacturaServicios?         @relation(fields: [facturaServicioId], references: [id], onDelete: Cascade)
+  facturaServicioId       Int
+  cantidad                Int
+  precio                  Decimal                   @default(0) @db.Decimal(12, 2)
+
+  @@map("factura_servicio_to_material")
+}
+
+model FacturaServicioToServicio {
+  id                      Int                    @id @default(autoincrement())
+  servicio                Servicio?              @relation(fields: [servicioId], references: [id])
+  servicioId              Int
+  facturaServicios        FacturaServicios?      @relation(fields: [facturaServiciosId], references: [id], onDelete: Cascade)
+  facturaServiciosId      Int
+  precio                  Decimal                @default(0) @db.Decimal(12, 2)
+
+  @@map("factura_servicio_to_servicio")
 }
 
 enum EstadoEnum {

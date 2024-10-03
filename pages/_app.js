@@ -10,7 +10,9 @@ import * as yup from "yup";
 import { FormProvider } from "../contexts/form.context";
 import { ToastContainer } from "react-toastify";
 import { MaterialesProvider } from "../contexts/materiales.context";
+import { VentaMostradorProvider } from "../contexts/venta-mostrador.context";
 import { ProtectedRoute } from "../app/components/routes/ProtectedRoute";
+import { VentaServiciosProvider } from "../contexts/venta-servicios.context";
 
 yup.setLocale({
   mixed: {
@@ -38,11 +40,15 @@ function MyApp({ Component, pageProps, router }) {
           <ProtectedRoute router={router}>
             <FormProvider>
               <MaterialesProvider>
-                <ThemeProvider>
-                  <LayoutDefault>
-                    <Component {...pageProps} />
-                  </LayoutDefault>
-                </ThemeProvider>
+                <VentaMostradorProvider>
+                  <VentaServiciosProvider>
+                    <ThemeProvider>
+                      <LayoutDefault>
+                        <Component {...pageProps} />
+                      </LayoutDefault>
+                    </ThemeProvider>
+                  </VentaServiciosProvider>
+                </VentaMostradorProvider>
               </MaterialesProvider>
             </FormProvider>
           </ProtectedRoute>

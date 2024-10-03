@@ -149,6 +149,7 @@ export default function Materiales() {
   }, [codigos, caracteristicasForm, updateForm]);
 
   const createRegistro = async () => {
+    console.log(form);
     await schema.validate(form, { abortEarly: false });
     await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/configuracion/materiales", {
       ...form,
@@ -161,6 +162,7 @@ export default function Materiales() {
   };
 
   const updateRegistro = async () => {
+    console.log(form);
     await updateSchema.validate(form, { abortEarly: false });
     await axiosRequest(
       "put",
@@ -587,7 +589,7 @@ export default function Materiales() {
       >
         {/* Form */}
         <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-5">
-          {/* Datos de la maquina */}
+          
           <Group title={"Datos del Material"}>
             <GroupInputs>
               <Select

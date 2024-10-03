@@ -185,19 +185,55 @@ export class MatrialesService {
   }
 
   static async getMaterial(id) {
+    console.log(id);
     const material = await prisma.material.findUnique({
       where: {
         id,
+      },
+      include: {
+        cotizacionToMaterial: true,
+        aprovacionCotizacionToMaterial: true,
+        familia: {
+          select: {
+            codigo: true,
+          },
+        },
+        subfamilia: {
+          select: {
+            codigo: true,
+          },
+        },
+        caracteristicaToMaterial: {
+          where: {
+            isChecked: true,
+          },
+          select: {
+            valor: true,
+            isChecked: true,
+            caracteristica: {
+              select: {
+                descripcion: true,
+                id: true,
+              },
+            },
+          },
+        },
       },
     });
 
     return material;
   }
 
-  static async getMateriales(empresaId, filterName) {
+  static async getMateriales(empresaId, filterName, idMaquina) {
+    
     const response = await prisma.material.findMany({
       where: {
         empresaId,
+        ...(idMaquina && {
+          aplicacionDeMaquina: {
+            array_contains: [{id:Number(idMaquina)}]
+          }
+        }),
         ...(filterName && {
           OR: [
             {

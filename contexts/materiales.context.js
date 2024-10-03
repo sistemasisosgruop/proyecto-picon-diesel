@@ -11,12 +11,15 @@ export const MaterialesProvider = ({ children }) => { //! COMPONENTE PROVEEDOR A
     aplicacionMaquina: [],
   });
   const [correlativo, setCorrelativo] = useState("");
-  const [selectedMateriales, setSelectedMateriales] = useState(null);
+  const [selectedMateriales, setSelectedMateriales] = useState({
+    materiales: []
+  });
   const [modalInfoIsOpen, setInfoIsOpen] = useState(false);
   const [materialInfo, setMaterialInfo] = useState(null);
   const [caracteristicasForm, setCaracteristicasForm] = useState([]);
+  const [selectedMaquina, setSelectedMaquina] = useState(null);
 
-  function openInfoModal() {      //! Cambia el estado para abir modal
+  function openInfoModal() {
     setInfoIsOpen(true);
   }
 
@@ -25,7 +28,7 @@ export const MaterialesProvider = ({ children }) => { //! COMPONENTE PROVEEDOR A
     subtitle.style.color = "#f00";
   }
 
-  function closeInfoModal() {     //! Cambia el estado para cerrar modal
+  function closeInfoModal() {
     setInfoIsOpen(false);
   }
 
@@ -46,6 +49,8 @@ export const MaterialesProvider = ({ children }) => { //! COMPONENTE PROVEEDOR A
         setMaterialInfo,
         caracteristicasForm,
         setCaracteristicasForm,
+        selectedMaquina,
+        setSelectedMaquina
       }}
     >
       {children}

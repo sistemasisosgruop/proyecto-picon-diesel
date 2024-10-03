@@ -1,0 +1,75 @@
+export const vehiculos = [
+  {
+    codigo: "VH-001",
+    placa: "A-11-22",
+    marca: "Toyota",
+    modelo: "Modelo A",
+    tipo: "Tipo A",
+    descripcion: "Vehículo A",
+    color: "Rojo",
+    tarjetaPropiedad: "Tarjeta A",
+    empresaId: 1
+},
+{
+    codigo: "VH-002",
+    placa: "Placa B",
+    marca: "Toyota",
+    modelo: "Modelo B",
+    tipo: "Tipo B",
+    descripcion: "Vehículo B",
+    color: "Negro",
+    tarjetaPropiedad: "Tarjeta B",
+    empresaId: 1
+}
+]
+
+// export const vehiculos = [
+//   {
+//     id: 1,
+//     codigo: "VH-001",
+//     placa: "ABC-123",
+//     marca: "Toyota",
+//     modelo: "Corolla",
+//     tipo: "Camioneta",
+//     color: "Rojo",
+//     tarjetaPropiedad: "123456789",
+//     descripcion: "Camioneta",
+//     estado: "Activo",
+//   },
+//   {
+//     id: 2,
+//     codigo: "VH-002",
+//     placa: "ABC-124",
+//     marca: "Toyota",
+//     modelo: "Corolla",
+//     tipo: "Camioneta",
+//     color: "Gris",
+//     tarjetaPropiedad: "123456789",
+//     descripcion: "Camioneta",
+//     estado: "Activo",
+//   },
+//   {
+//     id: 3,
+//     codigo: "VH-003",
+//     placa: "ABC-125",
+//     marca: "Toyota",
+//     modelo: "Corolla",
+//     tipo: "Camioneta",
+//     color: "Negro",
+//     tarjetaPropiedad: "123456789",
+//     descripcion: "Camioneta",
+//     estado: "Activo",
+//   },
+//   {
+//     id: 4,
+//     codigo: "VH-004",
+//     placa: "ABC-126",
+//     marca: "Toyota",
+//     modelo: "Corolla",
+//     tipo: "Camioneta",
+//     color: "Verde",
+//     tarjetaPropiedad: "123456789",
+//     descripcion: "Camioneta",
+//     estado: "Activo",
+//   },
+// ];

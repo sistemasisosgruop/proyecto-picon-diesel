@@ -64,4 +64,24 @@ export class TipoCambioService {
 
     return tipoDeCambios;
   }
+
+  static async getLast(empresaId, last) {
+    
+    const lastTipoDeCambio = await prisma.tipoDeCambio.findFirst({
+      where: {
+        empresaId,
+        AND: [
+          {
+            de: {
+              equals: last
+            }
+          }
+        ]
+      },
+      orderBy: {
+        fecha: 'desc'
+      }
+    })
+    return lastTipoDeCambio;
+  }
 }
