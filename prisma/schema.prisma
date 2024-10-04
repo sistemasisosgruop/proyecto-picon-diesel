@@ -783,6 +783,8 @@ model Material {
   denominacion                      String
   codigoFabricante                  String?
   tipoFabricante                    String?
+  nombreInterno                     String?
+  nombreComercial                   String?
   materialReemplazo                 Json?
   materialSimilitud                 Json?
   materialEquivalencia              Json?

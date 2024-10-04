@@ -11,6 +11,7 @@ export class FamiliaService {
       select: {
         codigo: true,
       },
+      where: { id: empresaId },
     });
 
     let codigo;
@@ -57,7 +58,7 @@ export class FamiliaService {
     return familia;
   }
 
-  static async getFamilias(empresaId) {
+  static async getFamilias(empresaId, filter) {
     return prisma.familia.findMany({
       where: {
         empresaId,

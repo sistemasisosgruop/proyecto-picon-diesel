@@ -14,14 +14,15 @@ export default async function handler(req, res) {
     if (req.method === "GET") {
       const empresaId = Number(req.query.empresaId);
       const filterName = req.query.filter;
-      const idMaquina = req.query.idMaquina;
-      const result = await MatrialesService.getMateriales(empresaId, filterName, idMaquina);
-      return res.status(200).json({ data: result });
+      // const idMaquina = req.query.idMaquina;
+      const page = req.query.page;
+      const take = req.query.take;
+      const result = await MatrialesService.getMateriales(empresaId, filterName, page, take);
+      return res.status(200).json(result);
     }
   } catch (error) {
-
     return res
-    .status(400)
-    .json({ error: error.message, code: error?.code, fields: error?.meta?.target ?? [] });
+      .status(400)
+      .json({ error: error.message, code: error?.code, fields: error?.meta?.target ?? [] });
   }
 }
