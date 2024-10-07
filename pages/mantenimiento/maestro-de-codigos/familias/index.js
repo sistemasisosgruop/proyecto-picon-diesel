@@ -56,6 +56,7 @@ export default function Familias() {
 
   const createRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
+    console.log('Familia a registrar:', form)
     await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/familias", {
       ...form,
       empresaId: parseInt(empresaId),
