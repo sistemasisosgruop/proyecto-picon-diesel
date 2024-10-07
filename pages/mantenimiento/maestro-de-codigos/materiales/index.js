@@ -35,14 +35,17 @@ const schema = yup.object().shape({
   subFamiliaId: yup.number(),
   denominacion: yup.string().required(),
   codigoFabricante: yup.string().required(),
-  tipoFabricante: yup.string().required(),
-  codigoMotorOriginal: yup.string().required(),
-  codigoBombaInyeccion: yup.string().required(),
+  // tipoFabricante: yup.string().required(),      //! REMOVER
+  // codigoMotorOriginal: yup.string().required(), //! REMOVER
+  // codigoBombaInyeccion: yup.string().required(), //! REMOVER
   caracteristicas: yup.array().nullable(),
   materialReemplazo: yup.array().nullable(),
   materialEquivalencia: yup.array().nullable(),
   materialSimilitud: yup.array().nullable(),
   aplicacionDeMaquina: yup.array().nullable(),
+  marca: yup.string().nullable(), //Nuevos
+  nombreInterno: yup.string().nullable(), //Nuevos
+  nombreComercial: yup.string().nullable(), //Nuevos
 });
 
 const updateSchema = yup.object().shape({
@@ -50,14 +53,18 @@ const updateSchema = yup.object().shape({
   subFamiliaId: yup.number().nullable(),
   denominacion: yup.string().required(),
   codigoFabricante: yup.string().required(),
-  tipoFabricante: yup.string().required(),
-  codigoMotorOriginal: yup.string().required(),
-  codigoBombaInyeccion: yup.string().required(),
+  // tipoFabricante: yup.string().required(),          //! REMOVER
+  // codigoMotorOriginal: yup.string().required(),     //! REMOVER
+  // codigoBombaInyeccion: yup.string().required(),    //! REMOVER
   caracteristicas: yup.array().nullable(),
   materialReemplazo: yup.array().nullable(),
   materialEquivalencia: yup.array().nullable(),
   materialSimilitud: yup.array().nullable(),
   aplicacionDeMaquina: yup.array().nullable(),
+  marca: yup.string().nullable(), //Nuevos
+  nombreInterno: yup.string().nullable(), //Nuevos
+  nombreComercial: yup.string().nullable(), //Nuevos
+
 });
 
 export default function Materiales() {
@@ -76,20 +83,28 @@ export default function Materiales() {
     equivalencia: false,
     aplicacionMaquina: false,
   });
+  const [nombreInterno, setNombreInterno] = useState('');
+  const [nombreComercial, setNombreComercial] = useState('');
+
   const [form, setForm] = useState({
     familiaId: null,
     subFamiliaId: null,
     denominacion: null,
     codigoFabricante: null,
-    tipoFabricante: null,
-    codigoMotorOriginal: null,
-    codigoBombaInyeccion: null,
+    // tipoFabricante: null,         //! REMOVER
+    // codigoMotorOriginal: null,    //! REMOVER
+    // codigoBombaInyeccion: null,   //! REMOVER
     caracteristicas: null,
     materialReemplazo: null,
     materialEquivalencia: null,
     materialSimilitud: null,
     aplicacionDeMaquina: null,
+    marca: null,            //nuevos
+    nombreInterno: null,    //nuevos
+    nombreComercial: null,  //nuevos
   });
+
+const [subsUpdate,setSubsUpdate]= useState(0);
 
   const { changeData, updateForm, elementId } = useContext(FormContext);
   const {
@@ -102,20 +117,25 @@ export default function Materiales() {
     setCaracteristicasForm,
   } = useContext(MaterialesContext);
 
+
+  
   useEffect(() => {
     setForm({
       familiaId: null,
       subFamiliaId: null,
       denominacion: null,
       codigoFabricante: null,
-      tipoFabricante: null,
-      codigoMotorOriginal: null,
-      codigoBombaInyeccion: null,
+      // tipoFabricante: null,           //! REMOVER
+      // codigoMotorOriginal: null,      //! REMOVER
+      // codigoBombaInyeccion: null,     //! REMOVER
       caracteristicas: null,
       materialReemplazo: null,
       materialEquivalencia: null,
       materialSimilitud: null,
       aplicacionDeMaquina: null,
+      marca: null,            //nuevos
+      nombreInterno: null,    //nuevos
+      nombreComercial: null,  //nuevos
     });
     refetch();
     setCaracteristicasForm([]);
@@ -130,6 +150,7 @@ export default function Materiales() {
     });
   }, []);
 
+  //! Si es un edit de Materiles
   useEffect(() => {
     if (isEdit) {
       setForm({
@@ -141,15 +162,19 @@ export default function Materiales() {
         aplicacionDeMaquina: codigos.aplicacionMaquina,
         denominacion: updateForm?.denominacion,
         codigoFabricante: updateForm?.codigoFabricante,
-        tipoFabricante: updateForm?.tipoFabricante,
-        codigoMotorOriginal: updateForm?.codigoMotorOriginal,
-        codigoBombaInyeccion: updateForm?.codigoBombaInyeccion,
+        // tipoFabricante: updateForm?.tipoFabricante,                     //! REMOVER
+        // codigoMotorOriginal: updateForm?.codigoMotorOriginal,           //! REMOVER
+        // codigoBombaInyeccion: updateForm?.codigoBombaInyeccion,         //! REMOVER
+
+        marca: updateForm?.marca,                         //! Descomentar para nuevos
+        nombreInterno: updateForm?.nombreInterno,
+        nombreComercial: updateForm?.nombreComercial,
       });
     }
   }, [codigos, caracteristicasForm, updateForm]);
 
   const createRegistro = async () => {
-    console.log(form);
+    console.log('Form a enviar materiales:',form);
     await schema.validate(form, { abortEarly: false });
     await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/configuracion/materiales", {
       ...form,
@@ -202,14 +227,17 @@ export default function Materiales() {
         subFamiliaId: null,
         denominacion: null,
         codigoFabricante: null,
-        tipoFabricante: null,
-        codigoMotorOriginal: null,
-        codigoBombaInyeccion: null,
+        // tipoFabricante: null, //! REMOVER
+        // codigoMotorOriginal: null,  //! REMOVER
+        // codigoBombaInyeccion: null, //! REMOVER
         caracteristicas: null,
         materialReemplazo: null,
         materialEquivalencia: null,
         materialSimilitud: null,
         aplicacionDeMaquina: null,
+        marca:null,
+        nombreInterno:null,
+        nombreComercial:null
       });
       setCaracteristicasForm([]);
       closeModal();
@@ -228,15 +256,27 @@ export default function Materiales() {
       { Header: "Denominación", accessor: "denominacion" },
       { Header: "Stock", accessor: "stock" },
       { Header: "Código de Fabricante", accessor: "codigoFabricante" },
-      { Header: "Tipo de Fabricante", accessor: "tipoFabricante" },
+      // { Header: "Tipo de Fabricante", accessor: "tipoFabricante" },
+      // {
+      //   Header: "Código de Motor Original",
+      //   accessor: "codigoMotorOriginal",
+      // },
+      // {
+      //   Header: "Código de Bomba de Inyección",
+      //   accessor: "codigoBombaInyeccion",
+      // },
       {
-        Header: "Código de Motor Original",
-        accessor: "codigoMotorOriginal",
+        Header: "Marca",
+        accessor: "marca",
       },
       {
-        Header: "Código de Bomba de Inyección",
-        accessor: "codigoBombaInyeccion",
+        Header: "Nombre Interno",
+        accessor: "nombreInterno",
       },
+      {
+        Header: "Nombre Comercial",
+        accessor: "nombreComercial",
+      }
     ],
     []
   );
@@ -386,6 +426,7 @@ export default function Materiales() {
   const caracteristicas = useMemo(() => formInfo?.data?.caracteristica ?? [], [formInfo?.data]);
   const familias = useMemo(() => formInfo?.data.familia, [formInfo?.data]);
 
+  
   const codigosReemplazo = useMemo(
     () =>
       codigos?.reemplazo.map(({ familia, subfamilia, ...info }) => ({
@@ -564,6 +605,29 @@ export default function Materiales() {
     return [...caracteristicas];
   };
 
+
+  useEffect(() => {
+    if (isEdit && updateForm?.familiaId) {
+      const currentFamilia = familias?.find((item) => item.id === updateForm.familiaId);
+      if (currentFamilia) {
+        setSelectedFamilia(currentFamilia.codigo);
+        getSubfamilias(currentFamilia.id);
+        console.log('La familia actual es: ',currentFamilia,'la subfamilia (edit) es:',updateForm.subfamiliaId)
+        console.log('las subfamilias disponibles son: ',subfamilias)
+        
+        // setCorrelativo(`${currentFamilia.codigo} + `);
+          //*AQUI
+
+        setForm((prevForm) => ({ ...prevForm, familiaId: currentFamilia.id }));
+      }
+    }
+  }, [isEdit, updateForm?.familiaId, familias]);
+
+    useEffect(() => {
+      console.log('Cambiando: ',updateForm?.subfamiliaId)
+      setSubsUpdate(subsUpdate+1);
+    }, [subfamilias]); // Se ejecuta cada vez que selectedFamilia cambia
+
   return (
     <>
       <TemplateMaestroCodigos>
@@ -592,80 +656,124 @@ export default function Materiales() {
         <div className="space-y-6">
           <Group title={"Datos del Material"}>
             <GroupInputs>
-              <Select
-                label="Familia"
-                onChange={(value) => {
-                  const currentFamilia = familias?.find((item) => item.id === Number(value));
-                  setSelectedFamilia(currentFamilia.codigo);
-                  getSubfamilias(currentFamilia.id);
-                  setCorrelativo(`${currentFamilia.codigo} + `);
-                  setForm({ ...form, familiaId: currentFamilia.id });
-                }}
-              >
-                {familias?.map((item) => {
-                  return (
-                    <Option key={item.id} value={item.id}>
-                      {item?.descripcion}
-                    </Option>
-                  );
-                })}
-              </Select>
-              <Select
-                label="SubFamilia"
-                onChange={(value) => {
-                  const currentSubFamilia = subfamilias?.find((item) => item.id === Number(value));
-                  setForm({ ...form, subFamiliaId: value });
-                  setCorrelativo(`${selectedFamilia} + ${currentSubFamilia.codigo} + COD.`);
-                }}
-              >
-                {subfamilias?.map((item) => {
-                  return (
-                    <Option key={item.id} value={item.id}>
-                      {item?.descripcion}
-                    </Option>
-                  );
-                })}
-              </Select>
-              <Input
-                label="Correlativo"
-                disabled
-                value={correlativo}
-                defaultValue={isEdit ? updateForm?.correlativo : undefined}
-              />
+                <Select
+                  label="Familia"
+                  value={isEdit ? updateForm?.familiaId : undefined} // Mostrar valor en modo edit
+                  onChange={(value) => {
+                    const currentFamilia = familias?.find((item) => item.id === Number(value));
+                    setSelectedFamilia(currentFamilia.codigo);
+                    getSubfamilias(currentFamilia.id);
+                    // setCorrelativo(`${currentFamilia.codigo} + `);
+                    setForm({ ...form, familiaId: currentFamilia.id });
+                  }}
+                >
+                  {familias?.map((item) => {
+                    return (
+                      <Option key={item.id} value={item.id}>
+                        {item?.descripcion}
+                      </Option>
+                    );
+                  })}
+                </Select>
+
+                <Select
+                  id='subfamilia-select'
+                  label="SubFamilia"
+                  value={subsUpdate? updateForm?.subfamiliaId : undefined} // Mostrar valor en modo edición
+                  onChange={(value) => {
+                    const currentSubFamilia = subfamilias?.find((item) => item.id === Number(value));
+                    setForm({ ...form, subFamiliaId: value });
+                    setCorrelativo(`${selectedFamilia} + ${currentSubFamilia.codigo} + COD.`);
+                    setNombreComercial(currentSubFamilia?.descripcion);
+                  }}
+                >
+                  {subfamilias?.map((item) => {
+                    return (
+                      <Option key={item.id} value={item.id}>
+                        {item?.descripcion}
+                      </Option>
+                    );
+                  })}
+                </Select>
+
+                  <Input
+                    label="Correlativo"
+                    disabled
+                    value={correlativo}
+                    defaultValue={isEdit ? updateForm?.correlativo : undefined}
+                  />
             </GroupInputs>
-            <Input
-              label={"Denominación"}
-              defaultValue={isEdit ? updateForm?.denominacion : undefined}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  denominacion: e.target.value,
-                })
-              }
-            />
             <GroupInputs>
+                <Input
+                  label={"Denominación"}
+                  defaultValue={isEdit ? updateForm?.denominacion : undefined}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      denominacion: e.target.value,
+                    })
+                  }
+                />
+                <Input
+                  label={"Código fabricante"}
+                  defaultValue={isEdit ? updateForm?.codigoFabricante : undefined}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      codigoFabricante: e.target.value,
+                    })
+                  }
+                />
+              
+                <Input
+                  label={"Marca"}
+                  defaultValue={isEdit ? updateForm?.marca : undefined}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      marca: e.target.value,
+                    })
+                  }
+                />
+
+            </GroupInputs>
+            <GroupInputs>
+
               <Input
-                label={"Código fabricante"}
-                defaultValue={isEdit ? updateForm?.codigoFabricante : undefined}
+                label={"Nombre Interno"}
+                value={nombreInterno}
+                defaultValue={isEdit ? updateForm?.nombreInterno : undefined}
                 onChange={(e) =>
                   setForm({
                     ...form,
-                    codigoFabricante: e.target.value,
+                    nombreInterno: e.target.value,
                   })
                 }
               />
               <Input
-                label={"Tipo fabricante"}
-                defaultValue={isEdit ? updateForm?.tipoFabricante : undefined}
+                label={"Nombre Comercial"}
+                value={nombreComercial}
+                defaultValue={isEdit ? updateForm?.nombreComercial : undefined}
                 onChange={(e) =>
                   setForm({
                     ...form,
-                    tipoFabricante: e.target.value,
+                    nombreComercial: e.target.value,
                   })
                 }
               />
+
             </GroupInputs>
-            <GroupInputs>
+                {/* <Input
+                  label={"Tipo fabricante"}
+                  defaultValue={isEdit ? updateForm?.tipoFabricante : undefined}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      tipoFabricante: e.target.value,
+                    })
+                  }
+                /> */}
+            {/* <GroupInputs>
               <Input
                 label={"Código de motor original"}
                 defaultValue={isEdit ? updateForm?.codigoMotorOriginal : undefined}
@@ -686,7 +794,7 @@ export default function Materiales() {
                   })
                 }
               />
-            </GroupInputs>
+            </GroupInputs> */}
           </Group>
           
           
@@ -788,6 +896,7 @@ export default function Materiales() {
                 );
               })}
             </Dropdown>
+
             <TableCodigos columns={columns} data={codigosEquivalencia} />
           </Group>
           </div>
