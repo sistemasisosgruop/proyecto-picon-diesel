@@ -95,7 +95,6 @@ export class MatrialesService {
       materialEquivalencia,
       materialReemplazo,
       aplicacionDeMaquina,
-      empresaId,
       familiaId,
       subFamiliaId,
       caracteristicas,
@@ -114,7 +113,10 @@ export class MatrialesService {
     console.log(currMaterial, "CURR MATERIAL");
     let genCodigo = currMaterial.codigo;
     let genCorrelativo = currMaterial.correlativo;
-    if (currMaterial.familiaId !== familiaId || currMaterial.subFamiliaId !== subFamiliaId) {
+    if (
+      currMaterial.familiaId !== Number(familiaId) ||
+      currMaterial.subfamiliaId !== Number(subFamiliaId)
+    ) {
       const familia = await prisma.familia.findUnique({
         where: {
           id: Number(familiaId),
@@ -126,17 +128,14 @@ export class MatrialesService {
           id: Number(subFamiliaId),
         },
       });
-      console.log(familia, subFamilia, "FAMILIA Y SUBFAMILIA");
       genCodigo = await this.generarCodigo(Number(subFamiliaId));
       genCorrelativo = `${familia.codigo}${subFamilia.codigo}${genCodigo}`;
     }
-    console.log(genCodigo, "GEN CODIGO");
-    console.log(genCorrelativo, "GEN CORRELATIVO");
     const updateMaterial = prisma.material.update({
       data: {
         codigo: genCodigo,
         correlativo: genCorrelativo,
-        empresaId: Number(empresaId),
+        // empresaId: Number(empresaId),
         familiaId: Number(familiaId),
         subfamiliaId: Number(subFamiliaId),
         denominacion: data.denominacion,
@@ -148,8 +147,8 @@ export class MatrialesService {
         materialEquivalencia: setMaterialEquivalencia,
         materialReemplazo: setMaterialReemplazo,
         aplicacionDeMaquina: setAplicacionDeMaquina,
-        stock: 0,
-        ventaUnidad: 0,
+        // stock: 0,
+        // ventaUnidad: 0,
       },
       where: { id: Number(id) },
     });
@@ -301,6 +300,13 @@ export class MatrialesService {
     const takeValue = take > 0 ? Number(take) : undefined;
     const whereFilter = {
       empresaId,
+
+      // materialReemplazo: {
+      //   not: undefined,
+      //   some: {
+      //     correlativo: filterName, // Aquí busca en los objetos del array
+      //   },
+      // },
       ...(filterName && {
         OR: [
           {
@@ -310,6 +316,11 @@ export class MatrialesService {
           },
           {
             codigo: {
+              contains: filterName,
+            },
+          },
+          {
+            correlativo: {
               contains: filterName,
             },
           },
@@ -330,6 +341,13 @@ export class MatrialesService {
               codigo: {
                 contains: filterName,
               },
+            },
+          },
+          {
+            materialReemplazo: {
+              not: undefined,
+              path: `$[*].correlativo`,
+              array_contains: filterName,
             },
           },
         ],
