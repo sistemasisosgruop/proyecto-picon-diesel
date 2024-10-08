@@ -34,7 +34,7 @@ const schema = yup.object().shape({
   codigoOriginalInyector: yup.string().required(),
   codigoTobera: yup.string().required(),
   tipoTobera: yup.string().required(),
-  // codigoOriginalTobera: yup.string().required(),    //Se agregó a modal
+  codigoOriginalTobera: yup.string().required(),    //Se agregó a modal
   fabricaMaquinaId: yup.number().required(),
   modeloMaquinaId: yup.number().required(),
   nombreMaquinaId: yup.number().required(),
@@ -77,7 +77,7 @@ export default function Maquinas() {
     codigoOriginalInyector: null,
     codigoTobera: null,
     tipoTobera: null,
-    // codigoOriginalTobera:null
+    codigoOriginalTobera:null   //! Se agregó 
   });
   const {
     updateForm,
@@ -118,7 +118,7 @@ export default function Maquinas() {
       codigoOriginalInyector: null,
       codigoTobera: null,
       tipoTobera: null,
-      // codigoOriginalTobera:null
+      codigoOriginalTobera:null     //! Se agregó 
     });
   }, [resetInfo]);
 
@@ -157,7 +157,7 @@ export default function Maquinas() {
       codigoOriginalInyector: null,
       codigoTobera: null,
       tipoTobera: null,
-      // codigoOriginalTobera:null
+      codigoOriginalTobera:null
     });
     refetch();
   }, [changeData]);
@@ -271,7 +271,8 @@ export default function Maquinas() {
       },
       { Header: "Código Tobera", accessor: "codigoTobera" },
       { Header: "Tipo Tobera", accessor: "tipoTobera" },
-
+      { Header: "Código Orig. Tobera", accessor: "codigoOriginalTobera" },
+      
     ],
     []
   );
@@ -321,7 +322,7 @@ export default function Maquinas() {
 
           codigoTobera: maquina.codigoTobera,
           tipoTobera: maquina.tipoTobera,
-          // codigoOriginalTobera:maquina.codigoOriginalTobera
+          codigoOriginalTobera:maquina.codigoOriginalTobera
         };
       }),
     [maquinasResponse?.data]
@@ -610,11 +611,11 @@ export default function Maquinas() {
                   defaultValue={isEdit ? updateForm?.tipoTobera : undefined}
                   onChange={(e) => setForm({ ...form, tipoTobera: e.target.value })}
                 />
-                {/* <Input
+                <Input
                   label={"Código Original Tobera"}
                   defaultValue={isEdit ? updateForm?.codigoOriginalTobera : undefined}
                   onChange={(e) => setForm({ ...form, codigoOriginalTobera: e.target.value })}
-                /> */}
+                />
               </GroupInputs>
             </Group>
             
