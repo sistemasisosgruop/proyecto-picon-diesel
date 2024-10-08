@@ -1,18 +1,16 @@
-import prisma from "../../../prisma";
+import prisma from '../../../prisma';
 
 export class DescripcionInyectorService {
   static async createDescripcionInyector(data) {
     const transaction = await prisma.$transaction(async (prismaClient) => {
       const { codigo, descripcion, empresaId } = data;
-      const descripcionInyector = await prismaClient.descripcionInyector.create(
-        {
-          data: {
-            codigo,
-            descripcion,
-            empresaId,
-          },
-        }
-      );
+      const descripcionInyector = await prismaClient.descripcionInyector.create({
+        data: {
+          codigo: await this.generarCodigoByEmpresa(empresaId),
+          descripcion,
+          empresaId,
+        },
+      });
 
       return descripcionInyector;
     });
@@ -46,6 +44,9 @@ export class DescripcionInyectorService {
 
   static async getDescripcionInyectores(empresaId) {
     return prisma.descripcionInyector.findMany({
+      orderBy: {
+        codigo: 'desc',
+      },
       where: {
         empresaId,
       },
@@ -60,5 +61,26 @@ export class DescripcionInyectorService {
     });
 
     return descripcionInyector;
+  }
+
+  static async generarCodigoByEmpresa(empresaId) {
+    const lastFamilia = await prisma.descripcionInyector.findFirst({
+      orderBy: {
+        codigo: 'desc',
+      },
+      select: {
+        codigo: true,
+      },
+      where: { empresaId },
+    });
+
+    let codigo;
+    if (lastFamilia) {
+      const nextCodigo = parseInt(lastFamilia.codigo, 10) + 1;
+      codigo = String(nextCodigo).padStart(2, '0');
+    } else {
+      codigo = '01';
+    }
+    return codigo;
   }
 }

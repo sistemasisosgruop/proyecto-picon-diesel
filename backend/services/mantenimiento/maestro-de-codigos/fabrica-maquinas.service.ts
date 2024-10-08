@@ -1,11 +1,11 @@
-import prisma from "../../../prisma";
+import prisma from '../../../prisma';
 
 export class FabricaMaquinaService {
   static async createFabricaMaquina(data) {
-    const { codigo, fabrica, empresaId } = data;
+    const { fabrica, empresaId } = data;
     const fabricaMaquina = await prisma.fabricaMaquina.create({
       data: {
-        codigo,
+        codigo: await this.generarCodigoByEmpresa(empresaId),
         fabrica,
         empresaId,
       },
@@ -15,13 +15,12 @@ export class FabricaMaquinaService {
   }
 
   static async updatefabricaMaquina(id, data) {
-    const { codigo, fabrica } = data;
+    const { fabrica } = data;
     const fabricaMaquina = prisma.fabricaMaquina.update({
       where: {
         id,
       },
       data: {
-        codigo,
         fabrica,
       },
     });
@@ -55,5 +54,26 @@ export class FabricaMaquinaService {
     });
 
     return fabricaMaquina;
+  }
+
+  static async generarCodigoByEmpresa(empresaId) {
+    const lastFamilia = await prisma.fabricaMaquina.findFirst({
+      orderBy: {
+        codigo: 'desc',
+      },
+      select: {
+        codigo: true,
+      },
+      where: { empresaId },
+    });
+
+    let codigo;
+    if (lastFamilia) {
+      const nextCodigo = parseInt(lastFamilia.codigo, 10) + 1;
+      codigo = String(nextCodigo).padStart(2, '0');
+    } else {
+      codigo = '01';
+    }
+    return codigo;
   }
 }
