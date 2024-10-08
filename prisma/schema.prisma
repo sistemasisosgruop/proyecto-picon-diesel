@@ -590,7 +590,7 @@ model TrabajoTerceros {
 // MAESTRO DE CODIGOS
 model Familia {
   id          Int          @id @default(autoincrement())
-  codigo      String       @unique
+  codigo      String       
   descripcion String
   empresa     Empresa?     @relation(fields: [empresaId], references: [id])
   empresaId   Int
@@ -602,7 +602,7 @@ model Familia {
 
 model SubFamilia {
   id          Int        @id @default(autoincrement())
-  codigo      String     @unique
+  codigo      String     
   descripcion String
   familia     Familia?   @relation(fields: [familiaId], references: [id])
   familiaId   Int
@@ -783,6 +783,8 @@ model Material {
   denominacion                      String
   codigoFabricante                  String?
   tipoFabricante                    String?
+  nombreInterno                     String?
+  nombreComercial                   String?
   materialReemplazo                 Json?
   materialSimilitud                 Json?
   materialEquivalencia              Json?
