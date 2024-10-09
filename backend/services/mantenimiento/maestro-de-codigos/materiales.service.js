@@ -17,6 +17,11 @@ export class MatrialesService {
       nombreComercial,
     } = data;
     console.log(data, 'DATA PARA CREAR');
+    // const setMaterialSimilutud = materialSimilitud || [];
+    // const setMaterialEquivalencia = materialEquivalencia || []; // Prisma.JsonNull;
+    // const setMaterialReemplazo = materialReemplazo || []; //Prisma.JsonNull;
+    // const setAplicacionDeMaquina = aplicacionDeMaquina || []; //Prisma.JsonNull;
+
     const setMaterialSimilutud =
       materialSimilitud?.length > 0 ? materialSimilitud : Prisma.JsonNull;
     const setMaterialEquivalencia =
@@ -25,7 +30,6 @@ export class MatrialesService {
       materialReemplazo?.length > 0 ? materialReemplazo : Prisma.JsonNull;
     const setAplicacionDeMaquina =
       aplicacionDeMaquina?.length > 0 ? aplicacionDeMaquina : Prisma.JsonNull;
-
     const familia = await prisma.familia.findUnique({
       where: {
         id: Number(familiaId),
@@ -48,6 +52,7 @@ export class MatrialesService {
         subfamiliaId: Number(subFamiliaId),
         nombreInterno,
         nombreComercial,
+        marca: data.marca,
         denominacion: data.denominacion,
         codigoBombaInyeccion: data.codigoBombaInyeccion,
         codigoMotorOriginal: data.codigoMotorOriginal,
@@ -60,7 +65,7 @@ export class MatrialesService {
         stock: 0,
         ventaUnidad: 0,
       };
-
+      console.log(dataNewMaterial, 'POR CREAR');
       const crearMaterial = await prisma.material.create({
         data: dataNewMaterial,
       });
@@ -294,45 +299,58 @@ export class MatrialesService {
     return material;
   }
 
-  static async getMateriales(empresaId, filterName, page, take) {
-    console.log(empresaId, filterName, page, take, 'PARAMETROS');
+  static async getMateriales(queryParams) {
+    const {
+      empresaId,
+      filterName,
+      page,
+      take,
+      marca,
+      codigoReferencia,
+      nombreInterno,
+      nombreComercial,
+    } = queryParams;
+    console.log(queryParams, 'PARAMETROS');
+
     const skipValue = page > 0 ? Number(page * take) : undefined;
     const takeValue = take > 0 ? Number(take) : undefined;
     const whereFilter = {
       empresaId,
-
-      // materialReemplazo: {
-      //   not: undefined,
-      //   some: {
-      //     correlativo: filterName, // Aquí busca en los objetos del array
-      //   },
-      // },
+      ...(marca && { marca }),
+      ...(codigoReferencia && { codigoReferencia }),
+      ...(nombreComercial && { nombreComercial }),
+      ...(nombreInterno && { nombreInterno }),
       ...(filterName && {
         OR: [
           {
             codigoFabricante: {
               contains: filterName,
+              mode: 'insensitive',
             },
           },
           {
             codigo: {
               contains: filterName,
+              mode: 'insensitive',
             },
           },
           {
             correlativo: {
               contains: filterName,
+              mode: 'insensitive',
             },
           },
           {
             denominacion: {
               contains: filterName,
+              mode: 'insensitive',
             },
           },
           {
             familia: {
               codigo: {
                 contains: filterName,
+                mode: 'insensitive',
               },
             },
           },
@@ -340,14 +358,24 @@ export class MatrialesService {
             subfamilia: {
               codigo: {
                 contains: filterName,
+                mode: 'insensitive',
               },
             },
           },
           {
             materialReemplazo: {
-              not: undefined,
-              path: '$[*].correlativo',
-              array_contains: filterName,
+              array_contains: [{ correlativo: filterName }],
+            },
+          },
+
+          {
+            materialSimilitud: {
+              array_contains: [{ correlativo: filterName }],
+            },
+          },
+          {
+            materialEquivalencia: {
+              array_contains: [{ correlativo: filterName }],
             },
           },
         ],
@@ -355,14 +383,15 @@ export class MatrialesService {
     };
 
     const count = prisma.material.count({
+      where: whereFilter,
       skip: skipValue,
       take: takeValue,
-      where: whereFilter,
     });
     const data = prisma.material.findMany({
+      where: whereFilter,
       skip: skipValue,
       take: takeValue,
-      where: whereFilter,
+
       include: {
         familia: {
           select: {
@@ -405,7 +434,7 @@ export class MatrialesService {
       },
       where: { subfamiliaId },
     });
-
+    console.log(lasMaterial, 'LAST MATERIAL');
     let codigo;
     if (lasMaterial) {
       const nextCodigo = parseInt(lasMaterial.codigo, 10) + 1;

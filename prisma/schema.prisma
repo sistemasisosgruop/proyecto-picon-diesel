@@ -208,7 +208,9 @@ model Personal {
   password          String
   passwordEncrypted String?
   telefono          String
-  puesto            String?
+  // puesto            String?
+  puesto            Puesto    @relation(fields: [puestoId], references: [id])
+  puestoId          Int
   estado            EstadoEnum       @default(Activo)
   direccion         String
   role              Role[]
@@ -222,6 +224,39 @@ model Personal {
   facturaServicios  FacturaServicios[]
 
   @@map("personal")
+}
+
+model Puesto {
+  id          Int         @id @default(autoincrement())
+  nombre      String
+  permisos    Permiso[]
+  personal    Personal[]
+}
+
+model Modulo {
+  id          Int         @id @default(autoincrement())
+  nombre      String
+  submodulos  Submodulo[]
+}
+
+model Submodulo {
+  id          Int         @id @default(autoincrement())
+  nombre      String
+  modulo      Modulo      @relation(fields: [moduloId], references: [id])
+  moduloId    Int
+  permisos    Permiso[]
+}
+
+model Permiso {
+  id            Int         @id @default(autoincrement())
+  puesto        Puesto      @relation(fields: [puestoId], references: [id])
+  puestoId      Int
+  submodulo     Submodulo   @relation(fields: [submoduloId], references: [id])
+  submoduloId   Int
+  crear         Boolean
+  leer          Boolean
+  actualizar    Boolean
+  eliminar      Boolean
 }
 
 model Vendedor {
@@ -729,40 +764,41 @@ model Maquina {
   id                             Int                           @id @default(autoincrement())
   codigo                         String?                       @unique
   fabricaMaquina                 FabricaMaquina?               @relation(fields: [fabricaMaquinaId], references: [id])
-  fabricaMaquinaId               Int
+  fabricaMaquinaId               Int?
   modeloMaquina                  ModeloMaquina?                @relation(fields: [modeloMaquinaId], references: [id])
-  modeloMaquinaId                Int
+  modeloMaquinaId                Int?
   nombreMaquina                  NombreMaquina?                @relation(fields: [nombreMaquinaId], references: [id])
-  nombreMaquinaId                Int
+  nombreMaquinaId                Int?
   procedencia                    Pais?                         @relation(name: "maquina", fields: [paisId], references: [id])
   paisId                         Int
   codigoOriginal                 String
   modeloMotor                    String
   marcaMotor                     MarcaMotor?                   @relation(fields: [marcaMotorId], references: [id])
-  marcaMotorId                   Int
+  marcaMotorId                   Int?
   procedenciaMotor               Pais?                         @relation(name: "motorPais", fields: [motorPaisId], references: [id])
-  motorPaisId                    Int
+  motorPaisId                    Int?
   numeroCilindros                Int
   codigoFabricaBombaInyeccion    String
   tipoBombaInyeccion             String
   marcaFabricaSistemaInyeccion   MarcaFabricaSistemaInyeccion? @relation(fields: [marcaFabricaSistemaInyeccionId], references: [id])
-  marcaFabricaSistemaInyeccionId Int
+  marcaFabricaSistemaInyeccionId Int?
   descripcionBombaInyeccion      DescripcionBombaInyeccion?    @relation(fields: [descripcionBombaInyeccionId], references: [id])
-  descripcionBombaInyeccionId    Int
+  descripcionBombaInyeccionId    Int?
   procedenciaBombaInyeccion      Pais?                         @relation(name: "bombaInyeccionPais", fields: [bombaInyeccionPaisId], references: [id])
-  bombaInyeccionPaisId           Int
+  bombaInyeccionPaisId           Int?
   codigoOriginalBombaInyeccion   String
   codigoFabricaInyector          String
   tipoFabricaInyector            String
   marcaFabricaInyector           MarcaFabricaInyector?         @relation(fields: [marcaFabricaInyectorId], references: [id])
-  marcaFabricaInyectorId         Int
+  marcaFabricaInyectorId         Int?
   descripcionInyector            DescripcionInyector?          @relation(fields: [descripcionInyectorId], references: [id])
-  descripcionInyectorId          Int
+  descripcionInyectorId          Int?
   procedenciaInyector            Pais?                         @relation(name: "inyectorPais", fields: [inyectorPaisId], references: [id])
-  inyectorPaisId                 Int
+  inyectorPaisId                 Int?
   codigoOriginalInyector         String
   codigoTobera                   String
   tipoTobera                     String
+  codigoOriginalTobera           String?
   empresa                        Empresa?                      @relation(fields: [empresaId], references: [id])
   empresaId                      Int
   Cotizacion                     Cotizacion[]
@@ -783,8 +819,9 @@ model Material {
   denominacion                      String
   codigoFabricante                  String?
   tipoFabricante                    String?
-  nombreInterno                     String?
-  nombreComercial                   String?
+  nombreInterno                     String? //Nuevo
+  nombreComercial                   String? //Nuevo
+  marca                             String? //Nuevo
   materialReemplazo                 Json?
   materialSimilitud                 Json?
   materialEquivalencia              Json?
