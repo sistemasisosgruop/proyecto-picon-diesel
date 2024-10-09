@@ -24,7 +24,7 @@ import axios from "axios";
 import { FormContext } from "../../../../../../contexts/form.context";
 
 const schema = yup.object().shape({
-  codigo: yup.string().required(),
+  codigo: yup.string().nullable(),
   descripcion: yup.string().required(),
 });
 
@@ -171,6 +171,7 @@ const getSubFamilias = async () => {
         <form className="flex flex-col gap-5">
           <Input
             label="Código"
+            disabled
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
             defaultValue={isEdit ? updateForm?.codigo : undefined}
           />

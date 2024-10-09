@@ -162,10 +162,13 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
         </thead>
         <tbody {...getTableBodyProps()}>
           {page.map((row, index) => {
+            
             prepareRow(row);
+            console.log({index},{row})
             return (
               <tr {...row.getRowProps()} key={index}>
                 {row.cells.map((cell, indexCell) => {
+                  // console.log('cells a editar',cells)
                   return (
                     <TableD {...cell.getCellProps()} key={indexCell}>
                       {cell.render("Cell")}
@@ -175,8 +178,10 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                 <TableDOptions>
                   <ButtonEdit
                     onClick={async () => {
+                      
                       setUpdateForm();
                       const { id } = row.values;
+                     
                       let currentRow;
                       setElementId(id);
                       openModal(true);
@@ -199,7 +204,7 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                 </TableDOptions>
                 <TableD>
                   <ButtonSubfamilia
-                    link={`/mantenimiento/maestro-de-codigos/familias/${row.original.codigo}/subfamilias`}
+                    link={`/mantenimiento/maestro-de-codigos/familias/${row.original.id}/subfamilias`}
                   />
                 </TableD>
               </tr>

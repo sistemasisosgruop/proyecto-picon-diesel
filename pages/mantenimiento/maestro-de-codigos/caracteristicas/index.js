@@ -22,7 +22,7 @@ import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
-  codigo: yup.string().required(),
+  codigo: yup.string().nullable(),
   descripcion: yup.string().required(),
   abreviatura: yup.string().required(),
 });
@@ -159,6 +159,7 @@ export default function Caracteristicas() {
         <form className="flex flex-col gap-5">
           <Input
             label="Código"
+            // disabled
             onChange={(e) => {
               setForm({
                 ...form,
