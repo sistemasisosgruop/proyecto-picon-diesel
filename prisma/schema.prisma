@@ -209,8 +209,8 @@ model Personal {
   passwordEncrypted String?
   telefono          String
   // puesto            String?
-  puesto            Puesto    @relation(fields: [puestoId], references: [id])
-  puestoId          Int
+  puesto            Puesto?    @relation(fields: [puestoId], references: [id])
+  puestoId          Int?
   estado            EstadoEnum       @default(Activo)
   direccion         String
   role              Role[]
