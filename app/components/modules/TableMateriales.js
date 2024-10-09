@@ -11,12 +11,15 @@ import {
 
 import { matchSorter } from "match-sorter";
 import { Table as Tabla, TableD, TableDOptions, TableHOptions, TableRH } from "../elements/Table";
-import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowUp, SearchNormal1 } from "iconsax-react";
+import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowUp, SearchNormal1, FilterSearch } from "iconsax-react";
 import { ArrowLeftFast, ArrowRightFast } from "../elements/icons/Arrow";
 import { ButtonCodigos, ButtonDelete, ButtonEdit, ButtonInspect } from "../elements/Buttons";
 import { MaterialesContext } from "../../../contexts/materiales.context";
 import { FormContext } from "../../../contexts/form.context";
+import { axiosRequest } from "../../utils/axios-request";
 
+
+// FILTRO DE BÚSQUEDA PRINCIPAL
 function GlobalFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) {
   const count = preGlobalFilteredRows.length;
   const [value, setValue] = useState(globalFilter);
@@ -130,13 +133,104 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
     usePagination // usePagination!
   );
 
+  //! Función para alternar la visibilidad de la sección filtros
+  const [isCustomSearchVisible, setCustomSearchVisible] = useState(false);
+  const toggleCustomSearch = () => {
+    setCustomSearchVisible(!isCustomSearchVisible);
+  };
+  //! Estados para cada input de filtros personalizados
+  const [codigoInterno, setCodigoInterno] = useState('');
+  const [marca, setMarca] = useState('');
+  const [codigoFabrica, setCodigoFabrica] = useState('');
+  const [nombreInterno, setNombreInterno] = useState('');
+  // const [page,setPage] = useState(0);
+  const [dropdownMateriales, setDropdownMateriales] = useState([]); // Para almacenar los resultados de la API
+
+  //! onClick busqueda filtrada
+  const handleSearchMaterials = async () => {
+    try {
+      const { data } = await axiosRequest(
+        "get",
+        `/api/mantenimiento/maestro-de-codigos/configuracion/materiales?empresaId=${1}&page=${page}&codigoInterno=${codigoInterno}&marca=${marca}&codigoFabrica=${codigoFabrica}&nombreInterno=${nombreInterno}`
+      );
+      console.log('page es:',page);
+      console.log('Data filtrada:', data.data);
+      setDropdownMateriales(data?.data);
+    } catch (error) {
+      console.error('Error fetching materials:', error);
+    }
+  };
+
+
   return (
     <>
+    <div className="flex items-center gap-4"> 
       <GlobalFilter
         preGlobalFilteredRows={preGlobalFilteredRows}
         globalFilter={state.globalFilter}
         setGlobalFilter={setGlobalFilter}
       />
+
+      <button type="button" className="flex justify-space-between items-center p-1 gap-0 bg-secundary text-primary rounded-lg cursor-pointer hover:bg-secundary-800 w-[300px] text-sm" 
+        onClick={toggleCustomSearch}
+      >
+        <FilterSearch />
+        Búsqueda Personalizada
+      </button>
+      
+
+
+    </div>
+    {isCustomSearchVisible && (
+        <div className="mt-0  bg-gray-100 p-1 rounded-lg"> 
+            <div className=" mb-5 grid grid-cols-2 gap-3">
+              {/* Input: Código Interno */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Código Interno</label>
+                <input type="text" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                  value={codigoInterno}
+                  onChange={(e) => setCodigoInterno(e.target.value)}
+                  />
+              </div>
+
+              {/* Input: Marca */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Marca</label>
+                <input type="text"  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                 value={marca}
+                 onChange={(e) => setMarca(e.target.value)}
+                />
+              </div>
+
+              {/* Input: Código fabrica/Equiv./Simil */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Código fabrica/Equiv./Simil</label>
+                <input type="text" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" 
+                  value={codigoFabrica}
+                  onChange={(e) => setCodigoFabrica(e.target.value)}
+                />
+              </div>
+
+              {/* Input: Nombre Interno */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Nombre Interno</label>
+                <input type="text" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                  value={nombreInterno}
+                  onChange={(e) => setNombreInterno(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Botón busqueda filtrada */}
+
+              <button type="button" className="flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 mt-2"
+              onClick={handleSearchMaterials}>
+              <SearchNormal1 size={15} className="mr-2"/> Busqueda filtrada 
+              </button>
+
+        </div>
+      )}
+
       <Tabla {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup, index) => (

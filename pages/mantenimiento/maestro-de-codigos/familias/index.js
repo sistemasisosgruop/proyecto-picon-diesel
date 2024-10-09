@@ -22,7 +22,7 @@ import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
-  codigo: yup.string().required(),
+  codigo: yup.string().nullable(),
   descripcion: yup.string().required(),
 });
 
@@ -93,7 +93,7 @@ export default function Familias() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      { Header: "Codigo", accessor: "codigo" },
+      // { Header: "Codigo", accessor: "codigo" },
       { Header: "Descripción", accessor: "descripcion" },
     ],
     []
@@ -117,6 +117,8 @@ export default function Familias() {
 
   const familias = useMemo(() => data?.data, [data?.data]);
 
+  console.log('Familias son:',familias);
+  
   return (
     <>
       <TemplateMaestroCodigos>
@@ -140,6 +142,7 @@ export default function Familias() {
           setIsOpenModalDelete={setIsOpenModalDelete}
         />
       </TemplateMaestroCodigos>
+
       {/* Modal agregar */}
       <Modal
         title={isEdit ? "Editar familia" : "Nuevo familia"}
@@ -149,6 +152,7 @@ export default function Familias() {
         {/* Form */}
         <form className="flex flex-col gap-5">
           <Input
+            disabled
             label="Código"
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
             defaultValue={isEdit ? updateForm?.codigo : undefined}

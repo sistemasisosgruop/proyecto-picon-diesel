@@ -643,6 +643,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
           setIsOpenModalDelete={setIsOpenModalDelete}
         />
       </TemplateMaestroCodigos>
+      
       {/* Modal agregar */}
       <ModalLg
         title={isEdit ? "Editar Material" : "Nuevo Material"}

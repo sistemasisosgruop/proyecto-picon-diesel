@@ -175,7 +175,8 @@ async function createUser(email, password, role, ruc) {
   return prisma.personal.upsert({
     where: { email },
     create: {
-      puesto: "CTO",
+      // puesto: "CTO",
+      puestoId: null,
       nombre: "Victor Benavente",
       email,
       password,
@@ -191,7 +192,8 @@ async function createUser(email, password, role, ruc) {
       },
     },
     update: {
-      puesto: "CTO",
+      // puesto: "CTO",
+      puestoId: null,
       nombre: "Victor Benavente",
       email,
       password,
