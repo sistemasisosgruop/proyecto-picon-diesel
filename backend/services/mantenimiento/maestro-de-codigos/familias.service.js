@@ -66,13 +66,24 @@ export class FamiliaService {
     });
   }
 
-  static async getFamilia(codigo) {
+  static async getFamilia(id) {
+ 
     const familia = await prisma.familia.findUnique({
       where: {
-        codigo,
+        id: Number(id), 
       },
     });
-
+  
     return familia;
   }
+
+  // static async getFamilia(codigo) {
+  //   const familia = await prisma.familia.findUnique({
+  //     where: {
+  //       codigo,
+  //     },
+  //   });
+
+  //   return familia;
+  // }
 }

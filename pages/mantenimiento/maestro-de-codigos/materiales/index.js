@@ -83,8 +83,6 @@ export default function Materiales() {
     equivalencia: false,
     aplicacionMaquina: false,
   });
-  const [nombreInterno, setNombreInterno] = useState('');
-  const [nombreComercial, setNombreComercial] = useState('');
 
   const [form, setForm] = useState({
     familiaId: null,
@@ -682,9 +680,9 @@ const [subsUpdate,setSubsUpdate]= useState(0);
                   value={subsUpdate? updateForm?.subfamiliaId : undefined} // Mostrar valor en modo edición
                   onChange={(value) => {
                     const currentSubFamilia = subfamilias?.find((item) => item.id === Number(value));
-                    setForm({ ...form, subFamiliaId: value });
+                    setForm({ ...form, subFamiliaId: value, nombreComercial: currentSubFamilia?.descripcion || "", nombreInterno: currentSubFamilia?.descripcion || ""  });
                     setCorrelativo(`${selectedFamilia} + ${currentSubFamilia.codigo} + COD.`);
-                    setNombreComercial(currentSubFamilia?.descripcion);
+                    // setNombreComercial(currentSubFamilia?.descripcion);
                   }}
                 >
                   {subfamilias?.map((item) => {
@@ -741,7 +739,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
 
               <Input
                 label={"Nombre Interno"}
-                value={nombreInterno}
+                value={form.nombreInterno}
                 defaultValue={isEdit ? updateForm?.nombreInterno : undefined}
                 onChange={(e) =>
                   setForm({
@@ -752,7 +750,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
               />
               <Input
                 label={"Nombre Comercial"}
-                value={nombreComercial}
+                value={form.nombreComercial}
                 defaultValue={isEdit ? updateForm?.nombreComercial : undefined}
                 onChange={(e) =>
                   setForm({
@@ -947,56 +945,82 @@ const [subsUpdate,setSubsUpdate]= useState(0);
                     key={caracteristica.id}
                     className="flex flex-row gap-5 items-center justify-between"
                   >
-                    <Checkbox
-                      onChange={(e) => {
-                        const newCaracteristicas = caracteristicasForm;
-                        const caracteristicaIndex = newCaracteristicas.findIndex(
-                          (item) => item.caracteristicaId === caracteristica.id
-                        );
-                        if (caracteristicaIndex !== -1) {
-                          newCaracteristicas[caracteristicaIndex] = {
-                            ...caracteristicasForm[caracteristicaIndex],
-                            isChecked: e.target.checked,
-                          };
-                        } else {
-                          newCaracteristicas.push({
-                            caracteristicaId: caracteristica.id,
-                            isChecked: e.target.checked,
-                          });
-                        }
-                        setCaracteristicasForm(newCaracteristicas);
-                      }}
-                      id={caracteristica.id.toString()}
-                      label={caracteristica.descripcion}
-                      defaultChecked={!!caracteristica?.isChecked}
-                    />
-                    <div className="w-72">
-                      <Input
-                        onChange={(e) => {
-                          const newCaracteristicas = caracteristicasForm;
-                          const caracteristicaIndex = newCaracteristicas.findIndex(
-                            (item) => item.caracteristicaId === caracteristica.id
-                          );
-                          if (caracteristicaIndex !== -1) {
-                            newCaracteristicas[caracteristicaIndex] = {
-                              ...caracteristicasForm[caracteristicaIndex],
-                              valor: e.target.value,
-                            };
-                          } else {
-                            newCaracteristicas.push({
-                              caracteristicaId: caracteristica.id,
-                              valor: e.target.value,
-                            });
-                          }
-                          setCaracteristicasForm(newCaracteristicas);
-                        }}
-                        label={"Valor"}
-                        defaultValue={caracteristica?.valor ?? undefined}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </Group>
+        <Checkbox
+        onChange={(e) => {
+          const newCaracteristicas = caracteristicasForm;
+          const caracteristicaIndex = newCaracteristicas.findIndex(
+            (item) => item.caracteristicaId === caracteristica.id
+          );
+
+          let updatedNombreInterno = form.nombreInterno || "";
+
+          // Si se selecciona el checkbox
+          if (e.target.checked) {
+            const concatString = `${caracteristica.descripcion} ${newCaracteristicas[caracteristicaIndex]?.valor || ""}`;
+            if (!updatedNombreInterno.includes(concatString)) {
+              updatedNombreInterno += ` ${concatString}`;
+            }
+            if (caracteristicaIndex === -1) {
+              newCaracteristicas.push({
+                caracteristicaId: caracteristica.id,
+                isChecked: true,
+                valor: "",
+              });
+            } else {
+              newCaracteristicas[caracteristicaIndex].isChecked = true;
+            }
+          } else {
+            // Si se deselecciona el checkbox, eliminar la característica del nombre interno
+            const concatString = `${caracteristica.descripcion} ${newCaracteristicas[caracteristicaIndex]?.valor || ""}`;
+            updatedNombreInterno = updatedNombreInterno.replace(` ${concatString}`, "");
+            if (caracteristicaIndex !== -1) {
+              newCaracteristicas[caracteristicaIndex].isChecked = false;
+            }
+          }
+
+          setCaracteristicasForm([...newCaracteristicas]);
+          setForm({ ...form, nombreInterno: updatedNombreInterno });
+        }}
+        id={caracteristica.id.toString()}
+        label={caracteristica.descripcion}
+        defaultChecked={!!caracteristica?.isChecked}
+      />
+      <div className="w-72">
+        <Input
+          onChange={(e) => {
+            const newCaracteristicas = caracteristicasForm;
+            const caracteristicaIndex = newCaracteristicas.findIndex(
+              (item) => item.caracteristicaId === caracteristica.id
+            );
+            const concatString = `${caracteristica.descripcion} ${newCaracteristicas[caracteristicaIndex]?.valor || ""}`;
+            const newConcatString = `${caracteristica.descripcion} ${e.target.value}`;
+
+            let updatedNombreInterno = form.nombreInterno.replace(
+              ` ${concatString}`,
+              ` ${newConcatString}`
+            );
+
+            if (caracteristicaIndex !== -1) {
+              newCaracteristicas[caracteristicaIndex].valor = e.target.value;
+            } else {
+              newCaracteristicas.push({
+                caracteristicaId: caracteristica.id,
+                valor: e.target.value,
+              });
+            }
+
+            setCaracteristicasForm([...newCaracteristicas]);
+            setForm({ ...form, nombreInterno: updatedNombreInterno });
+          }}
+          label={"Valor"}
+          defaultValue={caracteristica?.valor ?? undefined}
+        />
+      </div>
+    </div>
+  ))}
+</Group>
+
+
             <div className="w-full flex justify-center gap-2">
               <ButtonCancel onClick={closeModal} />
               <ButtonSave onClick={saveData} />
