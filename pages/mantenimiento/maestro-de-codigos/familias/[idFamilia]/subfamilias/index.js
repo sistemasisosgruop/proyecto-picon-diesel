@@ -106,14 +106,18 @@ export default function SubFamilias({ familia }) {
     []
   );
 
-  const getSubFamilias = async () => {
+const getSubFamilias = async () => {
+  try {
     const { data } = await axiosRequest(
       "get",
       `/api/mantenimiento/maestro-de-codigos/familias/subfamilias?familiaId=${id}`
     );
-
+    console.log('Data de subfamilia es:', data);
     return data;
-  };
+  } catch (error) {
+    console.error('Error al obtener subfamilias:', error);
+  }
+};
 
   const { data, refetch } = useQuery("subfamilias", getSubFamilias, {
     initialData: {
