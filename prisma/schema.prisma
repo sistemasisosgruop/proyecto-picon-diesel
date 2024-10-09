@@ -87,7 +87,7 @@ model Empresa {
 
 model Sucursal {
   id        Int      @id @default(autoincrement())
-  codigo    String?  @unique
+  codigo    String?  
   nombre    String
   direccion String?
   telefono  String?
@@ -143,7 +143,7 @@ model ParametroGlobal {
 
 model AgenteAduanas {
   id            Int      @id @default(autoincrement())
-  codigo        String?  @unique
+  codigo        String?  
   nombre        String
   email         String
   telefono      String
@@ -156,7 +156,7 @@ model AgenteAduanas {
 
 model Incoterms {
   id          Int      @id @default(autoincrement())
-  codigo      String?  @unique
+  codigo      String?  
   nombre      String
   descripcion String?
   empresa     Empresa? @relation(fields: [empresaId], references: [id])
@@ -167,7 +167,7 @@ model Incoterms {
 
 model TipoVia {
   id          Int      @id @default(autoincrement())
-  codigo      String?  @unique
+  codigo      String?  
   nombre      String
   descripcion String?
   empresa     Empresa? @relation(fields: [empresaId], references: [id])
@@ -178,7 +178,7 @@ model TipoVia {
 
 model GastoImportacion {
   id            Int      @id @default(autoincrement())
-  codigo        String?  @unique
+  codigo        String?  
   nombre        String
   descripcion   String?
   observaciones String?
@@ -190,7 +190,7 @@ model GastoImportacion {
 
 model FactorInternamiento {
   id        Int      @id @default(autoincrement())
-  codigo    String?  @unique
+  codigo    String? 
   valor     Decimal  @default(0) @db.Decimal(12, 2)
   fecha     DateTime
   empresa   Empresa? @relation(fields: [empresaId], references: [id])
@@ -227,6 +227,7 @@ model Personal {
 }
 
 model Puesto {
+   @@map("puesto")
   id          Int         @id @default(autoincrement())
   nombre      String
   permisos    Permiso[]
@@ -234,12 +235,14 @@ model Puesto {
 }
 
 model Modulo {
+  @@map("modulo")
   id          Int         @id @default(autoincrement())
   nombre      String
   submodulos  Submodulo[]
 }
 
 model Submodulo {
+  @@map("submodulo")
   id          Int         @id @default(autoincrement())
   nombre      String
   modulo      Modulo      @relation(fields: [moduloId], references: [id])
@@ -248,6 +251,7 @@ model Submodulo {
 }
 
 model Permiso {
+   @@map("permiso")
   id            Int         @id @default(autoincrement())
   puesto        Puesto      @relation(fields: [puestoId], references: [id])
   puestoId      Int
@@ -261,7 +265,7 @@ model Permiso {
 
 model Vendedor {
   id                   Int              @id @default(autoincrement())
-  codigo               String?          @unique
+  codigo               String?          
   nombre               String
   email                String           @unique
   password             String
@@ -286,7 +290,7 @@ model Vendedor {
 
 model Cliente {
   id              Int               @id @default(autoincrement())
-  codigo          String?           @unique
+  codigo          String?           
   tipoDocumento   TipoDocumentoEnum @map("tipo_documento")
   numeroDocumento String            @map("numero_documento")
   nombre          String
@@ -313,7 +317,7 @@ model Cliente {
 
 model Costo {
   id          Int        @id @default(autoincrement())
-  codigo      String?    @unique
+  codigo      String?    
   nombre      String
   responsable String
   estado      EstadoEnum @default(Activo)
@@ -648,7 +652,7 @@ model SubFamilia {
 
 model Caracteristica {
   id                       Int                        @id @default(autoincrement())
-  codigo                   String                     @unique
+  codigo                   String                     
   descripcion              String
   abreviatura              String
   empresa                  Empresa?                   @relation(fields: [empresaId], references: [id])
@@ -660,7 +664,7 @@ model Caracteristica {
 
 model ModeloMaquina {
   id        Int       @id @default(autoincrement())
-  codigo    String    @unique
+  codigo    String    
   modelo    String
   empresa   Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId Int
@@ -673,7 +677,7 @@ model ModeloMaquina {
 
 model FabricaMaquina {
   id        Int       @id @default(autoincrement())
-  codigo    String    @unique
+  codigo    String    
   fabrica   String
   empresa   Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId Int
@@ -686,7 +690,7 @@ model FabricaMaquina {
 
 model NombreMaquina {
   id        Int       @id @default(autoincrement())
-  codigo    String    @unique
+  codigo    String    
   nombre    String
   empresa   Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId Int
@@ -699,7 +703,7 @@ model NombreMaquina {
 
 model MarcaMotor {
   id        Int       @id @default(autoincrement())
-  codigo    String    @unique
+  codigo    String    
   marca     String
   empresa   Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId Int
@@ -710,7 +714,7 @@ model MarcaMotor {
 
 model MarcaFabricaSistemaInyeccion {
   id        Int       @id @default(autoincrement())
-  codigo    String    @unique
+  codigo    String    
   marca     String
   empresa   Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId Int
@@ -723,7 +727,7 @@ model MarcaFabricaSistemaInyeccion {
 
 model DescripcionBombaInyeccion {
   id          Int       @id @default(autoincrement())
-  codigo      String    @unique
+  codigo      String    
   descripcion String
   empresa     Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId   Int
@@ -734,7 +738,7 @@ model DescripcionBombaInyeccion {
 
 model MarcaFabricaInyector {
   id        Int       @id @default(autoincrement())
-  codigo    String    @unique
+  codigo    String    
   marca     String
   empresa   Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId Int
@@ -745,7 +749,7 @@ model MarcaFabricaInyector {
 
 model DescripcionInyector {
   id          Int       @id @default(autoincrement())
-  codigo      String    @unique
+  codigo      String    
   descripcion String
   empresa     Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId   Int
@@ -762,7 +766,7 @@ model MaquinaProcedencia {
 
 model Maquina {
   id                             Int                           @id @default(autoincrement())
-  codigo                         String?                       @unique
+  codigo                         String?                       
   fabricaMaquina                 FabricaMaquina?               @relation(fields: [fabricaMaquinaId], references: [id])
   fabricaMaquinaId               Int?
   modeloMaquina                  ModeloMaquina?                @relation(fields: [modeloMaquinaId], references: [id])
@@ -810,8 +814,8 @@ model Maquina {
 
 model Material {
   id                                Int                        @id @default(autoincrement())
-  codigo                            String?                    @unique
-  correlativo                       String?                    @unique
+  codigo                            String?                    
+  correlativo                       String?                    
   familia                           Familia?                   @relation(fields: [familiaId], references: [id])
   familiaId                         Int
   subfamilia                        SubFamilia?                @relation(fields: [subfamiliaId], references: [id])
@@ -1175,7 +1179,7 @@ model ReporteMensualVentas {
 
 model HojaRecepcion {
   id                Int                  @id @default(autoincrement())
-  codigo            String?              @unique
+  codigo            String?              
   denominacion      String               
   tipoReparacion    String
   cliente           Cliente?              @relation(fields: [clienteId], references: [id])
