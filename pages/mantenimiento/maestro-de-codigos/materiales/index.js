@@ -29,6 +29,7 @@ import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import * as yup from "yup";
 import { FormContext } from "../../../../contexts/form.context";
 import TableCodigosDetalle from "../../../../app/components/modules/TableCodigosDetalle";
+import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowUp, SearchNormal1, FilterSearch } from "iconsax-react";
 
 const schema = yup.object().shape({
   familiaId: yup.number(),
@@ -614,7 +615,6 @@ const [subsUpdate,setSubsUpdate]= useState(0);
         console.log('las subfamilias disponibles son: ',subfamilias)
         
         // setCorrelativo(`${currentFamilia.codigo} + `);
-          //*AQUI
 
         setForm((prevForm) => ({ ...prevForm, familiaId: currentFamilia.id }));
       }
@@ -626,6 +626,43 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       setSubsUpdate(subsUpdate+1);
     }, [subfamilias]); // Se ejecuta cada vez que selectedFamilia cambia
 
+
+//! BUSQUEDA POR FILTROS:
+
+//! Función para alternar la visibilidad de la sección filtros
+const [isCustomSearchVisible, setCustomSearchVisible] = useState(false);
+const toggleCustomSearch = () => {
+  setCustomSearchVisible(!isCustomSearchVisible);
+};
+//! Estados para cada input de filtros personalizados
+const [nombreComercial, setNombreComercial] = useState('');
+const [marca, setMarca] = useState('');
+const [codigoReferencia, setCodigoReferencia] = useState('');
+const [nombreInterno, setNombreInterno] = useState('');
+// const [page,setPage] = useState(0);
+const [dropdownMateriales, setDropdownMateriales] = useState([]); // Para almacenar los resultados de la API
+
+//! onClick busqueda filtrada
+const handleSearchMaterials = async () => {
+  try {
+    const { data } = await axiosRequest(
+      "get",
+      `/api/mantenimiento/maestro-de-codigos/configuracion/materiales?empresaId=${empresaId}&page=${0}&take=${30}&marca=${marca}&codigoReferencia=${codigoReferencia}&nombreComercial=${nombreComercial}&nombreInterno=${nombreInterno}`
+    );
+    // console.log('page es:',page);
+    console.log('Data filtrada:', data.data);
+    setDropdownMateriales(data?.data);
+  } catch (error) {
+    console.error('Error fetching materials:', error);
+  }
+};
+
+
+
+
+
+
+
   return (
     <>
       <TemplateMaestroCodigos>
@@ -635,6 +672,108 @@ const [subsUpdate,setSubsUpdate]= useState(0);
             <ButtonAdd text={"Nuevo material"} onClick={() => openModal(false)} />
           </div>
         </Title>
+
+        <button type="button" className="flex justify-space-between items-center p-1 gap-0 bg-secundary text-primary rounded-lg cursor-pointer hover:bg-secundary-800 w-[300px] text-sm" 
+        onClick={toggleCustomSearch}
+      >
+        <FilterSearch />
+        Búsqueda Personalizada
+      </button>
+
+{/* ------------------------------------------ BUSQUEDA PERSONALIZADA ------------------------------- */}
+        {isCustomSearchVisible && (
+        <div className="mt-0  bg-gray-100 p-1 rounded-lg"> 
+            <div className=" mb-5 grid grid-cols-2 gap-3">
+
+              {/* Input: Marca */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Marca</label>
+                <input type="text"  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                 value={marca}
+                 onChange={(e) => setMarca(e.target.value)}
+                />
+              </div>
+
+              {/* Input: Código fabrica/Equiv./Simil */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Código fabrica/Equiv./Simil</label>
+                <input type="text" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" 
+                  value={codigoReferencia}
+                  onChange={(e) => setCodigoReferencia(e.target.value)}
+                />
+              </div>
+              {/* Input: Nombre Comercial*/}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Nombre Comercial</label>
+                <input type="text" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                  value={nombreComercial}
+                  onChange={(e) => setNombreComercial(e.target.value)}
+                  />
+              </div>
+
+              {/* Input: Nombre Interno */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Nombre Interno</label>
+                <input type="text" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                  value={nombreInterno}
+                  onChange={(e) => setNombreInterno(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Botón busqueda filtrada */}
+
+              <button type="button" className="flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 mt-2"
+              onClick={handleSearchMaterials}>
+              <SearchNormal1 size={15} className="mr-2"/> Busqueda filtrada 
+              </button>
+
+        </div>
+      )}
+
+      {/* Tabla para mostrar los resultados */}
+      <div className="mt-4">
+              <table className="min-w-full bg-white">
+                <thead>
+                  <tr>
+                    <th className="px-4 py-2">#</th>
+                    <th className="px-4 py-2">Código</th>
+                    <th className="px-4 py-2">Familia</th>
+                    <th className="px-4 py-2">Subfamilia</th>
+                    <th className="px-4 py-2">Correlativo</th>
+                    <th className="px-4 py-2">Denomicación</th>
+                    <th className="px-4 py-2">Stock</th>
+                    <th className="px-4 py-2">Código de fabricante</th>
+                    <th className="px-4 py-2">Marca</th>
+                    <th className="px-4 py-2">Nombre Interno</th>
+                    <th className="px-4 py-2">Nombre Comercial</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dropdownMateriales.map((material, index) => (
+                    <tr key={index}>
+                      <td className="border px-4 py-2">{material.id}</td>
+  
+                      <td className="border px-4 py-2">{material.codigo}</td>
+                      <td className="border px-4 py-2">{material.familia.codigo}</td>
+                      <td className="border px-4 py-2">{material.subfamilia.codigo}</td>
+                      <td className="border px-4 py-2">{material.correlativo}</td>
+                      <td className="border px-4 py-2">{material.denominacion}</td>
+                      <td className="border px-4 py-2">{material.stock}</td>
+                      <td className="border px-4 py-2">{material.codigoFabricante}</td>
+                      <td className="border px-4 py-2">{material.marca}</td>
+                      <td className="border px-4 py-2">{material.nombreInterno}</td>
+                      <td className="border px-4 py-2">{material.nombreComercial}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+
+
+
+
         {/* Table list */}
         <TableMateriales
           columns={columns}

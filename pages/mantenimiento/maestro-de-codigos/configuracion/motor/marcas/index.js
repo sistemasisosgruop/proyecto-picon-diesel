@@ -22,7 +22,7 @@ import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert
 import { FormContext } from "../../../../../../contexts/form.context";
 
 const schema = yup.object().shape({
-  codigo: yup.string().required(),
+  codigo: yup.string().nullable(),
   marca: yup.string().required(),
 });
 
@@ -158,6 +158,7 @@ export default function MarcasMotor() {
         <form className="flex flex-col gap-5">
           <Input
             label="Código"
+            disabled
             defaultValue={isEdit ? updateForm?.codigo : undefined}
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
           />

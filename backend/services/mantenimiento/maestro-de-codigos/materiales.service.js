@@ -440,7 +440,7 @@ export class MatrialesService {
       const nextCodigo = parseInt(lasMaterial.codigo, 10) + 1;
       codigo = String(nextCodigo).padStart(4, '0');
     } else {
-      codigo = '01';
+      codigo = '0001';
     }
     return codigo;
   }
