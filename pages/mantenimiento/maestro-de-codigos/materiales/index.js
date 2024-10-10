@@ -641,13 +641,14 @@ const [codigoReferencia, setCodigoReferencia] = useState('');
 const [nombreInterno, setNombreInterno] = useState('');
 // const [page,setPage] = useState(0);
 const [dropdownMateriales, setDropdownMateriales] = useState([]); // Para almacenar los resultados de la API
+const [page, setPage] = useState(0);
 
 //! onClick busqueda filtrada
 const handleSearchMaterials = async () => {
   try {
     const { data } = await axiosRequest(
       "get",
-      `/api/mantenimiento/maestro-de-codigos/configuracion/materiales?empresaId=${empresaId}&page=${0}&take=${30}&marca=${marca}&codigoReferencia=${codigoReferencia}&nombreComercial=${nombreComercial}&nombreInterno=${nombreInterno}`
+      `/api/mantenimiento/maestro-de-codigos/configuracion/materiales?empresaId=${empresaId}&page=${page}&take=${30}&marca=${marca}&codigoReferencia=${codigoReferencia}&nombreComercial=${nombreComercial}&nombreInterno=${nombreInterno}`
     );
     // console.log('page es:',page);
     console.log('Data filtrada:', data.data);
