@@ -130,32 +130,32 @@ CREATE TABLE "personal" (
 );
 
 -- CreateTable
-CREATE TABLE "Puesto" (
+CREATE TABLE "puesto" (
     "id" SERIAL NOT NULL,
     "nombre" TEXT NOT NULL,
 
-    CONSTRAINT "Puesto_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "puesto_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Modulo" (
+CREATE TABLE "modulo" (
     "id" SERIAL NOT NULL,
     "nombre" TEXT NOT NULL,
 
-    CONSTRAINT "Modulo_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "modulo_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Submodulo" (
+CREATE TABLE "submodulo" (
     "id" SERIAL NOT NULL,
     "nombre" TEXT NOT NULL,
     "moduloId" INTEGER NOT NULL,
 
-    CONSTRAINT "Submodulo_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "submodulo_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Permiso" (
+CREATE TABLE "permiso" (
     "id" SERIAL NOT NULL,
     "puestoId" INTEGER NOT NULL,
     "submoduloId" INTEGER NOT NULL,
@@ -164,7 +164,7 @@ CREATE TABLE "Permiso" (
     "actualizar" BOOLEAN NOT NULL,
     "eliminar" BOOLEAN NOT NULL,
 
-    CONSTRAINT "Permiso_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "permiso_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -1499,16 +1499,16 @@ ALTER TABLE "gasto_importacion" ADD CONSTRAINT "gasto_importacion_empresaId_fkey
 ALTER TABLE "factor_internamiento" ADD CONSTRAINT "factor_internamiento_empresaId_fkey" FOREIGN KEY ("empresaId") REFERENCES "empresa"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "personal" ADD CONSTRAINT "personal_puestoId_fkey" FOREIGN KEY ("puestoId") REFERENCES "Puesto"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "personal" ADD CONSTRAINT "personal_puestoId_fkey" FOREIGN KEY ("puestoId") REFERENCES "puesto"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Submodulo" ADD CONSTRAINT "Submodulo_moduloId_fkey" FOREIGN KEY ("moduloId") REFERENCES "Modulo"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "submodulo" ADD CONSTRAINT "submodulo_moduloId_fkey" FOREIGN KEY ("moduloId") REFERENCES "modulo"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Permiso" ADD CONSTRAINT "Permiso_puestoId_fkey" FOREIGN KEY ("puestoId") REFERENCES "Puesto"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "permiso" ADD CONSTRAINT "permiso_puestoId_fkey" FOREIGN KEY ("puestoId") REFERENCES "puesto"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Permiso" ADD CONSTRAINT "Permiso_submoduloId_fkey" FOREIGN KEY ("submoduloId") REFERENCES "Submodulo"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "permiso" ADD CONSTRAINT "permiso_submoduloId_fkey" FOREIGN KEY ("submoduloId") REFERENCES "submodulo"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "vendedor" ADD CONSTRAINT "vendedor_empresaId_fkey" FOREIGN KEY ("empresaId") REFERENCES "empresa"("id") ON DELETE SET NULL ON UPDATE CASCADE;

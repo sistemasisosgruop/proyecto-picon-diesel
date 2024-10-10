@@ -1,11 +1,11 @@
-import prisma from "../../../prisma";
+import prisma from '../../../prisma';
 
 export class CaracteristicasService {
   static async createCaracteristica(data) {
     const { codigo, descripcion, abreviatura, empresaId } = data;
     const caracteristica = await prisma.caracteristica.create({
       data: {
-        codigo,
+        codigo: await this.generarCodigoByEmpresa(empresaId),
         descripcion,
         abreviatura,
         empresaId,
@@ -22,9 +22,9 @@ export class CaracteristicasService {
         id,
       },
       data: {
-        codigo,
+        // codigo,
         descripcion,
-        abreviatura
+        abreviatura,
       },
     });
 
@@ -57,5 +57,26 @@ export class CaracteristicasService {
     });
 
     return caracteristica;
+  }
+
+  static async generarCodigoByEmpresa(empresaId) {
+    const lastFamilia = await prisma.caracteristica.findFirst({
+      orderBy: {
+        codigo: 'desc',
+      },
+      select: {
+        codigo: true,
+      },
+      where: { empresaId },
+    });
+
+    let codigo;
+    if (lastFamilia) {
+      const nextCodigo = parseInt(lastFamilia.codigo, 10) + 1;
+      codigo = String(nextCodigo).padStart(2, '0');
+    } else {
+      codigo = '01';
+    }
+    return codigo;
   }
 }
