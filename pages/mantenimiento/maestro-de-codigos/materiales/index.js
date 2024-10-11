@@ -41,7 +41,7 @@ const schema = yup.object().shape({
   // tipoFabricante: yup.string().required(),      //! REMOVER
   // codigoMotorOriginal: yup.string().required(), //! REMOVER
   // codigoBombaInyeccion: yup.string().required(), //! REMOVER
-  caracteristicas: yup.array().nullable(),
+  caracteristicaToMaterial: yup.array().nullable(),
   materialReemplazo: yup.array().nullable(),
   materialEquivalencia: yup.array().nullable(),
   materialSimilitud: yup.array().nullable(),
@@ -59,7 +59,7 @@ const updateSchema = yup.object().shape({
   // tipoFabricante: yup.string().required(),          //! REMOVER
   // codigoMotorOriginal: yup.string().required(),     //! REMOVER
   // codigoBombaInyeccion: yup.string().required(),    //! REMOVER
-  caracteristicas: yup.array().nullable(),
+  caracteristicaToMaterial: yup.array().nullable(),
   materialReemplazo: yup.array().nullable(),
   materialEquivalencia: yup.array().nullable(),
   materialSimilitud: yup.array().nullable(),
@@ -95,7 +95,7 @@ export default function Materiales() {
     // tipoFabricante: null,         //! REMOVER
     // codigoMotorOriginal: null,    //! REMOVER
     // codigoBombaInyeccion: null,   //! REMOVER
-    caracteristicas: null,
+    caracteristicaToMaterial: null,
     materialReemplazo: null,
     materialEquivalencia: null,
     materialSimilitud: null,
@@ -131,7 +131,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       // tipoFabricante: null,           //! REMOVER
       // codigoMotorOriginal: null,      //! REMOVER
       // codigoBombaInyeccion: null,     //! REMOVER
-      caracteristicas: null,
+      caracteristicaToMaterial: null,
       materialReemplazo: null,
       materialEquivalencia: null,
       materialSimilitud: null,
@@ -158,7 +158,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
     if (isEdit) {
       setForm({
         ...form,
-        caracteristicas: caracteristicasForm,
+        caracteristicaToMaterial: caracteristicasForm,
         materialReemplazo: codigos.reemplazo,
         materialEquivalencia: codigos.equivalencia,
         materialSimilitud: codigos.similitud,
@@ -233,7 +233,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
         // tipoFabricante: null, //! REMOVER
         // codigoMotorOriginal: null,  //! REMOVER
         // codigoBombaInyeccion: null, //! REMOVER
-        caracteristicas: null,
+        caracteristicaToMaterial: null,
         materialReemplazo: null,
         materialEquivalencia: null,
         materialSimilitud: null,
@@ -1131,7 +1131,8 @@ function prevPage(){
                   onChange={(e) => {
                     const newCaracteristicas = caracteristicasForm;
                     const caracteristicaIndex = newCaracteristicas.findIndex(
-                      (item) => item.caracteristicaId === caracteristica.id
+                      // (item) => item.caracteristicaId === caracteristica.id
+                      (item) => item. caracteristica.id === caracteristica.id
                     );
 
                     let updatedNombreInterno = form.nombreInterno || "";
@@ -1144,7 +1145,8 @@ function prevPage(){
                       }
                       if (caracteristicaIndex === -1) {
                         newCaracteristicas.push({
-                          caracteristicaId: caracteristica.id,
+                          // caracteristicaId: caracteristica.id,
+                          caracteristica: {id: caracteristica.id},
                           isChecked: true,
                           valor: "",
                         });
@@ -1161,7 +1163,7 @@ function prevPage(){
                     }
 
                     setCaracteristicasForm([...newCaracteristicas]);
-                    setForm({ ...form, nombreInterno: updatedNombreInterno, caracteristicas: caracteristicasForm });
+                    setForm({ ...form, nombreInterno: updatedNombreInterno, caracteristicaToMaterial: caracteristicasForm });
                   }}
                   id={caracteristica.id.toString()}
                   label={caracteristica.descripcion}
@@ -1172,7 +1174,8 @@ function prevPage(){
           onChange={(e) => {
             const newCaracteristicas = caracteristicasForm;
             const caracteristicaIndex = newCaracteristicas.findIndex(
-              (item) => item.caracteristicaId === caracteristica.id
+              // (item) => item.caracteristicaId === caracteristica.id
+              (item) => item. caracteristica.id === caracteristica.id
             );
             const concatString = `${caracteristica.descripcion} ${newCaracteristicas[caracteristicaIndex]?.valor || ""}`;
             const newConcatString = `${caracteristica.descripcion} ${e.target.value}`;
@@ -1186,13 +1189,14 @@ function prevPage(){
               newCaracteristicas[caracteristicaIndex].valor = e.target.value;
             } else {
               newCaracteristicas.push({
-                caracteristicaId: caracteristica.id,
+                // caracteristicaId: caracteristica.id,
+                caracteristica: {id: caracteristica.id},
                 valor: e.target.value,
               });
             }
 
             setCaracteristicasForm([...newCaracteristicas]);
-            setForm({ ...form, nombreInterno: updatedNombreInterno, caracteristicas: caracteristicasForm });
+            setForm({ ...form, nombreInterno: updatedNombreInterno, caracteristicaToMaterial: caracteristicasForm });
           }}
           label={"Valor"}
           defaultValue={caracteristica?.valor ?? undefined}
