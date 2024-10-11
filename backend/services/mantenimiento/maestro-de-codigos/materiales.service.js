@@ -17,10 +17,6 @@ export class MatrialesService {
       nombreComercial,
     } = data;
     console.log(data, 'DATA PARA CREAR');
-    // const setMaterialSimilutud = materialSimilitud || [];
-    // const setMaterialEquivalencia = materialEquivalencia || []; // Prisma.JsonNull;
-    // const setMaterialReemplazo = materialReemplazo || []; //Prisma.JsonNull;
-    // const setAplicacionDeMaquina = aplicacionDeMaquina || []; //Prisma.JsonNull;
 
     const setMaterialSimilutud =
       materialSimilitud?.length > 0 ? materialSimilitud : Prisma.JsonNull;
@@ -41,9 +37,14 @@ export class MatrialesService {
         id: Number(subFamiliaId),
       },
     });
+    if (!familia || !subFamilia) {
+      throw new Error('Familia y SubFamilia debe existir.');
+    }
+
     let responseTransaction;
     try {
       const genCodigo = await this.generarCodigo(Number(subFamiliaId));
+      console.log(genCodigo, 'CODIGO');
       const dataNewMaterial = {
         codigo: genCodigo,
         correlativo: `${familia.codigo}${subFamilia.codigo}${genCodigo}`,

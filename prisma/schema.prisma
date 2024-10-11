@@ -58,7 +58,7 @@ model Empresa {
   fabricaMaquina               FabricaMaquina[]
   nombreMaquina                NombreMaquina[]
   marcaMotor                   MarcaMotor[]
-  marcaFabricaSistemaInyeccion MarcaFabricaSistemaInyeccion[]
+  // marcaFabricaSistemaInyeccion MarcaFabricaSistemaInyeccion[]
   descripcionBombaInyeccion    DescripcionBombaInyeccion[]
   marcaFabricaInyector         MarcaFabricaInyector[]
   descripcionInyector          DescripcionInyector[]
@@ -81,7 +81,7 @@ model Empresa {
   ordenTrabajo                 OrdenTrabajo[]
   guiaRemisionServicios        GuiaRemisionServicios[]
   facturaServicios             FacturaServicios[]
-
+  marca                         Marca[]
   @@map("empresa")
 }
 
@@ -701,29 +701,43 @@ model NombreMaquina {
   @@map("nombre_maquina")
 }
 
+model Marca {
+   @@map("marca")
+  id        Int       @id @default(autoincrement())
+  codigo    String    
+  marca     String
+  empresa   Empresa?  @relation(fields: [empresaId], references: [id])
+  empresaId Int
+  marcaMotor   Maquina[] @relation(name: "marcaMotor")
+  maquinaMarcaFabricaSistemaInyeccion   Maquina[] @relation(name: "marcaFabricaSistemaInyeccion")
+  maquinaMarcaFabricaInyector   Maquina[] @relation(name: "marcaFabricaInyector")
+  maquinaMarcaTobera   Maquina[] @relation(name: "marcaTobera")
+  hojaRecepcionMarcaFabricaSistemaInyeccion  HojaRecepcion[] @relation(name: "marcaFabricaSistemaInyeccion")
+  presupuestoMarcaFabricaSistemaInyeccion  Presupuesto[] @relation(name:"marcaFabricaSistemaInyeccion")
+}
 model MarcaMotor {
   id        Int       @id @default(autoincrement())
   codigo    String    
   marca     String
   empresa   Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId Int
-  Maquina   Maquina[]
+  // Maquina   Maquina[]
 
   @@map("marca_motor")
 }
 
-model MarcaFabricaSistemaInyeccion {
-  id        Int       @id @default(autoincrement())
-  codigo    String    
-  marca     String
-  empresa   Empresa?  @relation(fields: [empresaId], references: [id])
-  empresaId Int
-  Maquina   Maquina[]
-  hojaRecepcion HojaRecepcion[]
-  presupuestos  Presupuesto[]
+// model MarcaFabricaSistemaInyeccion { //
+//   id        Int       @id @default(autoincrement())
+//   codigo    String    
+//   marca     String
+//   empresa   Empresa?  @relation(fields: [empresaId], references: [id])
+//   empresaId Int
+//   // Maquina   Maquina[]
+//   hojaRecepcion HojaRecepcion[]
+//   presupuestos  Presupuesto[]
 
-  @@map("marca_fabrica_sistema_inyeccion")
-}
+//   @@map("marca_fabrica_sistema_inyeccion")
+// }
 
 model DescripcionBombaInyeccion {
   id          Int       @id @default(autoincrement())
@@ -742,7 +756,7 @@ model MarcaFabricaInyector {
   marca     String
   empresa   Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId Int
-  Maquina   Maquina[]
+  // Maquina   Maquina[]
 
   @@map("marca_fabrica_inyector")
 }
@@ -777,15 +791,17 @@ model Maquina {
   paisId                         Int
   codigoOriginal                 String
   modeloMotor                    String
-  marcaMotor                     MarcaMotor?                   @relation(fields: [marcaMotorId], references: [id])
-  marcaMotorId                   Int?
+  marcaMotor                     Marca                   @relation(name: "marcaMotor", fields: [marcaMotorId], references: [id])
+  marcaMotorId                   Int
   procedenciaMotor               Pais?                         @relation(name: "motorPais", fields: [motorPaisId], references: [id])
   motorPaisId                    Int?
   numeroCilindros                Int
   codigoFabricaBombaInyeccion    String
   tipoBombaInyeccion             String
-  marcaFabricaSistemaInyeccion   MarcaFabricaSistemaInyeccion? @relation(fields: [marcaFabricaSistemaInyeccionId], references: [id])
-  marcaFabricaSistemaInyeccionId Int?
+  marcaFabricaSistemaInyeccion                     Marca                   @relation(name: "marcaFabricaSistemaInyeccion", fields: [marcaFabricaSistemaInyeccionId], references: [id])
+  marcaFabricaSistemaInyeccionId                   Int
+  // marcaFabricaSistemaInyeccion   MarcaFabricaSistemaInyeccion? @relation(fields: [marcaFabricaSistemaInyeccionId], references: [id])
+  // marcaFabricaSistemaInyeccionId Int?
   descripcionBombaInyeccion      DescripcionBombaInyeccion?    @relation(fields: [descripcionBombaInyeccionId], references: [id])
   descripcionBombaInyeccionId    Int?
   procedenciaBombaInyeccion      Pais?                         @relation(name: "bombaInyeccionPais", fields: [bombaInyeccionPaisId], references: [id])
@@ -793,8 +809,12 @@ model Maquina {
   codigoOriginalBombaInyeccion   String
   codigoFabricaInyector          String
   tipoFabricaInyector            String
-  marcaFabricaInyector           MarcaFabricaInyector?         @relation(fields: [marcaFabricaInyectorId], references: [id])
-  marcaFabricaInyectorId         Int?
+  marcaFabricaInyector                     Marca                  @relation(name: "marcaFabricaInyector", fields: [marcaFabricaInyectorId], references: [id])
+  marcaFabricaInyectorId                   Int
+  // marcaFabricaInyector           MarcaFabricaInyector?         @relation(fields: [marcaFabricaInyectorId], references: [id])
+  // marcaFabricaInyectorId         Int?
+  marcaTobera                    Marca                   @relation(name: "marcaTobera", fields: [marcaToberaId], references: [id])
+  marcaToberaId                  Int
   descripcionInyector            DescripcionInyector?          @relation(fields: [descripcionInyectorId], references: [id])
   descripcionInyectorId          Int?
   procedenciaInyector            Pais?                         @relation(name: "inyectorPais", fields: [inyectorPaisId], references: [id])
@@ -1202,7 +1222,7 @@ model HojaRecepcion {
   codigoBombaInyeccionOriginal  String
   codigoBombaInyeccionFabricante String
   tipoBombaInyeccionFabricante  String
-  marcaFabricaSistemaInyeccion   MarcaFabricaSistemaInyeccion? @relation(fields: [marcaFabricaSistemaInyeccionId], references: [id])
+  marcaFabricaSistemaInyeccion   Marca? @relation(name: "marcaFabricaSistemaInyeccion" ,fields: [marcaFabricaSistemaInyeccionId], references: [id])
   marcaFabricaSistemaInyeccionId Int
   codigoOriginalBombaInyeccion  String
   nombreBombaInyeccion    String
@@ -1277,8 +1297,8 @@ model Presupuesto {
   codigoBombaInyeccionOriginal  String
   codigoBombaInyeccionFabricante String
   tipoBombaInyeccionFabricante  String
-  marcaFabricaSistemaInyeccion   MarcaFabricaSistemaInyeccion? @relation(fields: [marcaFabricaSistemaInyeccionId], references: [id])
-  marcaFabricaSistemaInyeccionId Int
+  marcaFabricaSistemaInyeccion   Marca? @relation(name: "marcaFabricaSistemaInyeccion", fields: [marcaFabricaSistemaInyeccionId], references: [id])
+  marcaFabricaSistemaInyeccionId Int?
   codigoOriginalBombaInyeccion  String
   nombreBombaInyeccion    String
   serieBombaInyeccion     String
