@@ -30,6 +30,8 @@ import * as yup from "yup";
 import { FormContext } from "../../../../contexts/form.context";
 import TableCodigosDetalle from "../../../../app/components/modules/TableCodigosDetalle";
 import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowUp, SearchNormal1, FilterSearch } from "iconsax-react";
+import { Table as Tabla, TableD, TableDOptions, TableHOptions, TableRH } from "../../../../app/components/elements/Table";
+import { ButtonCodigos, ButtonDelete, ButtonEdit, ButtonInspect } from "../../../../app/components/elements/Buttons";
 
 const schema = yup.object().shape({
   familiaId: yup.number(),
@@ -109,6 +111,8 @@ const [subsUpdate,setSubsUpdate]= useState(0);
   const {
     codigos,
     setCodigos,
+    openInfoModal,
+    setMaterialInfo,
     correlativo,
     setCorrelativo,
     materialInfo,
@@ -165,7 +169,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
         // codigoMotorOriginal: updateForm?.codigoMotorOriginal,           //! REMOVER
         // codigoBombaInyeccion: updateForm?.codigoBombaInyeccion,         //! REMOVER
 
-        marca: updateForm?.marca,                         //! Descomentar para nuevos
+        marca: updateForm?.marca,                         
         nombreInterno: updateForm?.nombreInterno,
         nombreComercial: updateForm?.nombreComercial,
       });
@@ -240,6 +244,8 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       });
       setCaracteristicasForm([]);
       closeModal();
+      setPage(0);
+      await handleSearchMaterials();
     } catch (error) {
       toast.error(<ToastAlert error={error} />, errorProps);
     }
@@ -264,18 +270,9 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       //   Header: "Código de Bomba de Inyección",
       //   accessor: "codigoBombaInyeccion",
       // },
-      {
-        Header: "Marca",
-        accessor: "marca",
-      },
-      {
-        Header: "Nombre Interno",
-        accessor: "nombreInterno",
-      },
-      {
-        Header: "Nombre Comercial",
-        accessor: "nombreComercial",
-      }
+      { Header: "Marca", accessor: "marca", },
+      { Header: "Nombre Interno", accessor: "nombreInterno", },
+      { Header: "Nombre Comercial", accessor: "nombreComercial", }
     ],
     []
   );
@@ -296,45 +293,35 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       { Header: "Marca del Motor", accessor: "marcaMotor" },
       { Header: "Procedencia del Motor", accessor: "procedenciaMotor" },
       { Header: "N° de cilindros", accessor: "numeroCilindros" },
-      {
-        Header: "Código fábrica Bomba de Inyeccion",
+      { Header: "Código fábrica Bomba de Inyeccion",
         accessor: "codigoFabricaBombaInyeccion",
       },
-      {
-        Header: "Tipo de Bomba de Inyeccion",
+      { Header: "Tipo de Bomba de Inyeccion",
         accessor: "tipoBombaInyeccion",
       },
-      {
-        Header: "Marca fábrica de Sistema deInyeccion",
+      { Header: "Marca fábrica de Sistema deInyeccion",
         accessor: "marcaFabricaSistemaInyeccion",
       },
-      {
-        Header: "Descripción de Bomba de Inyeccion",
+      { Header: "Descripción de Bomba de Inyeccion",
         accessor: "descripcionBombasInyeccion",
       },
-      {
-        Header: "Procedencia Bomba de Inyeccion",
+      { Header: "Procedencia Bomba de Inyeccion",
         accessor: "procedenciaBombaInyeccion",
       },
-      {
-        Header: "Código Original de Bomba de Inyección",
+      { Header: "Código Original de Bomba de Inyección",
         accessor: "codigoOriginalBombaInyeccion",
       },
-      {
-        Header: "Código fábrica de Inyector",
+      { Header: "Código fábrica de Inyector",
         accessor: "codigoFabricaInyector",
       },
-      {
-        Header: "Tipo fábrica de Inyector",
+      { Header: "Tipo fábrica de Inyector",
         accessor: "tipoFabricaInyector",
       },
-      {
-        Header: "Marca fábrica de Inyector",
+      { Header: "Marca fábrica de Inyector",
         accessor: "marcaFabricaInyector",
       },
       { Header: "Descripción Inyector", accessor: "descripcionInyector" },
-      {
-        Header: "Código Original de Inyector",
+      { Header: "Código Original de Inyector",
         accessor: "codigoOriginalInyector",
       },
       { Header: "Código Tobera", accessor: "codigoTobera" },
@@ -642,6 +629,8 @@ const [nombreInterno, setNombreInterno] = useState('');
 // const [page,setPage] = useState(0);
 const [dropdownMateriales, setDropdownMateriales] = useState([]); // Para almacenar los resultados de la API
 const [page, setPage] = useState(0);
+const [canPreviousPage, setCanPreviousPage] =useState(false);
+const { setElementId, setUpdateForm } = useContext(FormContext);
 
 //! onClick busqueda filtrada
 const handleSearchMaterials = async () => {
@@ -652,16 +641,39 @@ const handleSearchMaterials = async () => {
     );
     // console.log('page es:',page);
     console.log('Data filtrada:', data.data);
-    setDropdownMateriales(data?.data);
+
+    const modifiedData = data.data.map(material => ({
+      ...material,
+      familia: material.familia?.codigo || material.familia, // Solo guarda el valor de 'codigo'
+      subFamilia: material.subfamilia?.codigo || material.subfamilia, // Solo guarda el valor de 'codigo'
+    }));
+
+    console.log('Data modificada:', modifiedData);
+
+    setDropdownMateriales(modifiedData); // Almacenar el array modificado
   } catch (error) {
     console.error('Error fetching materials:', error);
   }
 };
 
+useEffect(() => {
+  handleSearchMaterials();
+}, [page]); // Se ejecuta cada vez que cambie `page`
 
 
-
-
+function nextPage(){
+  console.log('Incremento',{page})
+  setPage(page+1);
+  setCanPreviousPage(true)
+}
+function prevPage(){
+  let newPage = page-1;
+  if(newPage<=0){
+    newPage=0;
+    setCanPreviousPage(false)
+  }
+  setPage(newPage);
+}
 
 
   return (
@@ -674,15 +686,20 @@ const handleSearchMaterials = async () => {
           </div>
         </Title>
 
-        <button type="button" className="flex justify-space-between items-center p-1 gap-0 bg-secundary text-primary rounded-lg cursor-pointer hover:bg-secundary-800 w-[300px] text-sm" 
+        <button type="button" 
+        className={`flex justify-center items-center p-1 gap-0 rounded-lg cursor-pointer w-[25%] text-sm
+        ${isCustomSearchVisible ? 'bg-orange-500 text-white' : 'bg-secundary text-primary'}
+        hover:${isCustomSearchVisible ? 'bg-primary-800' : 'bg-secundary-800'}`}
         onClick={toggleCustomSearch}
       >
-        <FilterSearch />
+        <FilterSearch className="mr-2"/>
         Búsqueda Personalizada
+        {isCustomSearchVisible && <span> (Cerrar) </span>}
       </button>
 
 {/* ------------------------------------------ BUSQUEDA PERSONALIZADA ------------------------------- */}
         {isCustomSearchVisible && (
+          <>
         <div className="mt-0  bg-gray-100 p-1 rounded-lg"> 
             <div className=" mb-5 grid grid-cols-2 gap-3">
 
@@ -730,51 +747,101 @@ const handleSearchMaterials = async () => {
               </button>
 
         </div>
-      )}
+      
 
       {/* Tabla para mostrar los resultados */}
       <div className="mt-4">
-              <table className="min-w-full bg-white">
-                <thead>
-                  <tr>
-                    <th className="px-4 py-2">#</th>
-                    <th className="px-4 py-2">Código</th>
-                    <th className="px-4 py-2">Familia</th>
-                    <th className="px-4 py-2">Subfamilia</th>
-                    <th className="px-4 py-2">Correlativo</th>
-                    <th className="px-4 py-2">Denomicación</th>
-                    <th className="px-4 py-2">Stock</th>
-                    <th className="px-4 py-2">Código de fabricante</th>
-                    <th className="px-4 py-2">Marca</th>
-                    <th className="px-4 py-2">Nombre Interno</th>
-                    <th className="px-4 py-2">Nombre Comercial</th>
+              <table className="min-w-full bg-white text-xs">
+              <thead>
+                <tr>
+                  <th className="px-4 py-2 font-bold">#</th>
+                  <th className="px-4 py-2 font-bold">Código</th>
+                  <th className="px-4 py-2 font-bold">Familia</th>
+                  <th className="px-4 py-2 font-bold">Subfamilia</th>
+                  <th className="px-4 py-2 font-bold">Correlativo</th>
+                  <th className="px-4 py-2 font-bold">Denominación</th>
+                  <th className="px-4 py-2 font-bold">Stock</th>
+                  <th className="px-4 py-2 font-bold">Código de Fabricante</th>
+                  <th className="px-4 py-2 font-bold">Marca</th>
+                  <th className="px-4 py-2 font-bold">Nombre Interno</th>
+                  <th className="px-4 py-2 font-bold">Nombre Comercial</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dropdownMateriales.map((material, index) => (
+                  <tr key={index}>
+                    <td className="border-t px-4 py-2">{material.id}</td>
+                    <td className="border-t px-4 py-2">{material.codigo}</td>
+                    <td className="border-t px-4 py-2">{material.familia}</td>
+                    <td className="border-t px-4 py-2">{material.subFamilia}</td>
+                    <td className="border-t px-4 py-2">{material.correlativo}</td>
+                    <td className="border-t px-4 py-2">{material.denominacion}</td>
+                    <td className="border-t px-4 py-2">{material.stock}</td>
+                    <td className="border-t px-4 py-2">{material.codigoFabricante}</td>
+                    <td className="border-t px-4 py-2">{material.marca}</td>
+                    <td className="border-t px-4 py-2">{material.nombreInterno}</td>
+                    <td className="border-t px-4 py-2">{material.nombreComercial}</td>
+                    <TableDOptions>
+                    <ButtonEdit
+                      onClick={() => {
+
+                // Cargar los datos del material seleccionado en el modal
+                
+                
+                setCodigos({
+                  aplicacionMaquina: material?.aplicacionDeMaquina ?? [],
+                  equivalencia: material?.materialEquivalencia ?? [],
+                  reemplazo: material?.materialReemplazo ?? [],
+                  similitud: material?.materialSimilitud ?? [],
+                });
+                setUpdateForm(material); // Suponiendo que setUpdateForm es un setter de estado
+                setCorrelativo(material.correlativo);
+                setElementId(material.id);
+                    openModal(true);
+                      }}
+                    />
+                    <ButtonDelete
+                      onClick={() => {
+                        setElementId(material.id);
+                        setIsOpenModalDelete(true);
+                      }}
+                    />
+                    <ButtonInspect
+                      onClick={() => {
+                        console.log('Info de row filtertable',material)
+                        openInfoModal();
+                        setMaterialInfo(material);
+                      }}
+                    />
+                  </TableDOptions>
                   </tr>
-                </thead>
-                <tbody>
-                  {dropdownMateriales.map((material, index) => (
-                    <tr key={index}>
-                      <td className="border px-4 py-2">{material.id}</td>
-  
-                      <td className="border px-4 py-2">{material.codigo}</td>
-                      <td className="border px-4 py-2">{material.familia.codigo}</td>
-                      <td className="border px-4 py-2">{material.subfamilia.codigo}</td>
-                      <td className="border px-4 py-2">{material.correlativo}</td>
-                      <td className="border px-4 py-2">{material.denominacion}</td>
-                      <td className="border px-4 py-2">{material.stock}</td>
-                      <td className="border px-4 py-2">{material.codigoFabricante}</td>
-                      <td className="border px-4 py-2">{material.marca}</td>
-                      <td className="border px-4 py-2">{material.nombreInterno}</td>
-                      <td className="border px-4 py-2">{material.nombreComercial}</td>
-                    </tr>
-                  ))}
-                </tbody>
+                ))}
+              </tbody>
               </table>
+              <div className="flex gap-2 justify-end items-center text-xs">
+
+              <button
+                className="cursor-pointer text-primary-700 hover:text-primary disabled:text-primary-300"
+                onClick={prevPage}
+                disabled={!canPreviousPage}  
+              >  <ArrowLeft2 />
+              </button>   
+              <span><strong>{page}</strong>{" "}</span>
+              <button
+                className="cursor-pointer text-primary-700 hover:text-primary disabled:text-primary-300"
+                onClick={nextPage}
+                // disabled={!canNextPage}
+              > <ArrowRight2 />
+              </button>
+              
             </div>
+                <br className="border-t px-1 black"></br>
+        </div>
+          </>
+        )}
 
 
-
-
-
+{!isCustomSearchVisible &&(<>  
         {/* Table list */}
         <TableMateriales
           columns={columns}
@@ -782,6 +849,11 @@ const handleSearchMaterials = async () => {
           openModal={openModal}
           setIsOpenModalDelete={setIsOpenModalDelete}
         />
+        </> )}
+
+
+
+
       </TemplateMaestroCodigos>
       
       {/* Modal agregar */}
@@ -902,38 +974,7 @@ const handleSearchMaterials = async () => {
               />
 
             </GroupInputs>
-                {/* <Input
-                  label={"Tipo fabricante"}
-                  defaultValue={isEdit ? updateForm?.tipoFabricante : undefined}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      tipoFabricante: e.target.value,
-                    })
-                  }
-                /> */}
-            {/* <GroupInputs>
-              <Input
-                label={"Código de motor original"}
-                defaultValue={isEdit ? updateForm?.codigoMotorOriginal : undefined}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    codigoMotorOriginal: e.target.value,
-                  })
-                }
-              />
-              <Input
-                label={"Código de bomba de inyección"}
-                defaultValue={isEdit ? updateForm?.codigoBombaInyeccion : undefined}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    codigoBombaInyeccion: e.target.value,
-                  })
-                }
-              />
-            </GroupInputs> */}
+
           </Group>
           
           
@@ -1086,46 +1127,46 @@ const handleSearchMaterials = async () => {
                     key={caracteristica.id}
                     className="flex flex-row gap-5 items-center justify-between"
                   >
-        <Checkbox
-        onChange={(e) => {
-          const newCaracteristicas = caracteristicasForm;
-          const caracteristicaIndex = newCaracteristicas.findIndex(
-            (item) => item.caracteristicaId === caracteristica.id
-          );
+                  <Checkbox
+                  onChange={(e) => {
+                    const newCaracteristicas = caracteristicasForm;
+                    const caracteristicaIndex = newCaracteristicas.findIndex(
+                      (item) => item.caracteristicaId === caracteristica.id
+                    );
 
-          let updatedNombreInterno = form.nombreInterno || "";
+                    let updatedNombreInterno = form.nombreInterno || "";
 
-          // Si se selecciona el checkbox
-          if (e.target.checked) {
-            const concatString = `${caracteristica.descripcion} ${newCaracteristicas[caracteristicaIndex]?.valor || ""}`;
-            if (!updatedNombreInterno.includes(concatString)) {
-              updatedNombreInterno += ` ${concatString}`;
-            }
-            if (caracteristicaIndex === -1) {
-              newCaracteristicas.push({
-                caracteristicaId: caracteristica.id,
-                isChecked: true,
-                valor: "",
-              });
-            } else {
-              newCaracteristicas[caracteristicaIndex].isChecked = true;
-            }
-          } else {
-            // Si se deselecciona el checkbox, eliminar la característica del nombre interno
-            const concatString = `${caracteristica.descripcion} ${newCaracteristicas[caracteristicaIndex]?.valor || ""}`;
-            updatedNombreInterno = updatedNombreInterno.replace(` ${concatString}`, "");
-            if (caracteristicaIndex !== -1) {
-              newCaracteristicas[caracteristicaIndex].isChecked = false;
-            }
-          }
+                    // Si se selecciona el checkbox
+                    if (e.target.checked) {
+                      const concatString = `${caracteristica.descripcion} ${newCaracteristicas[caracteristicaIndex]?.valor || ""}`;
+                      if (!updatedNombreInterno.includes(concatString)) {
+                        updatedNombreInterno += ` ${concatString}`;
+                      }
+                      if (caracteristicaIndex === -1) {
+                        newCaracteristicas.push({
+                          caracteristicaId: caracteristica.id,
+                          isChecked: true,
+                          valor: "",
+                        });
+                      } else {
+                        newCaracteristicas[caracteristicaIndex].isChecked = true;
+                      }
+                    } else {
+                      // Si se deselecciona el checkbox, eliminar la característica del nombre interno
+                      const concatString = `${caracteristica.descripcion} ${newCaracteristicas[caracteristicaIndex]?.valor || ""}`;
+                      updatedNombreInterno = updatedNombreInterno.replace(` ${concatString}`, "");
+                      if (caracteristicaIndex !== -1) {
+                        newCaracteristicas[caracteristicaIndex].isChecked = false;
+                      }
+                    }
 
-          setCaracteristicasForm([...newCaracteristicas]);
-          setForm({ ...form, nombreInterno: updatedNombreInterno });
-        }}
-        id={caracteristica.id.toString()}
-        label={caracteristica.descripcion}
-        defaultChecked={!!caracteristica?.isChecked}
-      />
+                    setCaracteristicasForm([...newCaracteristicas]);
+                    setForm({ ...form, nombreInterno: updatedNombreInterno });
+                  }}
+                  id={caracteristica.id.toString()}
+                  label={caracteristica.descripcion}
+                  defaultChecked={!!caracteristica?.isChecked}
+                />
       <div className="w-72">
         <Input
           onChange={(e) => {

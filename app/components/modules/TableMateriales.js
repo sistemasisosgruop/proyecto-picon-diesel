@@ -133,33 +133,6 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
     usePagination // usePagination!
   );
 
-  // //! Función para alternar la visibilidad de la sección filtros
-  // const [isCustomSearchVisible, setCustomSearchVisible] = useState(false);
-  // const toggleCustomSearch = () => {
-  //   setCustomSearchVisible(!isCustomSearchVisible);
-  // };
-  // //! Estados para cada input de filtros personalizados
-  // const [nombreComercial, setNombreComercial] = useState('');
-  // const [marca, setMarca] = useState('');
-  // const [codigoReferencia, setCodigoReferencia] = useState('');
-  // const [nombreInterno, setNombreInterno] = useState('');
-  // // const [page,setPage] = useState(0);
-  // const [dropdownMateriales, setDropdownMateriales] = useState([]); // Para almacenar los resultados de la API
-
-  // //! onClick busqueda filtrada
-  // const handleSearchMaterials = async () => {
-  //   try {
-  //     const { data } = await axiosRequest(
-  //       "get",
-  //       `/api/mantenimiento/maestro-de-codigos/configuracion/materiales?empresaId=${3}&page=${0}&take=${30}&marca=${marca}&codigoReferencia=${codigoReferencia}&nombreComercial=${nombreComercial}&nombreInterno=${nombreInterno}`
-  //     );
-  //     console.log('page es:',page);
-  //     console.log('Data filtrada:', data.data);
-  //     setDropdownMateriales(data?.data);
-  //   } catch (error) {
-  //     console.error('Error fetching materials:', error);
-  //   }
-  // };
 
 
   return (
@@ -171,13 +144,6 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
         setGlobalFilter={setGlobalFilter}
       />
 
-      {/* <button type="button" className="flex justify-space-between items-center p-1 gap-0 bg-secundary text-primary rounded-lg cursor-pointer hover:bg-secundary-800 w-[300px] text-sm" 
-        onClick={toggleCustomSearch}
-      >
-        <FilterSearch />
-        Búsqueda Personalizada
-      </button> */}
-      
 
 
     </div>
@@ -271,6 +237,7 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                   />
                   <ButtonInspect
                     onClick={() => {
+                      // console.log('Info de row tabla orig',row)
                       openInfoModal();
                       setMaterialInfo(row.original);
                     }}

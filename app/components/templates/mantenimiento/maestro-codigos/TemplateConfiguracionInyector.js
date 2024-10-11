@@ -4,11 +4,11 @@ import { LayoutConfiguracion } from "../../../layouts/LayoutConfiguracion";
 
 export const TemplateConfiguracionInyector = ({ children }) => {
 	const menu = [
-		{
-			icon: <Box1 />,
-			modulo: "Marcas de fabricas de inyector",
-			href: "/mantenimiento/maestro-de-codigos/configuracion/inyector/marca",
-		},
+		// {
+		// 	icon: <Box1 />,
+		// 	modulo: "Marcas de fabricas de inyector",
+		// 	href: "/mantenimiento/maestro-de-codigos/configuracion/inyector/marca",
+		// },
 		{
 			icon: <Box1 />,
 			modulo: "Descripción Inyector",

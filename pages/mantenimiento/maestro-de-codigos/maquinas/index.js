@@ -77,7 +77,8 @@ export default function Maquinas() {
     codigoOriginalInyector: null,
     codigoTobera: null,
     tipoTobera: null,
-    codigoOriginalTobera:null   //! Se agregó 
+    codigoOriginalTobera:null,   //! Se agregó 
+    marcaToberaId:null// Agregado
   });
   const {
     updateForm,
@@ -118,7 +119,8 @@ export default function Maquinas() {
       codigoOriginalInyector: null,
       codigoTobera: null,
       tipoTobera: null,
-      codigoOriginalTobera:null     //! Se agregó 
+      codigoOriginalTobera:null,     //! Se agregó 
+      marcaToberaId:null    // Agregado
     });
   }, [resetInfo]);
 
@@ -157,7 +159,8 @@ export default function Maquinas() {
       codigoOriginalInyector: null,
       codigoTobera: null,
       tipoTobera: null,
-      codigoOriginalTobera:null
+      codigoOriginalTobera:null,
+      marcaToberaId: null
     });
     refetch();
   }, [changeData]);
@@ -272,17 +275,18 @@ export default function Maquinas() {
       { Header: "Código Tobera", accessor: "codigoTobera" },
       { Header: "Tipo Tobera", accessor: "tipoTobera" },
       { Header: "Código Orig. Tobera", accessor: "codigoOriginalTobera" },
-      
+      // { Header: "Marca Tobera", accessor: "marcaToberaId" },             //! Agregar marca a tobera
     ],
     []
   );
 
   const getMaquinas = async () => {
+    
     const { data } = await axiosRequest(
       "get",
-      `/api/mantenimiento/maestro-de-codigos/configuracion/maquinas?empresaId=${empresaId}`
+      `/api/mantenimiento/maestro-de-codigos/configuracion/maquinas?empresaId=${3}`
     );
-
+    console.log({empresaId},'Maquinas Lista',data);
     return data;
   };
   const { data: maquinasResponse, refetch } = useQuery("maquinas", getMaquinas, {
@@ -322,7 +326,8 @@ export default function Maquinas() {
 
           codigoTobera: maquina.codigoTobera,
           tipoTobera: maquina.tipoTobera,
-          codigoOriginalTobera:maquina.codigoOriginalTobera
+          codigoOriginalTobera:maquina.codigoOriginalTobera,
+          // marcaToberaId:maquina,marcaToberaId        //! AGREGAR
         };
       }),
     [maquinasResponse?.data]
@@ -371,6 +376,8 @@ export default function Maquinas() {
           setIsOpenModalDelete={setIsOpenModalDelete}
         />
       </TemplateMaestroCodigos>
+
+
       {/* Modal agregar */}
       <ModalLg
           title={isEdit ? "Editar Máquina" : "Nueva Máquina"}
@@ -611,11 +618,25 @@ export default function Maquinas() {
                   defaultValue={isEdit ? updateForm?.tipoTobera : undefined}
                   onChange={(e) => setForm({ ...form, tipoTobera: e.target.value })}
                 />
-                <Input
+
+              </GroupInputs>
+              <GroupInputs>
+              <Input
                   label={"Código Original Tobera"}
                   defaultValue={isEdit ? updateForm?.codigoOriginalTobera : undefined}
                   onChange={(e) => setForm({ ...form, codigoOriginalTobera: e.target.value })}
                 />
+                <Select
+                  label={"Marca Tobera"}
+                  onChange={(value) => setForm({ ...form, marcaMotorId: value })}
+                  value={isEdit ? updateForm?.marcaMotorId : undefined}
+                >
+                  {marcaMotores?.map(({ id, marca }) => (
+                    <Option key={id} value={id}>
+                      {marca}
+                    </Option>
+                  ))}
+                </Select>
               </GroupInputs>
             </Group>
             

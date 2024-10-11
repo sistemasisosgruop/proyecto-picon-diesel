@@ -38,18 +38,18 @@ export default function TemplateMaestroCodigos({ children }) {
 		},
 		{
 			icon: <Setting2 />,
-			modulo: "Marcas de motor",
+			modulo: "Marcas",
 			href: "/mantenimiento/maestro-de-codigos/configuracion/motor/marcas",
 		},
 		{
 			icon: <Setting2 />,
 			modulo: "Configuración de Bomba de inyección",
-			href: "/mantenimiento/maestro-de-codigos/configuracion/bomba-inyeccion/marca",
+			href: "/mantenimiento/maestro-de-codigos/configuracion/bomba-inyeccion/descripcion",
 		},
 		{
 			icon: <Setting2 />,
 			modulo: "Configuración de Inyector",
-			href: "/mantenimiento/maestro-de-codigos/configuracion/inyector/marca",
+			href: "/mantenimiento/maestro-de-codigos/configuracion/inyector/descripcion",
 		},
 	];
 
