@@ -1161,7 +1161,7 @@ function prevPage(){
                     }
 
                     setCaracteristicasForm([...newCaracteristicas]);
-                    setForm({ ...form, nombreInterno: updatedNombreInterno });
+                    setForm({ ...form, nombreInterno: updatedNombreInterno, caracteristicas: caracteristicasForm });
                   }}
                   id={caracteristica.id.toString()}
                   label={caracteristica.descripcion}
@@ -1192,7 +1192,7 @@ function prevPage(){
             }
 
             setCaracteristicasForm([...newCaracteristicas]);
-            setForm({ ...form, nombreInterno: updatedNombreInterno });
+            setForm({ ...form, nombreInterno: updatedNombreInterno, caracteristicas: caracteristicasForm });
           }}
           label={"Valor"}
           defaultValue={caracteristica?.valor ?? undefined}
