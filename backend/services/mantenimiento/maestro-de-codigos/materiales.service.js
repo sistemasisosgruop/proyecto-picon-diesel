@@ -102,7 +102,7 @@ export class MatrialesService {
       aplicacionDeMaquina,
       familiaId,
       subFamiliaId,
-      caracteristicas,
+      caracteristicaToMaterial,
     } = data;
     console.log(data, 'DATA PARA EDITAR');
     const setMaterialSimilutud =
@@ -159,10 +159,11 @@ export class MatrialesService {
     });
 
     const dataCaracteristicasToMat = [];
-    if (caracteristicas && caracteristicas.length > 0) {
-      for (const caracteristica of caracteristicas) {
+    if (caracteristicaToMaterial && caracteristicaToMaterial.length > 0) {
+      for (const caracteristica of caracteristicaToMaterial) {
         dataCaracteristicasToMat.push({
-          caracteristicaId: caracteristica.caracteristicaId,
+          materialId:Number(id),
+          caracteristicaId: caracteristica.caracteristica.id,
           isChecked: true,
           valor: caracteristica.valor,
         });
