@@ -9,7 +9,7 @@ export class MatrialesService {
       materialEquivalencia,
       materialReemplazo,
       aplicacionDeMaquina,
-      empresaId,
+      // empresaId,
       familiaId,
       subFamiliaId,
       caracteristicaToMaterial,
@@ -145,6 +145,7 @@ export class MatrialesService {
         // empresaId: Number(empresaId),
         familiaId: Number(familiaId),
         subfamiliaId: Number(subFamiliaId),
+        marcaId: data.marcaId,
         denominacion: data.denominacion,
         codigoBombaInyeccion: data.codigoBombaInyeccion,
         codigoMotorOriginal: data.codigoMotorOriginal,
@@ -303,7 +304,7 @@ export class MatrialesService {
 
   static async getMateriales(queryParams) {
     const {
-      empresaId,
+      // empresaId,
       filterName,
       page,
       take,
@@ -317,7 +318,7 @@ export class MatrialesService {
     const skipValue = page > 0 ? Number(page * take) : undefined;
     const takeValue = take > 0 ? Number(take) : undefined;
     const whereFilter = {
-      empresaId,
+      // empresaId,
       ...(marca && { marca }),
       ...(codigoReferencia && { codigoReferencia }),
       ...(nombreComercial && { nombreComercial }),
@@ -395,6 +396,13 @@ export class MatrialesService {
       take: takeValue,
 
       include: {
+        marca: {
+          select: {
+            id: true,
+            codigo: true,
+            marca: true,
+          },
+        },
         familia: {
           select: {
             codigo: true,
