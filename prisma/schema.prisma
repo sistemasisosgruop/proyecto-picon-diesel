@@ -715,6 +715,7 @@ model Marca {
   marca     String
   empresa   Empresa?  @relation(fields: [empresaId], references: [id])
   empresaId Int
+  marcaMaterial Material[]
   marcaMotor   Maquina[] @relation(name: "marcaMotor")
   maquinaMarcaFabricaSistemaInyeccion   Maquina[] @relation(name: "marcaFabricaSistemaInyeccion")
   maquinaMarcaFabricaInyector   Maquina[] @relation(name: "marcaFabricaInyector")
@@ -852,7 +853,8 @@ model Material {
   tipoFabricante                    String?
   nombreInterno                     String? //Nuevo
   nombreComercial                   String? //Nuevo
-  marca                             String? //Nuevo
+  marca                     Marca                   @relation(fields: [marcaId], references: [id])
+  marcaId                   Int
   materialReemplazo                 Json?
   materialSimilitud                 Json?
   materialEquivalencia              Json?
