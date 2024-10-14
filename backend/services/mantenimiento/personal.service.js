@@ -4,7 +4,17 @@ import { generateCode } from "../../utils/codes";
 
 export class PersonalService {
   static async createPersonal(data) {
-    const { nombre, password, email, telefono, direccion, empresaId, role, puesto } = data;
+    const {
+      nombre,
+      password,
+      email,
+      telefono,
+      direccion,
+      empresaId,
+      role,
+      puesto,
+      porcentajeComision,
+    } = data;
     const bcryptPassword = await encryptPassword(password);
     const cipherPassword = encrypt(password);
 
@@ -16,6 +26,7 @@ export class PersonalService {
         password: bcryptPassword,
         telefono,
         direccion,
+        porcentajeComision,
         passwordEncrypted: cipherPassword,
         empresa: {
           connect: {
@@ -43,7 +54,7 @@ export class PersonalService {
   }
 
   static async updatePersonal(id, data) {
-    const { nombre, password, email, telefono, direccion } = data;
+    const { nombre, password, email, telefono, direccion, porcentajeComision } = data;
     const bcryptPassword = await encryptPassword(password);
     const cipherPassword = encrypt(password);
 
@@ -58,6 +69,7 @@ export class PersonalService {
         passwordEncrypted: password.length > 0 ? cipherPassword : undefined,
         telefono,
         direccion,
+        porcentajeComision,
       },
     });
 

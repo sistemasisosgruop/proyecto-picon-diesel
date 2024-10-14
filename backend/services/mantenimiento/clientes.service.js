@@ -3,11 +3,11 @@ import { generateCodeCliente, generateCodeTipoCliente } from "../../utils/codes"
 
 export class ClienteService {
   static async createTipoCliente(data) {
-    const { tipo, empresaId } = data;
+    const { tipo } = data;
     const tipoCliente = await prisma.tipoCliente.create({
       data: {
         tipo,
-        empresaId,
+        // empresaId,
       },
     });
 
@@ -76,7 +76,7 @@ export class ClienteService {
       telefono,
       formaPago,
       email,
-      empresaId,
+      // empresaId,
       paisId,
       trabajadores,
     } = data;
@@ -106,7 +106,7 @@ export class ClienteService {
         telefono,
         formaPago,
         email,
-        empresaId,
+        // empresaId,
         tipoClienteId,
         paisId,
         trabajadores: formatTrabajadores,
@@ -187,7 +187,7 @@ export class ClienteService {
   static async getClientes(empresaId, filterName) {
     const cliente = await prisma.cliente.findMany({
       where: {
-        empresaId,
+        // empresaId,
         estado: "Activo",
         ...(filterName && {
           OR: [

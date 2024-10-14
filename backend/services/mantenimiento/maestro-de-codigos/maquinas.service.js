@@ -1,15 +1,15 @@
-import prisma from '../../../prisma';
-import { generateCodeMaquina } from '../../../utils/codes';
+import prisma from "../../../prisma";
+import { generateCodeMaquina } from "../../../utils/codes";
 
 export class MaquinaService {
   static async createMaquina(data) {
     const { ...props } = data;
-    console.log(data, 'CREATE DATA MAQUINA');
+    console.log(data, "CREATE DATA MAQUINA");
     try {
       const newMaquinaCreate = {
         ...props,
       };
-      console.log(newMaquinaCreate, 'newMaquinaCreate');
+      console.log(newMaquinaCreate, "newMaquinaCreate");
       const maquina = await prisma.maquina.create({
         data: newMaquinaCreate,
       });
@@ -26,7 +26,7 @@ export class MaquinaService {
       return newMaquina;
     } catch (error) {
       console.log(error);
-      throw new Error('Error al crear Maquina:' + error);
+      throw new Error("Error al crear Maquina:" + error);
     }
   }
 
@@ -56,7 +56,7 @@ export class MaquinaService {
   static async getMaquinas(empresaId, filterName) {
     return prisma.maquina.findMany({
       where: {
-        empresaId,
+        // empresaId,
         ...(filterName && {
           OR: [
             {

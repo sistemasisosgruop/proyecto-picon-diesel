@@ -27,7 +27,7 @@ model Empresa {
   parametrosGlobales           ParametroGlobal[]
   personal                     Personal[]
   vendedores                   Vendedor[]
-  clientes                     Cliente[]
+  // clientes                     Cliente[]
   costos                       Costo[]
   banco                        Banco[]
   cuentasBancarias             CuentaBancaria[]
@@ -62,8 +62,8 @@ model Empresa {
   descripcionBombaInyeccion    DescripcionBombaInyeccion[]
   marcaFabricaInyector         MarcaFabricaInyector[]
   descripcionInyector          DescripcionInyector[]
-  maquina                      Maquina[]
-  material                     Material[]
+  // maquina                      Maquina[]
+  // material                     Material[]
   FamiliaPresupuesto           FamiliaPresupuesto[]
   MaterialPresupuesto          MaterialPresupuesto[]
   Cotizacion                   Cotizacion[]
@@ -213,6 +213,7 @@ model Personal {
   puestoId          Int?
   estado            EstadoEnum       @default(Activo)
   direccion         String
+  porcentajeComision Int?
   role              Role[]
   empresa           Empresa[]
   Cotizacion        Cotizacion[]
@@ -300,8 +301,8 @@ model Cliente {
   estado          EstadoEnum        @default(Activo)
   tipoCliente     TipoCliente?      @relation(fields: [tipoClienteId], references: [id])
   tipoClienteId   Int?
-  empresa         Empresa?          @relation(fields: [empresaId], references: [id])
-  empresaId       Int?
+  // empresa         Empresa?          @relation(fields: [empresaId], references: [id])
+  // empresaId       Int?
   pais            Pais              @relation(fields: [paisId], references: [id])
   paisId          Int   
   trabajadores    Json            
@@ -829,8 +830,8 @@ model Maquina {
   codigoTobera                   String
   tipoTobera                     String
   codigoOriginalTobera           String?
-  empresa                        Empresa?                      @relation(fields: [empresaId], references: [id])
-  empresaId                      Int
+  // empresa                        Empresa?                      @relation(fields: [empresaId], references: [id])
+  // empresaId                      Int
   Cotizacion                     Cotizacion[]
   guiaRemisionServicios GuiaRemisionServicios[]
   facturaServicios      FacturaServicios[]
@@ -857,8 +858,8 @@ model Material {
   materialEquivalencia              Json?
   aplicacionDeMaquina               Json?
   caracteristicaToMaterial          CaracteristicaToMaterial[]
-  empresa                           Empresa?                   @relation(fields: [empresaId], references: [id])
-  empresaId                         Int
+  // empresa                           Empresa?                   @relation(fields: [empresaId], references: [id])
+  // empresaId                         Int
   stock                             Int?                       @default(0)
   codigoMotorOriginal               String?
   codigoBombaInyeccion              String?

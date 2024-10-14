@@ -48,7 +48,7 @@ export class MatrialesService {
       const dataNewMaterial = {
         codigo: genCodigo,
         correlativo: `${familia.codigo}${subFamilia.codigo}${genCodigo}`,
-        empresaId: Number(empresaId),
+        // empresaId: Number(empresaId),
         familiaId: Number(familiaId),
         subfamiliaId: Number(subFamiliaId),
         nombreInterno,
