@@ -123,7 +123,7 @@ model Pais {
   maquinasMotores          Maquina[] @relation(name: "motorPais")
   hojaRecepcion HojaRecepcion[]
   presupuestos  Presupuesto[]
-
+  clientes      Cliente[]
   @@unique([codigo, empresaId])
   @@map("pais")
 }
@@ -295,12 +295,16 @@ model Cliente {
   numeroDocumento String            @map("numero_documento")
   nombre          String
   email           String
-  telefono        String
+  telefono        String?
+  formaPago       String?
   estado          EstadoEnum        @default(Activo)
   tipoCliente     TipoCliente?      @relation(fields: [tipoClienteId], references: [id])
   tipoClienteId   Int?
   empresa         Empresa?          @relation(fields: [empresaId], references: [id])
   empresaId       Int?
+  pais            Pais              @relation(fields: [paisId], references: [id])
+  paisId          Int   
+  trabajadores    Json            
   Cotizacion      Cotizacion[]
   cotizacionesAprov AprovacionCotizacion[]
   pedidosAprov    AprovacionPedido[]
@@ -320,6 +324,7 @@ model Costo {
   codigo      String?    
   nombre      String
   responsable String
+  referencia  String?
   estado      EstadoEnum @default(Activo)
   empresa     Empresa?   @relation(fields: [empresaId], references: [id])
   empresaId   Int?
@@ -331,6 +336,7 @@ model Banco {
   id               Int              @id @default(autoincrement())
   codigo           String?          @unique
   nombre           String
+  referencia       String?
   cuentasBancarias CuentaBancaria[]
   empresa          Empresa?         @relation(fields: [empresaId], references: [id])
   empresaId        Int?

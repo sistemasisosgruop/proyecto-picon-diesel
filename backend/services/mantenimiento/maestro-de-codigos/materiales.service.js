@@ -1,6 +1,6 @@
-import { Prisma } from '@prisma/client';
-import prisma from '../../../prisma';
-import { generateCode } from '../../../utils/codes';
+import { Prisma } from "@prisma/client";
+import prisma from "../../../prisma";
+import { generateCode } from "../../../utils/codes";
 
 export class MatrialesService {
   static async createMaterial(data) {
@@ -16,7 +16,7 @@ export class MatrialesService {
       nombreInterno,
       nombreComercial,
     } = data;
-    console.log(data, 'DATA PARA CREAR');
+    console.log(data, "DATA PARA CREAR");
 
     const setMaterialSimilutud =
       materialSimilitud?.length > 0 ? materialSimilitud : Prisma.JsonNull;
@@ -38,13 +38,13 @@ export class MatrialesService {
       },
     });
     if (!familia || !subFamilia) {
-      throw new Error('Familia y SubFamilia debe existir.');
+      throw new Error("Familia y SubFamilia debe existir.");
     }
 
     let responseTransaction;
     try {
       const genCodigo = await this.generarCodigo(Number(subFamiliaId));
-      console.log(genCodigo, 'CODIGO');
+      console.log(genCodigo, "CODIGO");
       const dataNewMaterial = {
         codigo: genCodigo,
         correlativo: `${familia.codigo}${subFamilia.codigo}${genCodigo}`,
@@ -66,7 +66,8 @@ export class MatrialesService {
         stock: 0,
         ventaUnidad: 0,
       };
-      console.log(dataNewMaterial, 'POR CREAR');
+      console.log(dataNewMaterial, "POR CREAR");
+      console.log(caracteristicaToMaterial, "CATARACTERISTICAS");
       const crearMaterial = await prisma.material.create({
         data: dataNewMaterial,
       });
@@ -82,15 +83,15 @@ export class MatrialesService {
           });
         }
       }
-
+      console.log(dataCaracteristicasToMat, "** dataCaracteristicasToMat **");
       const saveCaracteristicasToMat = prisma.caracteristicaToMaterial.createMany({
         data: dataCaracteristicasToMat,
       });
 
       responseTransaction = await prisma.$transaction([saveCaracteristicasToMat]);
     } catch (error) {
-      console.error('Error en la transacción', error);
-      throw new Error('Error en la guardar transacción');
+      console.error("Error en la transacción", error);
+      throw new Error("Error en la guardar transacción");
     }
     return responseTransaction;
   }
@@ -105,7 +106,7 @@ export class MatrialesService {
       subFamiliaId,
       caracteristicas,
     } = data;
-    console.log(data, 'DATA PARA EDITAR');
+    console.log(data, "DATA PARA EDITAR");
     const setMaterialSimilutud =
       materialSimilitud?.length > 0 ? materialSimilitud : Prisma.JsonNull;
     const setMaterialEquivalencia =
@@ -116,7 +117,7 @@ export class MatrialesService {
       aplicacionDeMaquina?.length > 0 ? aplicacionDeMaquina : Prisma.JsonNull;
 
     const currMaterial = await prisma.material.findUnique({ where: { id: Number(id) } });
-    console.log(currMaterial, 'CURR MATERIAL');
+    console.log(currMaterial, "CURR MATERIAL");
     let genCodigo = currMaterial.codigo;
     let genCorrelativo = currMaterial.correlativo;
     if (
@@ -184,8 +185,8 @@ export class MatrialesService {
         saveCaracteristicasToMat,
       ]);
     } catch (error) {
-      console.error('Error en la transacción', error);
-      throw new Error('Error en la EDITAR transacción');
+      console.error("Error en la transacción", error);
+      throw new Error("Error en la EDITAR transacción");
     }
 
     return responseTransaction;
@@ -284,7 +285,7 @@ export class MatrialesService {
     });
 
     if (material.count === 0) {
-      throw new Error('No se puede eliminar el material porque tiene stock');
+      throw new Error("No se puede eliminar el material porque tiene stock");
     }
 
     return material;
@@ -311,7 +312,7 @@ export class MatrialesService {
       nombreInterno,
       nombreComercial,
     } = queryParams;
-    console.log(queryParams, 'PARAMETROS');
+    console.log(queryParams, "PARAMETROS");
 
     const skipValue = page > 0 ? Number(page * take) : undefined;
     const takeValue = take > 0 ? Number(take) : undefined;
@@ -326,32 +327,32 @@ export class MatrialesService {
           {
             codigoFabricante: {
               contains: filterName,
-              mode: 'insensitive',
+              mode: "insensitive",
             },
           },
           {
             codigo: {
               contains: filterName,
-              mode: 'insensitive',
+              mode: "insensitive",
             },
           },
           {
             correlativo: {
               contains: filterName,
-              mode: 'insensitive',
+              mode: "insensitive",
             },
           },
           {
             denominacion: {
               contains: filterName,
-              mode: 'insensitive',
+              mode: "insensitive",
             },
           },
           {
             familia: {
               codigo: {
                 contains: filterName,
-                mode: 'insensitive',
+                mode: "insensitive",
               },
             },
           },
@@ -359,7 +360,7 @@ export class MatrialesService {
             subfamilia: {
               codigo: {
                 contains: filterName,
-                mode: 'insensitive',
+                mode: "insensitive",
               },
             },
           },
@@ -428,20 +429,20 @@ export class MatrialesService {
   static async generarCodigo(subfamiliaId) {
     const lasMaterial = await prisma.material.findFirst({
       orderBy: {
-        codigo: 'desc',
+        codigo: "desc",
       },
       select: {
         codigo: true,
       },
       where: { subfamiliaId },
     });
-    console.log(lasMaterial, 'LAST MATERIAL');
+    console.log(lasMaterial, "LAST MATERIAL");
     let codigo;
     if (lasMaterial) {
       const nextCodigo = parseInt(lasMaterial.codigo, 10) + 1;
-      codigo = String(nextCodigo).padStart(4, '0');
+      codigo = String(nextCodigo).padStart(4, "0");
     } else {
-      codigo = '0001';
+      codigo = "0001";
     }
     return codigo;
   }

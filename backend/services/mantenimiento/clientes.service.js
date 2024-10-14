@@ -68,17 +68,48 @@ export class ClienteService {
   }
 
   static async createCliente(data) {
-    const { nombre, tipoDocumento, numeroDocumento, tipoClienteId, telefono, email, empresaId } =
-      data;
+    const {
+      nombre,
+      tipoDocumento,
+      numeroDocumento,
+      tipoClienteId,
+      telefono,
+      formaPago,
+      email,
+      empresaId,
+      paisId,
+      trabajadores,
+    } = data;
+    console.log(data, "DATA CLIENTES");
+    const formatTrabajadores = [];
+    if (trabajadores && trabajadores.length > 0) {
+      for (const trabador of trabajadores) {
+        formatTrabajadores.push({
+          nombreTrabajador: trabador.nombreTrabajador,
+          cargo: trabador.cargo,
+          dni: trabador.dni,
+          correo: trabador.correo,
+          telefono: trabador.telefono,
+          nroLicencia: trabador.nroLicencia,
+          placa: trabador.placa,
+          envioCorreo: trabador.envioCorreo,
+          transportista: trabador.transportista,
+        });
+      }
+    }
+
     const cliente = await prisma.cliente.create({
       data: {
         nombre,
         tipoDocumento,
         numeroDocumento,
         telefono,
+        formaPago,
         email,
         empresaId,
         tipoClienteId,
+        paisId,
+        trabajadores: formatTrabajadores,
       },
     });
 
@@ -94,7 +125,33 @@ export class ClienteService {
   }
 
   static async updateCliente(id, data) {
-    const { nombre, tipoDocumento, numeroDocumento, tipoClienteId, telefono, email } = data;
+    const {
+      nombre,
+      tipoDocumento,
+      numeroDocumento,
+      tipoClienteId,
+      formaPago,
+      telefono,
+      email,
+      trabajadores,
+    } = data;
+
+    const formatTrabajadores = [];
+    if (trabajadores && trabajadores.length > 0) {
+      for (const trabador of trabajadores) {
+        formatTrabajadores.push({
+          nombreTrabajador: trabador.nombreTrabajador,
+          cargo: trabador.cargo,
+          dni: trabador.dni,
+          correo: trabador.correo,
+          telefono: trabador.telefono,
+          nroLicencia: trabador.nroLicencia,
+          placa: trabador.placa,
+          envioCorreo: trabador.envioCorreo,
+          transportista: trabador.transportista,
+        });
+      }
+    }
     const cliente = prisma.cliente.update({
       where: {
         id,
@@ -105,7 +162,9 @@ export class ClienteService {
         numeroDocumento,
         tipoClienteId,
         telefono,
+        formaPago,
         email,
+        trabajadores: formatTrabajadores,
       },
     });
 
@@ -134,27 +193,26 @@ export class ClienteService {
           OR: [
             {
               nombre: {
-                contains: filterName
-              }
+                contains: filterName,
+              },
             },
             {
               codigo: {
                 contains: filterName,
-              }
+              },
             },
             {
               numeroDocumento: {
-                contains: filterName
-              }
+                contains: filterName,
+              },
             },
             {
-              telefono:{
-                contains: filterName
-              }
-            }
-            
-          ]
-        })
+              telefono: {
+                contains: filterName,
+              },
+            },
+          ],
+        }),
       },
       include: {
         tipoCliente: true,
