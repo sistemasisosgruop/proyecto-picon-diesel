@@ -1,5 +1,5 @@
-import prisma from "../../prisma";
-import { generateCode } from "../../utils/codes";
+import prisma from '../../prisma';
+import { generateCode } from '../../utils/codes';
 
 export class EmpresasService {
   static async createEmpresa(data) {
@@ -67,7 +67,7 @@ export class EmpresasService {
       where: { personal: { some: { id: adminId } } },
     });
 
-    return empresas.map(({ logo, ...data }) => ({ ...data, logo: logo ?? "" }));
+    return empresas.map(({ logo, ...data }) => ({ ...data, logo: logo ?? '' }));
   }
 
   static async getEmpresa(id) {
@@ -91,7 +91,7 @@ export class EmpresasService {
         nombreMaquina: true,
         paises: true,
         marcaMotor: true,
-        marcaFabricaSistemaInyeccion: true,
+        marca: true,
         descripcionBombaInyeccion: true,
         marcaFabricaInyector: true,
         descripcionInyector: true,

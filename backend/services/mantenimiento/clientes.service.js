@@ -3,11 +3,11 @@ import { generateCodeCliente, generateCodeTipoCliente } from "../../utils/codes"
 
 export class ClienteService {
   static async createTipoCliente(data) {
-    const { tipo, empresaId } = data;
+    const { tipo } = data;
     const tipoCliente = await prisma.tipoCliente.create({
       data: {
         tipo,
-        empresaId,
+        // empresaId,
       },
     });
 
@@ -68,17 +68,48 @@ export class ClienteService {
   }
 
   static async createCliente(data) {
-    const { nombre, tipoDocumento, numeroDocumento, tipoClienteId, telefono, email, empresaId } =
-      data;
+    const {
+      nombre,
+      tipoDocumento,
+      numeroDocumento,
+      tipoClienteId,
+      telefono,
+      formaPago,
+      email,
+      // empresaId,
+      paisId,
+      trabajadores,
+    } = data;
+    console.log(data, "DATA CLIENTES");
+    const formatTrabajadores = [];
+    if (trabajadores && trabajadores.length > 0) {
+      for (const trabador of trabajadores) {
+        formatTrabajadores.push({
+          nombreTrabajador: trabador.nombreTrabajador,
+          cargo: trabador.cargo,
+          dni: trabador.dni,
+          correo: trabador.correo,
+          telefono: trabador.telefono,
+          nroLicencia: trabador.nroLicencia,
+          placa: trabador.placa,
+          envioCorreo: trabador.envioCorreo,
+          transportista: trabador.transportista,
+        });
+      }
+    }
+
     const cliente = await prisma.cliente.create({
       data: {
         nombre,
         tipoDocumento,
         numeroDocumento,
         telefono,
+        formaPago,
         email,
-        empresaId,
+        // empresaId,
         tipoClienteId,
+        paisId,
+        trabajadores: formatTrabajadores,
       },
     });
 
@@ -94,7 +125,33 @@ export class ClienteService {
   }
 
   static async updateCliente(id, data) {
-    const { nombre, tipoDocumento, numeroDocumento, tipoClienteId, telefono, email } = data;
+    const {
+      nombre,
+      tipoDocumento,
+      numeroDocumento,
+      tipoClienteId,
+      formaPago,
+      telefono,
+      email,
+      trabajadores,
+    } = data;
+
+    const formatTrabajadores = [];
+    if (trabajadores && trabajadores.length > 0) {
+      for (const trabador of trabajadores) {
+        formatTrabajadores.push({
+          nombreTrabajador: trabador.nombreTrabajador,
+          cargo: trabador.cargo,
+          dni: trabador.dni,
+          correo: trabador.correo,
+          telefono: trabador.telefono,
+          nroLicencia: trabador.nroLicencia,
+          placa: trabador.placa,
+          envioCorreo: trabador.envioCorreo,
+          transportista: trabador.transportista,
+        });
+      }
+    }
     const cliente = prisma.cliente.update({
       where: {
         id,
@@ -105,7 +162,9 @@ export class ClienteService {
         numeroDocumento,
         tipoClienteId,
         telefono,
+        formaPago,
         email,
+        trabajadores: formatTrabajadores,
       },
     });
 
@@ -128,33 +187,32 @@ export class ClienteService {
   static async getClientes(empresaId, filterName) {
     const cliente = await prisma.cliente.findMany({
       where: {
-        empresaId,
+        // empresaId,
         estado: "Activo",
         ...(filterName && {
           OR: [
             {
               nombre: {
-                contains: filterName
-              }
+                contains: filterName,
+              },
             },
             {
               codigo: {
                 contains: filterName,
-              }
+              },
             },
             {
               numeroDocumento: {
-                contains: filterName
-              }
+                contains: filterName,
+              },
             },
             {
-              telefono:{
-                contains: filterName
-              }
-            }
-            
-          ]
-        })
+              telefono: {
+                contains: filterName,
+              },
+            },
+          ],
+        }),
       },
       include: {
         tipoCliente: true,
