@@ -156,8 +156,8 @@ const [subsUpdate,setSubsUpdate]= useState(0);
   //! Si es un edit de Materiles
   useEffect(() => {
     if (isEdit) {
-      setForm({
-        ...form,
+      setForm((prevForm) => ({
+        ...prevForm,
         caracteristicaToMaterial: caracteristicasForm,
         materialReemplazo: codigos.reemplazo,
         materialEquivalencia: codigos.equivalencia,
@@ -165,19 +165,17 @@ const [subsUpdate,setSubsUpdate]= useState(0);
         aplicacionDeMaquina: codigos.aplicacionMaquina,
         denominacion: updateForm?.denominacion,
         codigoFabricante: updateForm?.codigoFabricante,
-        // tipoFabricante: updateForm?.tipoFabricante,                     //! REMOVER
-        // codigoMotorOriginal: updateForm?.codigoMotorOriginal,           //! REMOVER
-        // codigoBombaInyeccion: updateForm?.codigoBombaInyeccion,         //! REMOVER
-
         marca: updateForm?.marca,                         
-        nombreInterno: updateForm?.nombreInterno,
         nombreComercial: updateForm?.nombreComercial,
-      });
+        // Si el nombreInterno ya está siendo calculado dinámicamente, no lo sobrescribas aquí
+        nombreInterno: prevForm.nombreInterno || updateForm?.nombreInterno,
+      }));
     }
   }, [codigos, caracteristicasForm, updateForm]);
+  
 
   const createRegistro = async () => {
-    console.log('Form a enviar materiales:',form);
+    // console.log('Form a enviar materiales:',form);
     await schema.validate(form, { abortEarly: false });
     await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/configuracion/materiales", {
       ...form,
@@ -190,7 +188,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
   };
 
   const updateRegistro = async () => {
-    console.log(form);
+    // console.log('updateando material:',form);
     await updateSchema.validate(form, { abortEarly: false });
     await axiosRequest(
       "put",
@@ -261,15 +259,6 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       { Header: "Denominación", accessor: "denominacion" },
       { Header: "Stock", accessor: "stock" },
       { Header: "Código de Fabricante", accessor: "codigoFabricante" },
-      // { Header: "Tipo de Fabricante", accessor: "tipoFabricante" },
-      // {
-      //   Header: "Código de Motor Original",
-      //   accessor: "codigoMotorOriginal",
-      // },
-      // {
-      //   Header: "Código de Bomba de Inyección",
-      //   accessor: "codigoBombaInyeccion",
-      // },
       { Header: "Marca", accessor: "marca", },
       { Header: "Nombre Interno", accessor: "nombreInterno", },
       { Header: "Nombre Comercial", accessor: "nombreComercial", }
@@ -335,7 +324,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       "get",
       `/api/mantenimiento/maestro-de-codigos/configuracion/materiales?empresaId=${empresaId}`
     );
-
+    console.log('Materiales data:',{data})
     return data;
   };
 
@@ -549,9 +538,10 @@ const [subsUpdate,setSubsUpdate]= useState(0);
 
   const caracteristicaToMaterialData = useMemo(
     () =>
-      materialInfo?.caracteristicaToMaterial?.map(({ caracteristica, valor }) => ({
+      materialInfo?.caracteristicaToMaterial?.map(({ caracteristica, valor,isChecked }) => ({
         id: caracteristica.id,
         nombre: caracteristica.descripcion,
+        isChecked,
         valor,
       })) ?? [],
     [materialInfo]
@@ -603,13 +593,13 @@ const [subsUpdate,setSubsUpdate]= useState(0);
         
         // setCorrelativo(`${currentFamilia.codigo} + `);
 
-        setForm((prevForm) => ({ ...prevForm, familiaId: currentFamilia.id }));
+        setForm((prevForm) => ({ ...prevForm, familiaId: currentFamilia.id,subFamiliaId:updateForm.subfamiliaId }));
       }
     }
   }, [isEdit, updateForm?.familiaId, familias]);
 
     useEffect(() => {
-      console.log('Cambiando: ',updateForm?.subfamiliaId)
+      // console.log('Cambiando: ',updateForm?.subfamiliaId)
       setSubsUpdate(subsUpdate+1);
     }, [subfamilias]); // Se ejecuta cada vez que selectedFamilia cambia
 
@@ -640,7 +630,7 @@ const handleSearchMaterials = async () => {
       `/api/mantenimiento/maestro-de-codigos/configuracion/materiales?empresaId=${empresaId}&page=${page}&take=${30}&marca=${marca}&codigoReferencia=${codigoReferencia}&nombreComercial=${nombreComercial}&nombreInterno=${nombreInterno}`
     );
     // console.log('page es:',page);
-    console.log('Data filtrada:', data.data);
+    // console.log('Data filtrada:', data.data);
 
     const modifiedData = data.data.map(material => ({
       ...material,
@@ -648,7 +638,7 @@ const handleSearchMaterials = async () => {
       subFamilia: material.subfamilia?.codigo || material.subfamilia, // Solo guarda el valor de 'codigo'
     }));
 
-    console.log('Data modificada:', modifiedData);
+    // console.log('Data modificada:', modifiedData);
 
     setDropdownMateriales(modifiedData); // Almacenar el array modificado
   } catch (error) {
@@ -662,7 +652,7 @@ useEffect(() => {
 
 
 function nextPage(){
-  console.log('Incremento',{page})
+  // console.log('Incremento',{page})
   setPage(page+1);
   setCanPreviousPage(true)
 }
@@ -794,7 +784,7 @@ function prevPage(){
                   reemplazo: material?.materialReemplazo ?? [],
                   similitud: material?.materialSimilitud ?? [],
                 });
-                setUpdateForm(material); // Suponiendo que setUpdateForm es un setter de estado
+                setUpdateForm(material); 
                 setCorrelativo(material.correlativo);
                 setElementId(material.id);
                     openModal(true);
@@ -808,7 +798,7 @@ function prevPage(){
                     />
                     <ButtonInspect
                       onClick={() => {
-                        console.log('Info de row filtertable',material)
+                        // console.log('Info de row filtertable',material)
                         openInfoModal();
                         setMaterialInfo(material);
                       }}
@@ -1242,7 +1232,10 @@ function prevPage(){
                   </tr>
                 </thead>
                 <tbody>
-                  {caracteristicaToMaterialData?.map(({ id, valor, nombre }) => {
+                  {caracteristicaToMaterialData?.map(({ id, valor, nombre, isChecked }) => {
+                    console.log({ id, valor, nombre, isChecked })
+                    if (!isChecked) return null; // Si no está marcado, no renderizamos nada
+
                     return (
                       <tr key={id}>
                         <td className="px-6 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
