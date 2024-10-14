@@ -53,7 +53,7 @@ export class MatrialesService {
         subfamiliaId: Number(subFamiliaId),
         nombreInterno,
         nombreComercial,
-        marca: data.marca,
+        marcaId: data.marcaId,
         denominacion: data.denominacion,
         codigoBombaInyeccion: data.codigoBombaInyeccion,
         codigoMotorOriginal: data.codigoMotorOriginal,
