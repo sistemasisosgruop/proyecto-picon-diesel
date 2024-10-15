@@ -885,7 +885,7 @@ function prevPage(){
         <div className="space-y-6">
           <Group title={"Datos del Material"}>
             <GroupInputs>
-                {/* <Select
+                <Select
                   label="Familia"
                   value={isEdit ? updateForm?.familiaId : undefined} // Mostrar valor en modo edit
                   onChange={(value) => {
@@ -903,9 +903,9 @@ function prevPage(){
                       </Option>
                     );
                   })}
-                </Select> */}
+                </Select>
 
-                {/* <Select
+                <Select
                   id='subfamilia-select'
                   label="SubFamilia"
                   value={subsUpdate? updateForm?.subfamiliaId : undefined} // Mostrar valor en modo edición
@@ -928,7 +928,7 @@ function prevPage(){
                   ) : (
                     <Option value="">No hay marcas disponibles</Option>
                   )}
-                </Select> */}
+                </Select>
                   <Input
                     label="Correlativo"
                     disabled
