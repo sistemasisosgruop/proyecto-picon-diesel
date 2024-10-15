@@ -368,7 +368,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       "get",
       `/api/mantenimiento/maestro-de-codigos/configuracion/maquinas?empresaId=${empresaId}&filter=${target.value}`
     );
-
+   
     setAplicacionMaquinas(data?.data);
   };
 
@@ -387,7 +387,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       "get",
       `/api/mantenimiento/empresas/info-material/${empresaId}`
     );
-
+    
     return data;
   };
   const { data: formInfo } = useQuery("formInfo", getFormInfo, {
@@ -428,7 +428,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
     }
   }, [isOpenModal]); // El useEffect se ejecuta cuando el modal se abre
 
-
+  console.log('Data de getFormInfo',{formInfo})
   const caracteristicas = useMemo(() => formInfo?.data?.caracteristica ?? [], [formInfo?.data]);
   const familias = useMemo(() => formInfo?.data.familia, [formInfo?.data]);
 
@@ -885,7 +885,7 @@ function prevPage(){
         <div className="space-y-6">
           <Group title={"Datos del Material"}>
             <GroupInputs>
-                <Select
+                {/* <Select
                   label="Familia"
                   value={isEdit ? updateForm?.familiaId : undefined} // Mostrar valor en modo edit
                   onChange={(value) => {
@@ -903,9 +903,9 @@ function prevPage(){
                       </Option>
                     );
                   })}
-                </Select>
+                </Select> */}
 
-                <Select
+                {/* <Select
                   id='subfamilia-select'
                   label="SubFamilia"
                   value={subsUpdate? updateForm?.subfamiliaId : undefined} // Mostrar valor en modo edición
@@ -916,14 +916,19 @@ function prevPage(){
                     // setNombreComercial(currentSubFamilia?.descripcion);
                   }}
                 >
-                  {subfamilias?.map((item) => {
+                  {subfamilias && subfamilias.length > 0 ? (
+                  subfamilias?.map((item) => {
                     return (
                       <Option key={item.id} value={item.id}>
                         {item?.descripcion}
                       </Option>
                     );
-                  })}
-                </Select>
+                  })
+
+                  ) : (
+                    <Option value="">No hay marcas disponibles</Option>
+                  )}
+                </Select> */}
                   <Input
                     label="Correlativo"
                     disabled

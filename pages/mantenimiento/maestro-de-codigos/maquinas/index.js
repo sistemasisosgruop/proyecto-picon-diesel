@@ -259,7 +259,7 @@ export default function Maquinas() {
       "get",
       `/api/mantenimiento/maestro-de-codigos/configuracion/maquinas?empresaId=${3}`
     );
-    // console.log({empresaId},'Maquinas Lista',data);
+    console.log({empresaId},'Maquinas Lista',data);
     return data;
   };
   const { data: maquinasResponse, refetch } = useQuery("maquinas", getMaquinas, {
