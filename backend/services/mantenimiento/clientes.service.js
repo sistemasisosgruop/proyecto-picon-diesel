@@ -49,9 +49,9 @@ export class ClienteService {
 
   static async getAllTipoCliente(empresaId) {
     const tipoCliente = await prisma.tipoCliente.findMany({
-      where: {
-        empresaId,
-      },
+      // where: {
+      //   empresaId,
+      // },
     });
 
     return tipoCliente;

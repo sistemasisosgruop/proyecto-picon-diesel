@@ -11,11 +11,11 @@ export default function TemplateAdministrativo({children}) {
       modulo: "Personal",
       href: "/mantenimiento/administrativo/personal",
     },
-    {
-      icon: <Shop />,
-      modulo: "Vendedores",
-      href: "/mantenimiento/administrativo/vendedores",
-    },
+    // {
+    //   icon: <Shop />,
+    //   modulo: "Vendedores",
+    //   href: "/mantenimiento/administrativo/vendedores",
+    // },
     {
       icon: <UserSquare />,
       modulo: "Clientes",
