@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   try {
     const user = await AuthService.ValidateAccessToken(req, res);
     user && AuthService.AdministradorFeatures(user.roles);
-    await AuthService.validarPermiso(user.username, req.method, req.url);
+    // await AuthService.validarPermiso(user.username, req.method, req.url);
 
     if (req.method === "POST") {
       const result = await FamiliaService.createFamilia(req.body);
