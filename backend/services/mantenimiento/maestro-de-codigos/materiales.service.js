@@ -78,7 +78,7 @@ export class MatrialesService {
           dataCaracteristicasToMat.push({
             caracteristicaId: caracteristica.caracteristica.id,
             materialId: crearMaterial.id,
-            isChecked: true,
+            isChecked: caracteristica.isChecked,    //! SE CAMBIO, ESTABA EN TRUE siempre
             valor: caracteristica.valor,
           });
         }
@@ -104,7 +104,8 @@ export class MatrialesService {
       aplicacionDeMaquina,
       familiaId,
       subFamiliaId,
-      caracteristicas,
+      caracteristicaToMaterial,
+
     } = data;
     console.log(data, "DATA PARA EDITAR");
     const setMaterialSimilutud =
@@ -146,6 +147,9 @@ export class MatrialesService {
         familiaId: Number(familiaId),
         subfamiliaId: Number(subFamiliaId),
         marcaId: data.marcaId,
+        nombreInterno:data.nombreInterno,           //! SE AGREGÓ
+        nombreComercial:data.nombreComercial,       //! SE AGREGÓ
+        // marca: data.marca,                          //! SE AGREGÓ
         denominacion: data.denominacion,
         codigoBombaInyeccion: data.codigoBombaInyeccion,
         codigoMotorOriginal: data.codigoMotorOriginal,
@@ -162,11 +166,12 @@ export class MatrialesService {
     });
 
     const dataCaracteristicasToMat = [];
-    if (caracteristicas && caracteristicas.length > 0) {
-      for (const caracteristica of caracteristicas) {
+    if (caracteristicaToMaterial && caracteristicaToMaterial.length > 0) {
+      for (const caracteristica of caracteristicaToMaterial) {
         dataCaracteristicasToMat.push({
-          caracteristicaId: caracteristica.caracteristicaId,
-          isChecked: true,
+          materialId:Number(id),
+          caracteristicaId: caracteristica.caracteristica.id,
+          isChecked: caracteristica.isChecked,              //! SE CAMBIO, ESTABA EN TRUE
           valor: caracteristica.valor,
         });
       }

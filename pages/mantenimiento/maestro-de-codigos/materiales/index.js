@@ -29,6 +29,9 @@ import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import * as yup from "yup";
 import { FormContext } from "../../../../contexts/form.context";
 import TableCodigosDetalle from "../../../../app/components/modules/TableCodigosDetalle";
+import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowUp, SearchNormal1, FilterSearch } from "iconsax-react";
+import { Table as Tabla, TableD, TableDOptions, TableHOptions, TableRH } from "../../../../app/components/elements/Table";
+import { ButtonCodigos, ButtonDelete, ButtonEdit, ButtonInspect } from "../../../../app/components/elements/Buttons";
 
 const schema = yup.object().shape({
   familiaId: yup.number(),
@@ -38,12 +41,13 @@ const schema = yup.object().shape({
   // tipoFabricante: yup.string().required(),      //! REMOVER
   // codigoMotorOriginal: yup.string().required(), //! REMOVER
   // codigoBombaInyeccion: yup.string().required(), //! REMOVER
-  caracteristicas: yup.array().nullable(),
+  caracteristicaToMaterial: yup.array().nullable(),
   materialReemplazo: yup.array().nullable(),
   materialEquivalencia: yup.array().nullable(),
   materialSimilitud: yup.array().nullable(),
   aplicacionDeMaquina: yup.array().nullable(),
-  marca: yup.string().nullable(), //Nuevos
+  // marca: yup.string().nullable(), //Nuevos
+  marcaID:yup.number(),
   nombreInterno: yup.string().nullable(), //Nuevos
   nombreComercial: yup.string().nullable(), //Nuevos
 });
@@ -56,12 +60,13 @@ const updateSchema = yup.object().shape({
   // tipoFabricante: yup.string().required(),          //! REMOVER
   // codigoMotorOriginal: yup.string().required(),     //! REMOVER
   // codigoBombaInyeccion: yup.string().required(),    //! REMOVER
-  caracteristicas: yup.array().nullable(),
+  caracteristicaToMaterial: yup.array().nullable(),
   materialReemplazo: yup.array().nullable(),
   materialEquivalencia: yup.array().nullable(),
   materialSimilitud: yup.array().nullable(),
   aplicacionDeMaquina: yup.array().nullable(),
-  marca: yup.string().nullable(), //Nuevos
+  // marca: yup.string().nullable(), //Nuevos
+  marcaID:yup.number(),
   nombreInterno: yup.string().nullable(), //Nuevos
   nombreComercial: yup.string().nullable(), //Nuevos
 
@@ -73,6 +78,7 @@ export default function Materiales() {
   const [empresaId] = useLocalStorage("empresaId");
   const [selectedFamilia, setSelectedFamilia] = useState("");
   const [subfamilias, setSubfamilias] = useState([]);
+  const [marcas, setMarcas] = useState([]);
   const [reemplazos, setReemplazos] = useState([]);
   const [similitudes, setSimilitudes] = useState([]);
   const [equivalencias, setEquivalencias] = useState([]);
@@ -92,12 +98,13 @@ export default function Materiales() {
     // tipoFabricante: null,         //! REMOVER
     // codigoMotorOriginal: null,    //! REMOVER
     // codigoBombaInyeccion: null,   //! REMOVER
-    caracteristicas: null,
+    caracteristicaToMaterial: null,
     materialReemplazo: null,
     materialEquivalencia: null,
     materialSimilitud: null,
     aplicacionDeMaquina: null,
     marca: null,            //nuevos
+    marcaId:null,
     nombreInterno: null,    //nuevos
     nombreComercial: null,  //nuevos
   });
@@ -108,6 +115,8 @@ const [subsUpdate,setSubsUpdate]= useState(0);
   const {
     codigos,
     setCodigos,
+    openInfoModal,
+    setMaterialInfo,
     correlativo,
     setCorrelativo,
     materialInfo,
@@ -126,12 +135,13 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       // tipoFabricante: null,           //! REMOVER
       // codigoMotorOriginal: null,      //! REMOVER
       // codigoBombaInyeccion: null,     //! REMOVER
-      caracteristicas: null,
+      caracteristicaToMaterial: null,
       materialReemplazo: null,
       materialEquivalencia: null,
       materialSimilitud: null,
       aplicacionDeMaquina: null,
       marca: null,            //nuevos
+      marcaId:null,
       nombreInterno: null,    //nuevos
       nombreComercial: null,  //nuevos
     });
@@ -151,28 +161,27 @@ const [subsUpdate,setSubsUpdate]= useState(0);
   //! Si es un edit de Materiles
   useEffect(() => {
     if (isEdit) {
-      setForm({
-        ...form,
-        caracteristicas: caracteristicasForm,
+      setForm((prevForm) => ({
+        ...prevForm,
+        caracteristicaToMaterial: caracteristicasForm,
         materialReemplazo: codigos.reemplazo,
         materialEquivalencia: codigos.equivalencia,
         materialSimilitud: codigos.similitud,
         aplicacionDeMaquina: codigos.aplicacionMaquina,
         denominacion: updateForm?.denominacion,
         codigoFabricante: updateForm?.codigoFabricante,
-        // tipoFabricante: updateForm?.tipoFabricante,                     //! REMOVER
-        // codigoMotorOriginal: updateForm?.codigoMotorOriginal,           //! REMOVER
-        // codigoBombaInyeccion: updateForm?.codigoBombaInyeccion,         //! REMOVER
-
-        marca: updateForm?.marca,                         //! Descomentar para nuevos
-        nombreInterno: updateForm?.nombreInterno,
+        marca: updateForm?.marca,
+        marcaId: updateForm?.marcaId,                              
         nombreComercial: updateForm?.nombreComercial,
-      });
+        // Si el nombreInterno ya está siendo calculado dinámicamente, no lo sobrescribas aquí
+        nombreInterno: prevForm.nombreInterno || updateForm?.nombreInterno,
+      }));
     }
   }, [codigos, caracteristicasForm, updateForm]);
+  
 
   const createRegistro = async () => {
-    console.log('Form a enviar materiales:',form);
+    // console.log('Form a enviar materiales:',form);
     await schema.validate(form, { abortEarly: false });
     await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/configuracion/materiales", {
       ...form,
@@ -185,7 +194,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
   };
 
   const updateRegistro = async () => {
-    console.log(form);
+    // console.log('updateando material:',form);
     await updateSchema.validate(form, { abortEarly: false });
     await axiosRequest(
       "put",
@@ -228,17 +237,20 @@ const [subsUpdate,setSubsUpdate]= useState(0);
         // tipoFabricante: null, //! REMOVER
         // codigoMotorOriginal: null,  //! REMOVER
         // codigoBombaInyeccion: null, //! REMOVER
-        caracteristicas: null,
+        caracteristicaToMaterial: null,
         materialReemplazo: null,
         materialEquivalencia: null,
         materialSimilitud: null,
         aplicacionDeMaquina: null,
         marca:null,
+        marcaId:null,
         nombreInterno:null,
         nombreComercial:null
       });
       setCaracteristicasForm([]);
       closeModal();
+      setPage(0);
+      await handleSearchMaterials();
     } catch (error) {
       toast.error(<ToastAlert error={error} />, errorProps);
     }
@@ -254,27 +266,9 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       { Header: "Denominación", accessor: "denominacion" },
       { Header: "Stock", accessor: "stock" },
       { Header: "Código de Fabricante", accessor: "codigoFabricante" },
-      // { Header: "Tipo de Fabricante", accessor: "tipoFabricante" },
-      // {
-      //   Header: "Código de Motor Original",
-      //   accessor: "codigoMotorOriginal",
-      // },
-      // {
-      //   Header: "Código de Bomba de Inyección",
-      //   accessor: "codigoBombaInyeccion",
-      // },
-      {
-        Header: "Marca",
-        accessor: "marca",
-      },
-      {
-        Header: "Nombre Interno",
-        accessor: "nombreInterno",
-      },
-      {
-        Header: "Nombre Comercial",
-        accessor: "nombreComercial",
-      }
+      { Header: "Marca", accessor: "marcaId", },
+      { Header: "Nombre Interno", accessor: "nombreInterno", },
+      { Header: "Nombre Comercial", accessor: "nombreComercial", }
     ],
     []
   );
@@ -295,45 +289,35 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       { Header: "Marca del Motor", accessor: "marcaMotor" },
       { Header: "Procedencia del Motor", accessor: "procedenciaMotor" },
       { Header: "N° de cilindros", accessor: "numeroCilindros" },
-      {
-        Header: "Código fábrica Bomba de Inyeccion",
+      { Header: "Código fábrica Bomba de Inyeccion",
         accessor: "codigoFabricaBombaInyeccion",
       },
-      {
-        Header: "Tipo de Bomba de Inyeccion",
+      { Header: "Tipo de Bomba de Inyeccion",
         accessor: "tipoBombaInyeccion",
       },
-      {
-        Header: "Marca fábrica de Sistema deInyeccion",
+      { Header: "Marca fábrica de Sistema deInyeccion",
         accessor: "marcaFabricaSistemaInyeccion",
       },
-      {
-        Header: "Descripción de Bomba de Inyeccion",
+      { Header: "Descripción de Bomba de Inyeccion",
         accessor: "descripcionBombasInyeccion",
       },
-      {
-        Header: "Procedencia Bomba de Inyeccion",
+      { Header: "Procedencia Bomba de Inyeccion",
         accessor: "procedenciaBombaInyeccion",
       },
-      {
-        Header: "Código Original de Bomba de Inyección",
+      { Header: "Código Original de Bomba de Inyección",
         accessor: "codigoOriginalBombaInyeccion",
       },
-      {
-        Header: "Código fábrica de Inyector",
+      { Header: "Código fábrica de Inyector",
         accessor: "codigoFabricaInyector",
       },
-      {
-        Header: "Tipo fábrica de Inyector",
+      { Header: "Tipo fábrica de Inyector",
         accessor: "tipoFabricaInyector",
       },
-      {
-        Header: "Marca fábrica de Inyector",
+      { Header: "Marca fábrica de Inyector",
         accessor: "marcaFabricaInyector",
       },
       { Header: "Descripción Inyector", accessor: "descripcionInyector" },
-      {
-        Header: "Código Original de Inyector",
+      { Header: "Código Original de Inyector",
         accessor: "codigoOriginalInyector",
       },
       { Header: "Código Tobera", accessor: "codigoTobera" },
@@ -347,7 +331,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       "get",
       `/api/mantenimiento/maestro-de-codigos/configuracion/materiales?empresaId=${empresaId}`
     );
-
+    console.log('Materiales data:',{data})
     return data;
   };
 
@@ -420,6 +404,30 @@ const [subsUpdate,setSubsUpdate]= useState(0);
 
     setSubfamilias(data?.data);
   };
+
+
+  // OBTENER MARCAS:
+
+  const getMarcas = async () => {
+    try {
+      const { data } = await axiosRequest(
+        'get',
+        `/api/mantenimiento/maestro-de-codigos/configuracion/marca?empresaId=${empresaId}`
+      );
+      // console.log('Marcas obtenidas:', data); 
+      setMarcas(data.data); // Guardar las marcas en el estado
+    } catch (error) {
+      console.error('Error fetching marcas:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpenModal) {
+      getMarcas(); // Llamamos a la función para obtener las marcas cuando se abre el modal
+      console.log({marcas})
+    }
+  }, [isOpenModal]); // El useEffect se ejecuta cuando el modal se abre
+
 
   const caracteristicas = useMemo(() => formInfo?.data?.caracteristica ?? [], [formInfo?.data]);
   const familias = useMemo(() => formInfo?.data.familia, [formInfo?.data]);
@@ -561,9 +569,10 @@ const [subsUpdate,setSubsUpdate]= useState(0);
 
   const caracteristicaToMaterialData = useMemo(
     () =>
-      materialInfo?.caracteristicaToMaterial?.map(({ caracteristica, valor }) => ({
+      materialInfo?.caracteristicaToMaterial?.map(({ caracteristica, valor,isChecked }) => ({
         id: caracteristica.id,
         nombre: caracteristica.descripcion,
+        isChecked,
         valor,
       })) ?? [],
     [materialInfo]
@@ -614,17 +623,79 @@ const [subsUpdate,setSubsUpdate]= useState(0);
         console.log('las subfamilias disponibles son: ',subfamilias)
         
         // setCorrelativo(`${currentFamilia.codigo} + `);
-          //*AQUI
 
-        setForm((prevForm) => ({ ...prevForm, familiaId: currentFamilia.id }));
+        setForm((prevForm) => ({ ...prevForm, familiaId: currentFamilia.id,subFamiliaId:updateForm.subfamiliaId }));
       }
     }
   }, [isEdit, updateForm?.familiaId, familias]);
 
     useEffect(() => {
-      console.log('Cambiando: ',updateForm?.subfamiliaId)
+      // console.log('Cambiando: ',updateForm?.subfamiliaId)
       setSubsUpdate(subsUpdate+1);
     }, [subfamilias]); // Se ejecuta cada vez que selectedFamilia cambia
+
+
+//! BUSQUEDA POR FILTROS:
+
+//! Función para alternar la visibilidad de la sección filtros
+const [isCustomSearchVisible, setCustomSearchVisible] = useState(false);
+const toggleCustomSearch = () => {
+  setCustomSearchVisible(!isCustomSearchVisible);
+};
+//! Estados para cada input de filtros personalizados
+const [nombreComercial, setNombreComercial] = useState('');
+const [marca, setMarca] = useState('');
+const [codigoReferencia, setCodigoReferencia] = useState('');
+const [nombreInterno, setNombreInterno] = useState('');
+// const [page,setPage] = useState(0);
+const [dropdownMateriales, setDropdownMateriales] = useState([]); // Para almacenar los resultados de la API
+const [page, setPage] = useState(0);
+const [canPreviousPage, setCanPreviousPage] =useState(false);
+const { setElementId, setUpdateForm } = useContext(FormContext);
+
+//! onClick busqueda filtrada
+const handleSearchMaterials = async () => {
+  try {
+    const { data } = await axiosRequest(
+      "get",
+      `/api/mantenimiento/maestro-de-codigos/configuracion/materiales?empresaId=${empresaId}&page=${page}&take=${30}&marca=${marca}&codigoReferencia=${codigoReferencia}&nombreComercial=${nombreComercial}&nombreInterno=${nombreInterno}`
+    );
+    // console.log('page es:',page);
+    // console.log('Data filtrada:', data.data);
+
+    const modifiedData = data.data.map(material => ({
+      ...material,
+      familia: material.familia?.codigo || material.familia, // Solo guarda el valor de 'codigo'
+      subFamilia: material.subfamilia?.codigo || material.subfamilia, // Solo guarda el valor de 'codigo'
+    }));
+
+    // console.log('Data modificada:', modifiedData);
+
+    setDropdownMateriales(modifiedData); // Almacenar el array modificado
+  } catch (error) {
+    console.error('Error fetching materials:', error);
+  }
+};
+
+useEffect(() => {
+  handleSearchMaterials();
+}, [page]); // Se ejecuta cada vez que cambie `page`
+
+
+function nextPage(){
+  // console.log('Incremento',{page})
+  setPage(page+1);
+  setCanPreviousPage(true)
+}
+function prevPage(){
+  let newPage = page-1;
+  if(newPage<=0){
+    newPage=0;
+    setCanPreviousPage(false)
+  }
+  setPage(newPage);
+}
+
 
   return (
     <>
@@ -635,6 +706,160 @@ const [subsUpdate,setSubsUpdate]= useState(0);
             <ButtonAdd text={"Nuevo material"} onClick={() => openModal(false)} />
           </div>
         </Title>
+
+        <button type="button" 
+        className={`flex justify-center items-center p-1 gap-0 rounded-lg cursor-pointer w-[25%] text-sm
+        ${isCustomSearchVisible ? 'bg-orange-500 text-white' : 'bg-secundary text-primary'}
+        hover:${isCustomSearchVisible ? 'bg-primary-800' : 'bg-secundary-800'}`}
+        onClick={toggleCustomSearch}
+      >
+        <FilterSearch className="mr-2"/>
+        Búsqueda Personalizada
+        {isCustomSearchVisible && <span> (Cerrar) </span>}
+      </button>
+
+{/* ------------------------------------------ BUSQUEDA PERSONALIZADA ------------------------------- */}
+        {isCustomSearchVisible && (
+          <>
+        <div className="mt-0  bg-gray-100 p-1 rounded-lg"> 
+            <div className=" mb-5 grid grid-cols-2 gap-3">
+              {/* Input: Marca */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Marca</label>
+                <input type="text"  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                 value={marca}
+                 onChange={(e) => setMarca(e.target.value)}
+                />
+              </div>
+              {/* Input: Código fabrica/Equiv./Simil */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Código fabrica/Equiv./Simil</label>
+                <input type="text" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" 
+                  value={codigoReferencia}
+                  onChange={(e) => setCodigoReferencia(e.target.value)}
+                />
+              </div>
+              {/* Input: Nombre Comercial*/}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Nombre Comercial</label>
+                <input type="text" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                  value={nombreComercial}
+                  onChange={(e) => setNombreComercial(e.target.value)}
+                  />
+              </div>
+              {/* Input: Nombre Interno */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Nombre Interno</label>
+                <input type="text" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                  value={nombreInterno}
+                  onChange={(e) => setNombreInterno(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Botón busqueda filtrada */}
+
+              <button type="button" className="flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 mt-2"
+              onClick={handleSearchMaterials}>
+              <SearchNormal1 size={15} className="mr-2"/> Busqueda filtrada 
+              </button>
+
+        </div>
+      
+
+      {/* Tabla para mostrar los resultados */}
+      <div className="mt-4">
+              <table className="min-w-full bg-white text-xs">
+              <thead>
+                <tr>
+                  <th className="px-4 py-2 font-bold">#</th>
+                  <th className="px-4 py-2 font-bold">Código</th>
+                  <th className="px-4 py-2 font-bold">Familia</th>
+                  <th className="px-4 py-2 font-bold">Subfamilia</th>
+                  <th className="px-4 py-2 font-bold">Correlativo</th>
+                  <th className="px-4 py-2 font-bold">Denominación</th>
+                  <th className="px-4 py-2 font-bold">Stock</th>
+                  <th className="px-4 py-2 font-bold">Código de Fabricante</th>
+                  <th className="px-4 py-2 font-bold">Marca</th>
+                  <th className="px-4 py-2 font-bold">Nombre Interno</th>
+                  <th className="px-4 py-2 font-bold">Nombre Comercial</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dropdownMateriales.map((material, index) => (
+                  <tr key={index}>
+                    <td className="border-t px-4 py-2">{material.id}</td>
+                    <td className="border-t px-4 py-2">{material.codigo}</td>
+                    <td className="border-t px-4 py-2">{material.familia}</td>
+                    <td className="border-t px-4 py-2">{material.subFamilia}</td>
+                    <td className="border-t px-4 py-2">{material.correlativo}</td>
+                    <td className="border-t px-4 py-2">{material.denominacion}</td>
+                    <td className="border-t px-4 py-2">{material.stock}</td>
+                    <td className="border-t px-4 py-2">{material.codigoFabricante}</td>
+                    <td className="border-t px-4 py-2">{material.marcaId}</td>
+                    <td className="border-t px-4 py-2">{material.nombreInterno}</td>
+                    <td className="border-t px-4 py-2">{material.nombreComercial}</td>
+                    <TableDOptions>
+                    <ButtonEdit
+                      onClick={() => {
+
+                // Cargar los datos del material seleccionado en el modal
+                
+                
+                setCodigos({
+                  aplicacionMaquina: material?.aplicacionDeMaquina ?? [],
+                  equivalencia: material?.materialEquivalencia ?? [],
+                  reemplazo: material?.materialReemplazo ?? [],
+                  similitud: material?.materialSimilitud ?? [],
+                });
+                setUpdateForm(material); 
+                setCorrelativo(material.correlativo);
+                setElementId(material.id);
+                    openModal(true);
+                      }}
+                    />
+                    <ButtonDelete
+                      onClick={() => {
+                        setElementId(material.id);
+                        setIsOpenModalDelete(true);
+                      }}
+                    />
+                    <ButtonInspect
+                      onClick={() => {
+                        // console.log('Info de row filtertable',material)
+                        openInfoModal();
+                        setMaterialInfo(material);
+                      }}
+                    />
+                  </TableDOptions>
+                  </tr>
+                ))}
+              </tbody>
+              </table>
+              <div className="flex gap-2 justify-end items-center text-xs">
+
+              <button
+                className="cursor-pointer text-primary-700 hover:text-primary disabled:text-primary-300"
+                onClick={prevPage}
+                disabled={!canPreviousPage}  
+              >  <ArrowLeft2 />
+              </button>   
+              <span><strong>{page}</strong>{" "}</span>
+              <button
+                className="cursor-pointer text-primary-700 hover:text-primary disabled:text-primary-300"
+                onClick={nextPage}
+                // disabled={!canNextPage}
+              > <ArrowRight2 />
+              </button>
+              
+            </div>
+                <br className="border-t px-1 black"></br>
+        </div>
+          </>
+        )}
+
+
+{!isCustomSearchVisible &&(<>  
         {/* Table list */}
         <TableMateriales
           columns={columns}
@@ -642,6 +867,11 @@ const [subsUpdate,setSubsUpdate]= useState(0);
           openModal={openModal}
           setIsOpenModalDelete={setIsOpenModalDelete}
         />
+        </> )}
+
+
+
+
       </TemplateMaestroCodigos>
       
       {/* Modal agregar */}
@@ -694,7 +924,6 @@ const [subsUpdate,setSubsUpdate]= useState(0);
                     );
                   })}
                 </Select>
-
                   <Input
                     label="Correlativo"
                     disabled
@@ -723,9 +952,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
                     })
                   }
                 />
-              
-                <Input
-                  label={"Marca"}
+                {/* <Input label={"Marca"}
                   defaultValue={isEdit ? updateForm?.marca : undefined}
                   onChange={(e) =>
                     setForm({
@@ -733,7 +960,26 @@ const [subsUpdate,setSubsUpdate]= useState(0);
                       marca: e.target.value,
                     })
                   }
-                />
+                /> */}
+                
+                <Select label="Marca"
+                  value={isEdit ? updateForm?.marcaId : undefined} // Mostrar valor en modo edición
+                  onChange={(value) => {
+                    const currentMarca = marcas?.find((item) => item.id === Number(value));
+                    setForm({ ...form, marcaId: currentMarca?.id }); // Guardamos marcaId en el formulario
+                  }}
+                >
+                  {marcas && marcas.length > 0 ? (
+                    marcas.map((item) => (
+                      <Option key={item.id} value={item.id}>
+                        {item.marca}
+                      </Option>
+                    ))
+                  ) : (
+                    <Option value="">No hay marcas disponibles</Option>
+                  )}
+                </Select>
+
 
             </GroupInputs>
             <GroupInputs>
@@ -762,38 +1008,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
               />
 
             </GroupInputs>
-                {/* <Input
-                  label={"Tipo fabricante"}
-                  defaultValue={isEdit ? updateForm?.tipoFabricante : undefined}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      tipoFabricante: e.target.value,
-                    })
-                  }
-                /> */}
-            {/* <GroupInputs>
-              <Input
-                label={"Código de motor original"}
-                defaultValue={isEdit ? updateForm?.codigoMotorOriginal : undefined}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    codigoMotorOriginal: e.target.value,
-                  })
-                }
-              />
-              <Input
-                label={"Código de bomba de inyección"}
-                defaultValue={isEdit ? updateForm?.codigoBombaInyeccion : undefined}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    codigoBombaInyeccion: e.target.value,
-                  })
-                }
-              />
-            </GroupInputs> */}
+
           </Group>
           
           
@@ -946,52 +1161,55 @@ const [subsUpdate,setSubsUpdate]= useState(0);
                     key={caracteristica.id}
                     className="flex flex-row gap-5 items-center justify-between"
                   >
-        <Checkbox
-        onChange={(e) => {
-          const newCaracteristicas = caracteristicasForm;
-          const caracteristicaIndex = newCaracteristicas.findIndex(
-            (item) => item.caracteristicaId === caracteristica.id
-          );
+                  <Checkbox
+                  onChange={(e) => {
+                    const newCaracteristicas = caracteristicasForm;
+                    const caracteristicaIndex = newCaracteristicas.findIndex(
+                      // (item) => item.caracteristicaId === caracteristica.id
+                      (item) => item. caracteristica.id === caracteristica.id
+                    );
 
-          let updatedNombreInterno = form.nombreInterno || "";
+                    let updatedNombreInterno = form.nombreInterno || "";
 
-          // Si se selecciona el checkbox
-          if (e.target.checked) {
-            const concatString = `${caracteristica.descripcion} ${newCaracteristicas[caracteristicaIndex]?.valor || ""}`;
-            if (!updatedNombreInterno.includes(concatString)) {
-              updatedNombreInterno += ` ${concatString}`;
-            }
-            if (caracteristicaIndex === -1) {
-              newCaracteristicas.push({
-                caracteristicaId: caracteristica.id,
-                isChecked: true,
-                valor: "",
-              });
-            } else {
-              newCaracteristicas[caracteristicaIndex].isChecked = true;
-            }
-          } else {
-            // Si se deselecciona el checkbox, eliminar la característica del nombre interno
-            const concatString = `${caracteristica.descripcion} ${newCaracteristicas[caracteristicaIndex]?.valor || ""}`;
-            updatedNombreInterno = updatedNombreInterno.replace(` ${concatString}`, "");
-            if (caracteristicaIndex !== -1) {
-              newCaracteristicas[caracteristicaIndex].isChecked = false;
-            }
-          }
+                    // Si se selecciona el checkbox
+                    if (e.target.checked) {
+                      const concatString = `${caracteristica.descripcion} ${newCaracteristicas[caracteristicaIndex]?.valor || ""}`;
+                      if (!updatedNombreInterno.includes(concatString)) {
+                        updatedNombreInterno += ` ${concatString}`;
+                      }
+                      if (caracteristicaIndex === -1) {
+                        newCaracteristicas.push({
+                          // caracteristicaId: caracteristica.id,
+                          caracteristica: {id: caracteristica.id},
+                          isChecked: true,
+                          valor: "",
+                        });
+                      } else {
+                        newCaracteristicas[caracteristicaIndex].isChecked = true;
+                      }
+                    } else {
+                      // Si se deselecciona el checkbox, eliminar la característica del nombre interno
+                      const concatString = `${caracteristica.descripcion} ${newCaracteristicas[caracteristicaIndex]?.valor || ""}`;
+                      updatedNombreInterno = updatedNombreInterno.replace(` ${concatString}`, "");
+                      if (caracteristicaIndex !== -1) {
+                        newCaracteristicas[caracteristicaIndex].isChecked = false;
+                      }
+                    }
 
-          setCaracteristicasForm([...newCaracteristicas]);
-          setForm({ ...form, nombreInterno: updatedNombreInterno });
-        }}
-        id={caracteristica.id.toString()}
-        label={caracteristica.descripcion}
-        defaultChecked={!!caracteristica?.isChecked}
-      />
+                    setCaracteristicasForm([...newCaracteristicas]);
+                    setForm({ ...form, nombreInterno: updatedNombreInterno, caracteristicaToMaterial: caracteristicasForm });
+                  }}
+                  id={caracteristica.id.toString()}
+                  label={caracteristica.descripcion}
+                  defaultChecked={!!caracteristica?.isChecked}
+                />
       <div className="w-72">
         <Input
           onChange={(e) => {
             const newCaracteristicas = caracteristicasForm;
             const caracteristicaIndex = newCaracteristicas.findIndex(
-              (item) => item.caracteristicaId === caracteristica.id
+              // (item) => item.caracteristicaId === caracteristica.id
+              (item) => item. caracteristica.id === caracteristica.id
             );
             const concatString = `${caracteristica.descripcion} ${newCaracteristicas[caracteristicaIndex]?.valor || ""}`;
             const newConcatString = `${caracteristica.descripcion} ${e.target.value}`;
@@ -1005,13 +1223,14 @@ const [subsUpdate,setSubsUpdate]= useState(0);
               newCaracteristicas[caracteristicaIndex].valor = e.target.value;
             } else {
               newCaracteristicas.push({
-                caracteristicaId: caracteristica.id,
+                // caracteristicaId: caracteristica.id,
+                caracteristica: {id: caracteristica.id},
                 valor: e.target.value,
               });
             }
 
             setCaracteristicasForm([...newCaracteristicas]);
-            setForm({ ...form, nombreInterno: updatedNombreInterno });
+            setForm({ ...form, nombreInterno: updatedNombreInterno, caracteristicaToMaterial: caracteristicasForm });
           }}
           label={"Valor"}
           defaultValue={caracteristica?.valor ?? undefined}
@@ -1057,7 +1276,10 @@ const [subsUpdate,setSubsUpdate]= useState(0);
                   </tr>
                 </thead>
                 <tbody>
-                  {caracteristicaToMaterialData?.map(({ id, valor, nombre }) => {
+                  {caracteristicaToMaterialData?.map(({ id, valor, nombre, isChecked }) => {
+                    console.log({ id, valor, nombre, isChecked })
+                    if (!isChecked) return null; // Si no está marcado, no renderizamos nada
+
                     return (
                       <tr key={id}>
                         <td className="px-6 py-2 whitespace-nowrap text-sm font-medium text-gray-900">

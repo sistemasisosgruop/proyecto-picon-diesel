@@ -77,7 +77,8 @@ export default function Maquinas() {
     codigoOriginalInyector: null,
     codigoTobera: null,
     tipoTobera: null,
-    codigoOriginalTobera:null   //! Se agregó 
+    codigoOriginalTobera:null,   //! Se agregó 
+    marcaToberaId:null// Agregado
   });
   const {
     updateForm,
@@ -118,7 +119,8 @@ export default function Maquinas() {
       codigoOriginalInyector: null,
       codigoTobera: null,
       tipoTobera: null,
-      codigoOriginalTobera:null     //! Se agregó 
+      codigoOriginalTobera:null,     //! Se agregó 
+      marcaToberaId:null    // Agregado
     });
   }, [resetInfo]);
 
@@ -157,7 +159,8 @@ export default function Maquinas() {
       codigoOriginalInyector: null,
       codigoTobera: null,
       tipoTobera: null,
-      codigoOriginalTobera:null
+      codigoOriginalTobera:null,
+      marcaToberaId: null
     });
     refetch();
   }, [changeData]);
@@ -272,17 +275,18 @@ export default function Maquinas() {
       { Header: "Código Tobera", accessor: "codigoTobera" },
       { Header: "Tipo Tobera", accessor: "tipoTobera" },
       { Header: "Código Orig. Tobera", accessor: "codigoOriginalTobera" },
-      
+      // { Header: "Marca Tobera", accessor: "marcaToberaId" },             //! Agregar marca a tobera
     ],
     []
   );
 
   const getMaquinas = async () => {
+    
     const { data } = await axiosRequest(
       "get",
-      `/api/mantenimiento/maestro-de-codigos/configuracion/maquinas?empresaId=${empresaId}`
+      `/api/mantenimiento/maestro-de-codigos/configuracion/maquinas?empresaId=${3}`
     );
-
+    console.log({empresaId},'Maquinas Lista',data);
     return data;
   };
   const { data: maquinasResponse, refetch } = useQuery("maquinas", getMaquinas, {
@@ -322,7 +326,8 @@ export default function Maquinas() {
 
           codigoTobera: maquina.codigoTobera,
           tipoTobera: maquina.tipoTobera,
-          codigoOriginalTobera:maquina.codigoOriginalTobera
+          codigoOriginalTobera:maquina.codigoOriginalTobera,
+          // marcaToberaId:maquina,marcaToberaId        //! AGREGAR
         };
       }),
     [maquinasResponse?.data]
@@ -342,7 +347,7 @@ export default function Maquinas() {
   const modeloMaquinas = useMemo(() => formInfo?.data.modeloMaquina, [formInfo?.data]);
   const nombreMaquinas = useMemo(() => formInfo?.data.nombreMaquina, [formInfo?.data]);
   const paises = useMemo(() => formInfo?.data.paises, [formInfo?.data]);
-  const marcaMotores = useMemo(() => formInfo?.data.marcaMotor, [formInfo?.data]);
+  const marcaMotores = useMemo(() => formInfo?.data.marcaMotor, [formInfo?.data]);              //* Motor
   const marcaFabricaSistemaInyeccion = useMemo(
     () => formInfo?.data.marcaFabricaSistemaInyeccion,
     [formInfo?.data]
@@ -371,6 +376,8 @@ export default function Maquinas() {
           setIsOpenModalDelete={setIsOpenModalDelete}
         />
       </TemplateMaestroCodigos>
+
+
       {/* Modal agregar */}
       <ModalLg
           title={isEdit ? "Editar Máquina" : "Nueva Máquina"}
@@ -445,7 +452,7 @@ export default function Maquinas() {
                 />
               </GroupInputs>
               <GroupInputs>
-                <Select
+                {/* <Select
                   label={"Marca del Motor"}
                   onChange={(value) => setForm({ ...form, marcaMotorId: value })}
                   value={isEdit ? updateForm?.marcaMotorId : undefined}
@@ -455,7 +462,18 @@ export default function Maquinas() {
                       {marca}
                     </Option>
                   ))}
-                </Select>
+                </Select> */}
+                {/* <Select
+                  label={"Marca del Motor"}
+                  onChange={(value) => setForm({ ...form, marcaMotorId: value })}
+                  value={isEdit ? updateForm?.marcaMotorId : undefined}
+                >
+                  {marcaMotores?.map(({ id, marca }) => (
+                    <Option key={id} value={id}>
+                      {marca}
+                    </Option>
+                  ))}
+                </Select> */}
                 <Select
                   label={"Procedencia"}
                   onChange={(value) => setForm({ ...form, motorPaisId: value })}
@@ -494,7 +512,7 @@ export default function Maquinas() {
                 />
               </GroupInputs>
               <GroupInputs>
-                <Select
+                {/* <Select
                   label={"Marca fábrica de Sistema de Inyección"}
                   onChange={(value) => setForm({ ...form, marcaFabricaSistemaInyeccionId: value })}
                   value={isEdit ? updateForm?.marcaFabricaSistemaInyeccionId : undefined}
@@ -504,7 +522,7 @@ export default function Maquinas() {
                       {marca}
                     </Option>
                   ))}
-                </Select>
+                </Select> */}
                 <Select
                   label={"Descripción de Bomba de Inyección"}
                   onChange={(value) => setForm({ ...form, descripcionBombaInyeccionId: value })}
@@ -556,7 +574,7 @@ export default function Maquinas() {
                 />
               </GroupInputs>
               <GroupInputs>
-                <Select
+                {/* <Select
                   label={"Marca fábrica del Inyector"}
                   value={isEdit ? updateForm?.marcaFabricaInyectorId : undefined}
                   onChange={(value) => setForm({ ...form, marcaFabricaInyectorId: value })}
@@ -566,7 +584,7 @@ export default function Maquinas() {
                       {marca}
                     </Option>
                   ))}
-                </Select>
+                </Select> */}
                 <Select
                   label={"Descripción del Inyector"}
                   value={isEdit ? updateForm?.descripcionInyectorId : undefined}
@@ -611,11 +629,24 @@ export default function Maquinas() {
                   defaultValue={isEdit ? updateForm?.tipoTobera : undefined}
                   onChange={(e) => setForm({ ...form, tipoTobera: e.target.value })}
                 />
-                <Input
+              </GroupInputs>
+              <GroupInputs>
+              <Input
                   label={"Código Original Tobera"}
                   defaultValue={isEdit ? updateForm?.codigoOriginalTobera : undefined}
                   onChange={(e) => setForm({ ...form, codigoOriginalTobera: e.target.value })}
                 />
+                {/* <Select
+                  label={"Marca Tobera"}
+                  onChange={(value) => setForm({ ...form, marcaMotorId: value })}
+                  value={isEdit ? updateForm?.marcaMotorId : undefined}
+                >
+                  {marcaMotores?.map(({ id, marca }) => (
+                    <Option key={id} value={id}>
+                      {marca}
+                    </Option>
+                  ))}
+                </Select> */}
               </GroupInputs>
             </Group>
             

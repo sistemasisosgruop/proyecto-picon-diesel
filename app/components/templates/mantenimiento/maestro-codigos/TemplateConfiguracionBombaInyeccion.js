@@ -4,11 +4,11 @@ import { LayoutConfiguracion } from "../../../layouts/LayoutConfiguracion";
 
 export const TemplateConfiguracionBombaInyeccion = ({ children }) => {
 	const menu = [
-		{
-			icon: <Box1 />,
-			modulo: "Marcas de fabrica sistema inyeccion",
-			href: "/mantenimiento/maestro-de-codigos/configuracion/bomba-inyeccion/marca",
-		},
+		// {
+		// 	icon: <Box1 />,
+		// 	modulo: "Marcas de fabrica sistema inyeccion",
+		// 	href: "/mantenimiento/maestro-de-codigos/configuracion/bomba-inyeccion/marca",
+		// },
 		{
 			icon: <Box1 />,
 			modulo: "Descripción de bomba de inyeccion",

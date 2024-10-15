@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
-  codigo: yup.string().required(),
+  // codigo: yup.string().required(),
   nombre: yup.string().required(),
 });
 
@@ -90,7 +90,7 @@ export default function Paises() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      { Header: "Codigo", accessor: "codigo" },
+      // { Header: "Codigo", accessor: "codigo" },
       { Header: "Nombre", accessor: "nombre" },
     ],
     []

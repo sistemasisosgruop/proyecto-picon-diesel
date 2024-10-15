@@ -102,7 +102,7 @@ export default function Caracteristicas() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      { Header: "Codigo", accessor: "codigo" },
+      // { Header: "Codigo", accessor: "codigo" },
       { Header: "Descripción", accessor: "descripcion" },
       { Header: "Abreviatura", accessor: "abreviatura" },
     ],
@@ -157,7 +157,7 @@ export default function Caracteristicas() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input
+          {/* <Input
             label="Código"
             // disabled
             onChange={(e) => {
@@ -167,7 +167,7 @@ export default function Caracteristicas() {
               });
             }}
             defaultValue={isEdit ? updateForm?.codigo : undefined}
-          />
+          /> */}
           <Input
             label="Descripción"
             onChange={(e) => {
