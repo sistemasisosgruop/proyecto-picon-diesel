@@ -9,7 +9,7 @@
 // const  {subfamilias}  = require("../data/subfamilias")
 // const  {materialesData} = require("../data/materiales-data")
 
-const { PrismaClient, RolesEnum } = require("@prisma/client");
+const { PrismaClient, RolesEnum } = require('@prisma/client');
 const {
   randBrand,
   randStreetAddress,
@@ -20,25 +20,26 @@ const {
   randLastName,
   randSeatNumber,
   randCity,
-} = require("@ngneat/falso");
-const { hashSync } = require("bcrypt");
-const { DateTime } = require("luxon");
-const { EnumTipoCliente } = require("../backend/utils/enums");
-
-
+} = require('@ngneat/falso');
+const { hashSync } = require('bcrypt');
+const { DateTime } = require('luxon');
+const { EnumTipoCliente } = require('../backend/utils/enums');
 
 const prisma = new PrismaClient();
-const rucs = ["1000001", "1000002", "1000003"];
+const rucs = ['1000001', '1000002', '1000003'];
 
 async function main() {
   const startTime = DateTime.now().toSeconds();
-  console.log("start to create seeds...");
+  console.log('start to create seeds...');
   const empresas = await createEmpresas();
   const sucursales = empresas.flatMap(({ sucursales }) => sucursales);
   const roles = await createRoles();
+  const newPuestos = await createPuestos(puestos);
+  const setPermisos = await configurarModuloSubModuloPermisos(modulos);
   const adminUser = await createAdminUser();
   const vendedores = await createVendedores();
   const tipoClientes = await createTipoCliente();
+
   // const nuevasCaracteristicas = await createCaracteristicas();
   // const nuevasFamilias = await createFamilias();
   // const nuevasSubFamilias = await createSubFamilias();
@@ -56,9 +57,7 @@ async function main() {
     // nuevosMateriales
   });
   console.log(
-    `seeds created successfully on ${(
-      DateTime.now().toSeconds() - startTime
-    ).toFixed(2)} seconds`
+    `seeds created successfully on ${(DateTime.now().toSeconds() - startTime).toFixed(2)} seconds`
   );
 }
 
@@ -68,10 +67,10 @@ main()
     await prisma.$disconnect();
   });
 
-function createAdminUser() {
-  const user = "admin@admin.com";
-  const password = hashSync("admin", 10);
-  return createUser(user, password, RolesEnum.Administrador, rucs[0]);
+async function createAdminUser() {
+  const user = 'admin@admin.com';
+  const password = hashSync('admin', 10);
+  return await createUser(user, password, RolesEnum.Administrador, rucs[0]);
 }
 
 async function createTipoCliente() {
@@ -107,25 +106,19 @@ async function createTipoCliente() {
 async function createVendedores() {
   const users = [
     {
-      username: "vendedor1@admin.com",
-      password: hashSync("vendedor1", 10),
+      username: 'vendedor1@admin.com',
+      password: hashSync('vendedor1', 10),
       name: `${randFirstName()} ${randLastName()} ${randLastName()}`,
     },
     {
-      username: "vendedor2@admin.com",
-      password: hashSync("vendedor2", 10),
+      username: 'vendedor2@admin.com',
+      password: hashSync('vendedor2', 10),
       name: `${randFirstName()} ${randLastName()} ${randLastName()}`,
     },
   ];
 
   const userTasks = users.map(async ({ username, password, name }) => {
-    return createVendedor(
-      username,
-      password,
-      RolesEnum.Vendedor,
-      rucs[0],
-      name
-    );
+    return createVendedor(username, password, RolesEnum.Vendedor, rucs[0], name);
   });
 
   return await Promise.all(userTasks);
@@ -156,11 +149,7 @@ async function createEmpresas() {
 }
 
 function createRoles() {
-  const roles = [
-    RolesEnum.Administrador,
-    RolesEnum.Vendedor,
-    RolesEnum.Tecnico,
-  ];
+  const roles = [RolesEnum.Administrador, RolesEnum.Vendedor, RolesEnum.Tecnico];
   const roleTasks = roles.map(async (role) => {
     return prisma.role.upsert({
       where: { name: role },
@@ -172,15 +161,15 @@ function createRoles() {
 }
 
 async function createUser(email, password, role, ruc) {
-  return prisma.personal.upsert({
+  return await prisma.personal.upsert({
     where: { email },
     create: {
       // puesto: "CTO",
       puestoId: null,
-      nombre: "Victor Benavente",
+      nombre: 'Victor Benavente',
       email,
       password,
-      telefono: randPhoneNumber({ countryCode: "PE" }),
+      telefono: randPhoneNumber({ countryCode: 'PE' }),
       direccion: randStreetAddress(),
       empresa: {
         connect: rucs.map((ruc) => ({ ruc })),
@@ -194,10 +183,10 @@ async function createUser(email, password, role, ruc) {
     update: {
       // puesto: "CTO",
       puestoId: null,
-      nombre: "Victor Benavente",
+      nombre: 'Victor Benavente',
       email,
       password,
-      telefono: randPhoneNumber({ countryCode: "PE" }),
+      telefono: randPhoneNumber({ countryCode: 'PE' }),
       direccion: randStreetAddress(),
       empresa: {
         connect: rucs.map((ruc) => ({ ruc })),
@@ -224,7 +213,7 @@ async function createVendedor(email, password, role, ruc, nombre) {
       nombre,
       email,
       password,
-      telefono: randPhoneNumber({ countryCode: "PE" }),
+      telefono: randPhoneNumber({ countryCode: 'PE' }),
       direccion: randStreetAddress(),
       empresa: {
         connect: {
@@ -243,7 +232,7 @@ async function createVendedor(email, password, role, ruc, nombre) {
       nombre,
       email,
       password,
-      telefono: randPhoneNumber({ countryCode: "PE" }),
+      telefono: randPhoneNumber({ countryCode: 'PE' }),
       direccion: randStreetAddress(),
       empresa: {
         connect: {
@@ -271,7 +260,7 @@ function createEmpresa(ruc, index) {
       nombre: randBrand(),
       codigo: `000${randSeatNumber()}${index + 1}`,
       direccion: randStreetAddress(),
-      telefono: randPhoneNumber({ countryCode: "PE" }),
+      telefono: randPhoneNumber({ countryCode: 'PE' }),
       email: randEmail(),
       web: randUrl(),
     },
@@ -280,7 +269,7 @@ function createEmpresa(ruc, index) {
       codigo: `000${randSeatNumber({ length: 3 })}${index + 1}`,
       nombre: randBrand(),
       direccion: randStreetAddress(),
-      telefono: randPhoneNumber({ countryCode: "PE" }),
+      telefono: randPhoneNumber({ countryCode: 'PE' }),
       email: randEmail(),
       web: randUrl(),
     },
@@ -296,11 +285,109 @@ async function createSucursal(empresaId, index) {
       nombre: `${randCity()} ${randBrand()}`,
       codigo: `000${randSeatNumber()}${index + 1}`,
       direccion: randStreetAddress(),
-      telefono: randPhoneNumber({ countryCode: "PE" }),
+      telefono: randPhoneNumber({ countryCode: 'PE' }),
       email: randEmail(),
       empresaId,
     },
   });
+}
+
+const puestos = ['ADMINISTRADOR', 'VENDEDOR'];
+const modulos = [
+  {
+    modulo: 'MANTENIMIENTO',
+    submodulos: [
+      'DATOS-DE-LA-EMPRESA',
+      'MAESTRO-CODIGOS',
+      'GENERAL',
+      'ADMINISTRATIVOS',
+      'IMPORTACION',
+      'INVENTARIO',
+      'COMERCIAL',
+      'PRESUPUESTO',
+    ],
+  },
+  {
+    modulo: 'VENTA-MOSTRADOR',
+    submodulos: [
+      'COTIZACIONES',
+      'APROBACION-DE-COTIZACIONES',
+      'APROBACION-DE-PEDIDOS',
+      'GUIA-DE-REMISION',
+      'VENTA-FACTURACION',
+      'REPORTES-Y-ESTADISTICAS',
+    ],
+  },
+  {
+    modulo: 'VENTA-SERVICIO',
+    submodulos: [
+      'RECEPCION-EVALUACION',
+      'PRESUPUESTO',
+      'ORDEN-DE-TRABAJO',
+      'GUIA-DE-REMISION',
+      'VENTA-FACTURACION',
+      'REPORTES-Y-ESTADISTICAS',
+    ],
+  },
+  {
+    modulo: 'COMPRAS',
+    submodulos: [
+      'REQUERIMIENTOS',
+      'COTIZACION-AL-PROVEEDOR',
+      'PEDIDOS',
+      'IMPORTACIONES',
+      'COMPRA-FACTURACION',
+      'REPORTES-Y-ESTADISTICAS',
+    ],
+  },
+  {
+    modulo: 'INVENTARIO',
+    submodulos: [
+      'GUIAS-DE-ENTRADA',
+      'TRANSACCION-DE-ALMACEN',
+      'KARDEX',
+      'VALORIZACION-DE-INVENTARIO',
+    ],
+  },
+  {
+    modulo: 'CUENTAS-POR-COBRAR-Y-PAGAR',
+    submodulos: ['CUENTAS-PROVEEDORES', 'COBRANZA-CLIENTES'],
+  },
+];
+
+async function createPuestos(puestos) {
+  const newPuestos = [];
+  for (const puesto of puestos) {
+    newPuestos.push({
+      nombre: puesto,
+    });
+  }
+  const crearPuestos = prisma.puesto.createMany({ data: newPuestos });
+  await prisma.$transaction([crearPuestos]);
+}
+
+async function configurarModuloSubModuloPermisos(modulos) {
+  for (const modulo of modulos) {
+    const newModulo = await prisma.modulo.create({ data: { nombre: modulo.modulo } });
+
+    for (const subModulo of modulo.submodulos) {
+      const newSubModulos = await prisma.submodulo.create({
+        data: { nombre: subModulo, moduloId: newModulo.id },
+      });
+
+      const puestoAdmin = await prisma.puesto.findFirst({ where: { nombre: puestos[0] } });
+      await prisma.permiso.create({
+        data: {
+          puestoId: puestoAdmin.id,
+          submoduloId: newSubModulos.id,
+          crear: true,
+          actualizar: true,
+          leer: true,
+          eliminar: true,
+        },
+      });
+    }
+  }
 }
 
 // async function createCaracteristicas(){
@@ -370,7 +457,6 @@ async function createSucursal(empresaId, index) {
 //   //   });
 
 //   //   return subFamilia;
-
 
 //   // materiales
 
