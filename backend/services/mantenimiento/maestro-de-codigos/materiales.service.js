@@ -149,7 +149,7 @@ export class MatrialesService {
         marcaId: data.marcaId,
         nombreInterno:data.nombreInterno,           //! SE AGREGÓ
         nombreComercial:data.nombreComercial,       //! SE AGREGÓ
-        marca: data.marca,                          //! SE AGREGÓ
+        // marca: data.marca,                          //! SE AGREGÓ
         denominacion: data.denominacion,
         codigoBombaInyeccion: data.codigoBombaInyeccion,
         codigoMotorOriginal: data.codigoMotorOriginal,
