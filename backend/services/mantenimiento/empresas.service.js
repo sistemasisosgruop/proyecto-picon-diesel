@@ -98,7 +98,16 @@ export class EmpresasService {
       },
     });
 
-    return result;
+    const info = {
+      ...result,
+      marca: await prisma.marca.findMany(),
+      fabricaMaquina: await prisma.fabricaMaquina.findMany(),
+      modeloMaquina: await prisma.modeloMaquina.findMany(),
+      nombreMaquina: await prisma.nombreMaquina.findMany(),
+      descripcionBombaInyeccion: await prisma.descripcionBombaInyeccion.findMany(),
+      descripcionInyector: await prisma.descripcionInyector.findMany(),
+    };
+    return info;
   }
 
   static async getInfoForMaterial(id) {
