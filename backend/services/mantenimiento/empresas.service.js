@@ -111,7 +111,11 @@ export class EmpresasService {
         // caracteristica: true,
       },
     });
-
-    return result;
+    const resumen = {
+      ...result,
+      familia: await prisma.familia.findMany(),
+      caracteristica: await prisma.caracteristica.findMany(),
+    };
+    return resumen;
   }
 }
