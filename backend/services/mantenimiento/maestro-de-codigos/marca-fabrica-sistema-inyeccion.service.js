@@ -1,13 +1,13 @@
-import prisma from '../../../prisma';
+import prisma from "../../../prisma";
 
 export class MarcaFabricaSistemaInyeccionService {
   static async createMarcaFabricaSistemaInyeccion(data) {
-    const { marca, empresaId } = data;
+    const { marca } = data;
     const marcaFabricaSistemaInyeccion = await prisma.marcaFabricaSistemaInyeccion.create({
       data: {
-        codigo: await this.generarCodigoByEmpresa(empresaId),
+        codigo: await this.generarCodigo(),
         marca,
-        empresaId,
+        // empresaId,
       },
     });
 
@@ -42,7 +42,7 @@ export class MarcaFabricaSistemaInyeccionService {
   static async getMarcaFabricaSistemaInyecciones(empresaId) {
     return prisma.marcaFabricaSistemaInyeccion.findMany({
       orderBy: {
-        codigo: 'desc',
+        codigo: "desc",
       },
       where: {
         empresaId,
@@ -60,23 +60,23 @@ export class MarcaFabricaSistemaInyeccionService {
     return marcaFabricaSistemaInyeccion;
   }
 
-  static async generarCodigoByEmpresa(empresaId) {
+  static async generarCodigo() {
     const lastFamilia = await prisma.marcaFabricaSistemaInyeccion.findFirst({
       orderBy: {
-        codigo: 'desc',
+        codigo: "desc",
       },
       select: {
         codigo: true,
       },
-      where: { empresaId },
+      // where: { empresaId },
     });
 
     let codigo;
     if (lastFamilia) {
       const nextCodigo = parseInt(lastFamilia.codigo, 10) + 1;
-      codigo = String(nextCodigo).padStart(2, '0');
+      codigo = String(nextCodigo).padStart(2, "0");
     } else {
-      codigo = '01';
+      codigo = "01";
     }
     return codigo;
   }

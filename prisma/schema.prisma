@@ -50,18 +50,18 @@ model Empresa {
   documentoAdministrativo      DocumentoAdministrativo[]
   detraccion                   Detraccion[]
   motivoTrasladoGuiaRemision   MotivoTrasladoGuiaRemision[]
-  familia                      Familia[]
+  // familia                      Familia[]
   servicio                     Servicio[]
   trabajoTerceros              TrabajoTerceros[]
-  caracteristica               Caracteristica[]
-  modeloMaquina                ModeloMaquina[]
-  fabricaMaquina               FabricaMaquina[]
-  nombreMaquina                NombreMaquina[]
+  // caracteristica               Caracteristica[]
+  // modeloMaquina                ModeloMaquina[]
+  // fabricaMaquina               FabricaMaquina[]
+  // nombreMaquina                NombreMaquina[]
   marcaMotor                   MarcaMotor[]
   // marcaFabricaSistemaInyeccion MarcaFabricaSistemaInyeccion[]
-  descripcionBombaInyeccion    DescripcionBombaInyeccion[]
+  // descripcionBombaInyeccion    DescripcionBombaInyeccion[]
   marcaFabricaInyector         MarcaFabricaInyector[]
-  descripcionInyector          DescripcionInyector[]
+  // descripcionInyector          DescripcionInyector[]
   // maquina                      Maquina[]
   // material                     Material[]
   FamiliaPresupuesto           FamiliaPresupuesto[]
@@ -81,7 +81,7 @@ model Empresa {
   ordenTrabajo                 OrdenTrabajo[]
   guiaRemisionServicios        GuiaRemisionServicios[]
   facturaServicios             FacturaServicios[]
-  marca                         Marca[]
+  // marca                         Marca[]
   @@map("empresa")
 }
 
@@ -638,8 +638,8 @@ model Familia {
   id          Int          @id @default(autoincrement())
   codigo      String       
   descripcion String
-  empresa     Empresa?     @relation(fields: [empresaId], references: [id])
-  empresaId   Int
+  // empresa     Empresa?     @relation(fields: [empresaId], references: [id])
+  // empresaId   Int
   SubFamilia  SubFamilia[]
   Material    Material[]
 
@@ -662,8 +662,8 @@ model Caracteristica {
   codigo                   String                     
   descripcion              String
   abreviatura              String
-  empresa                  Empresa?                   @relation(fields: [empresaId], references: [id])
-  empresaId                Int
+  // empresa                  Empresa?                   @relation(fields: [empresaId], references: [id])
+  // empresaId                Int
   caracteristicaToMaterial CaracteristicaToMaterial[]
 
   @@map("caracteristica")
@@ -673,8 +673,8 @@ model ModeloMaquina {
   id        Int       @id @default(autoincrement())
   codigo    String    
   modelo    String
-  empresa   Empresa?  @relation(fields: [empresaId], references: [id])
-  empresaId Int
+  // empresa   Empresa?  @relation(fields: [empresaId], references: [id])
+  // empresaId Int
   Maquina   Maquina[]
   hojaRecepcion HojaRecepcion[]
   presupuestos  Presupuesto[]
@@ -686,8 +686,8 @@ model FabricaMaquina {
   id        Int       @id @default(autoincrement())
   codigo    String    
   fabrica   String
-  empresa   Empresa?  @relation(fields: [empresaId], references: [id])
-  empresaId Int
+  // empresa   Empresa?  @relation(fields: [empresaId], references: [id])
+  // empresaId Int
   Maquina   Maquina[]
   hojaRecepcion HojaRecepcion[]
   presupuestos  Presupuesto[]
@@ -699,8 +699,8 @@ model NombreMaquina {
   id        Int       @id @default(autoincrement())
   codigo    String    
   nombre    String
-  empresa   Empresa?  @relation(fields: [empresaId], references: [id])
-  empresaId Int
+  // empresa   Empresa?  @relation(fields: [empresaId], references: [id])
+  // empresaId Int
   Maquina   Maquina[]
   hojaRecepcion HojaRecepcion[]
   presupuestos  Presupuesto[]
@@ -713,8 +713,8 @@ model Marca {
   id        Int       @id @default(autoincrement())
   codigo    String    
   marca     String
-  empresa   Empresa?  @relation(fields: [empresaId], references: [id])
-  empresaId Int
+  // empresa   Empresa?  @relation(fields: [empresaId], references: [id])
+  // empresaId Int
   marcaMaterial Material[]
   marcaMotor   Maquina[] @relation(name: "marcaMotor")
   maquinaMarcaFabricaSistemaInyeccion   Maquina[] @relation(name: "marcaFabricaSistemaInyeccion")
@@ -751,8 +751,8 @@ model DescripcionBombaInyeccion {
   id          Int       @id @default(autoincrement())
   codigo      String    
   descripcion String
-  empresa     Empresa?  @relation(fields: [empresaId], references: [id])
-  empresaId   Int
+  // empresa     Empresa?  @relation(fields: [empresaId], references: [id])
+  // empresaId   Int
   Maquina     Maquina[]
 
   @@map("descripcion_bomba_inyeccion")
@@ -773,8 +773,8 @@ model DescripcionInyector {
   id          Int       @id @default(autoincrement())
   codigo      String    
   descripcion String
-  empresa     Empresa?  @relation(fields: [empresaId], references: [id])
-  empresaId   Int
+  // empresa     Empresa?  @relation(fields: [empresaId], references: [id])
+  // empresaId   Int
   Maquina     Maquina[]
 
   @@map("descripcion_inyector")
