@@ -7,10 +7,10 @@ export default async function handler(req, res) {
       const result = await FamiliaService.getFamilia(req.query.id);
       return res.status(200).json(result);
     }
-    
-    const user = await AuthService.ValidateAccessToken(req, res);                                       //! PROBLEMA AQUI SI SE PONE ANTES QUE EL METHOD === GET
-    user && AuthService.AdministradorFeatures(user.roles);                                              //! PROBLEMA AQUI SI SE PONE ANTES QUE EL METHOD === GET
-    const id = Number(req.query.id);                                                                    //! PROBLEMA AQUI SI SE PONE ANTES QUE EL METHOD === GET
+
+    const user = await AuthService.ValidateAccessToken(req, res); //! PROBLEMA AQUI SI SE PONE ANTES QUE EL METHOD === GET
+    user && AuthService.AdministradorFeatures(user.roles); //! PROBLEMA AQUI SI SE PONE ANTES QUE EL METHOD === GET
+    const id = Number(req.query.id); //! PROBLEMA AQUI SI SE PONE ANTES QUE EL METHOD === GET
 
     if (req.method === "PUT") {
       const result = await FamiliaService.updateFamilia(id, req.body);
