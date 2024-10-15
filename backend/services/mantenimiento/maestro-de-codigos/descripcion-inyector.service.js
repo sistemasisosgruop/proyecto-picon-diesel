@@ -1,14 +1,14 @@
-import prisma from '../../../prisma';
+import prisma from "../../../prisma";
 
 export class DescripcionInyectorService {
   static async createDescripcionInyector(data) {
     const transaction = await prisma.$transaction(async (prismaClient) => {
-      const { codigo, descripcion, empresaId } = data;
+      const { descripcion, empresaId } = data;
       const descripcionInyector = await prismaClient.descripcionInyector.create({
         data: {
           codigo: await this.generarCodigoByEmpresa(empresaId),
           descripcion,
-          empresaId,
+          // empresaId,
         },
       });
 
@@ -45,11 +45,11 @@ export class DescripcionInyectorService {
   static async getDescripcionInyectores(empresaId) {
     return prisma.descripcionInyector.findMany({
       orderBy: {
-        codigo: 'desc',
+        codigo: "desc",
       },
-      where: {
-        empresaId,
-      },
+      // where: {
+      //   empresaId,
+      // },
     });
   }
 
@@ -66,20 +66,20 @@ export class DescripcionInyectorService {
   static async generarCodigoByEmpresa(empresaId) {
     const lastFamilia = await prisma.descripcionInyector.findFirst({
       orderBy: {
-        codigo: 'desc',
+        codigo: "desc",
       },
       select: {
         codigo: true,
       },
-      where: { empresaId },
+      // where: { empresaId },
     });
 
     let codigo;
     if (lastFamilia) {
       const nextCodigo = parseInt(lastFamilia.codigo, 10) + 1;
-      codigo = String(nextCodigo).padStart(2, '0');
+      codigo = String(nextCodigo).padStart(2, "0");
     } else {
-      codigo = '01';
+      codigo = "01";
     }
     return codigo;
   }

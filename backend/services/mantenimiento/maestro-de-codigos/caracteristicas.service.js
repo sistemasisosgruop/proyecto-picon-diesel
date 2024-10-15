@@ -1,14 +1,14 @@
-import prisma from '../../../prisma';
+import prisma from "../../../prisma";
 
 export class CaracteristicasService {
   static async createCaracteristica(data) {
-    const { codigo, descripcion, abreviatura, empresaId } = data;
+    const { descripcion, abreviatura, empresaId } = data;
     const caracteristica = await prisma.caracteristica.create({
       data: {
         codigo: await this.generarCodigoByEmpresa(empresaId),
         descripcion,
         abreviatura,
-        empresaId,
+        // empresaId,
       },
     });
 
@@ -16,7 +16,7 @@ export class CaracteristicasService {
   }
 
   static async updateCaracteristica(id, data) {
-    const { codigo, descripcion, abreviatura } = data;
+    const { descripcion, abreviatura } = data;
     const caracteristica = prisma.caracteristica.update({
       where: {
         id,
@@ -43,9 +43,9 @@ export class CaracteristicasService {
 
   static async getCaracteristicas(empresaId) {
     return prisma.caracteristica.findMany({
-      where: {
-        empresaId,
-      },
+      // where: {
+      //   empresaId,
+      // },
     });
   }
 
@@ -62,20 +62,20 @@ export class CaracteristicasService {
   static async generarCodigoByEmpresa(empresaId) {
     const lastFamilia = await prisma.caracteristica.findFirst({
       orderBy: {
-        codigo: 'desc',
+        codigo: "desc",
       },
       select: {
         codigo: true,
       },
-      where: { empresaId },
+      // where: { empresaId },
     });
 
     let codigo;
     if (lastFamilia) {
       const nextCodigo = parseInt(lastFamilia.codigo, 10) + 1;
-      codigo = String(nextCodigo).padStart(2, '0');
+      codigo = String(nextCodigo).padStart(2, "0");
     } else {
-      codigo = '01';
+      codigo = "01";
     }
     return codigo;
   }
