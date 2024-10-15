@@ -78,6 +78,7 @@ export class ClienteService {
       email,
       // empresaId,
       paisId,
+      notas,
       trabajadores,
     } = data;
     console.log(data, "DATA CLIENTES");
@@ -109,6 +110,7 @@ export class ClienteService {
         // empresaId,
         tipoClienteId,
         paisId,
+        notas,
         trabajadores: formatTrabajadores,
       },
     });
@@ -133,6 +135,7 @@ export class ClienteService {
       formaPago,
       telefono,
       email,
+      notas,
       trabajadores,
     } = data;
 
@@ -164,6 +167,7 @@ export class ClienteService {
         telefono,
         formaPago,
         email,
+        notas,
         trabajadores: formatTrabajadores,
       },
     });

@@ -2,10 +2,10 @@ import prisma from "../../prisma";
 
 export class IncotermsService {
   static async createIncoterm(data) {
-    const { codigo, nombre, descripcion, empresaId } = data;
+    const { nombre, descripcion, empresaId } = data;
     return prisma.incoterms.create({
       data: {
-        codigo,
+        codigo: await this.generarCodigo(empresaId),
         nombre,
         descripcion,
         empresaId,
@@ -57,5 +57,32 @@ export class IncotermsService {
     });
 
     return result;
+  }
+
+  static async generarCodigo(empresaId) {
+    // const prefijo = "INC";
+    let codigo;
+
+    const lastRow = await prisma.incoterms.findFirst({
+      orderBy: {
+        codigo: "desc",
+      },
+      select: {
+        codigo: true,
+      },
+      where: { empresaId },
+    });
+
+    const ultimosTresDigitos = lastRow?.codigo?.slice(-3);
+    if (lastRow && Number(ultimosTresDigitos)) {
+      const nextCodigo = parseInt(ultimosTresDigitos, 10) + 1;
+      codigo = String(nextCodigo).padStart(3, "0");
+    } else {
+      const totalRows = await prisma.incoterms.count({
+        where: { empresaId },
+      });
+      codigo = "00" + (totalRows + 1);
+    }
+    return codigo;
   }
 }

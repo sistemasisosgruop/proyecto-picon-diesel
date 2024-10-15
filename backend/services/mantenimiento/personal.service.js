@@ -6,6 +6,8 @@ export class PersonalService {
   static async createPersonal(data) {
     const {
       nombre,
+      nombreAbreviado,
+      dni,
       password,
       email,
       telefono,
@@ -22,6 +24,8 @@ export class PersonalService {
       data: {
         puesto,
         nombre,
+        nombreAbreviado,
+        dni,
         email,
         password: bcryptPassword,
         telefono,
@@ -54,7 +58,16 @@ export class PersonalService {
   }
 
   static async updatePersonal(id, data) {
-    const { nombre, password, email, telefono, direccion, porcentajeComision } = data;
+    const {
+      nombre,
+      nombreAbreviado,
+      dni,
+      password,
+      email,
+      telefono,
+      direccion,
+      porcentajeComision,
+    } = data;
     const bcryptPassword = await encryptPassword(password);
     const cipherPassword = encrypt(password);
 
@@ -64,6 +77,8 @@ export class PersonalService {
       },
       data: {
         nombre,
+        nombreAbreviado,
+        dni,
         email,
         password: password.length > 0 ? bcryptPassword : undefined,
         passwordEncrypted: password.length > 0 ? cipherPassword : undefined,
