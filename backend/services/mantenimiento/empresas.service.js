@@ -107,8 +107,8 @@ export class EmpresasService {
         id,
       },
       include: {
-        familia: true,
-        caracteristica: true,
+        // familia: true,
+        // caracteristica: true,
       },
     });
 
