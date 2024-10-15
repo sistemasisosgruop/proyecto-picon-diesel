@@ -324,7 +324,7 @@ model Costo {
   id          Int        @id @default(autoincrement())
   codigo      String?    
   nombre      String
-  responsable String
+  responsable String?
   referencia  String?
   estado      EstadoEnum @default(Activo)
   empresa     Empresa?   @relation(fields: [empresaId], references: [id])
