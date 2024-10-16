@@ -14,7 +14,7 @@ export class PersonalService {
       direccion,
       empresaId,
       role,
-      puesto,
+      puestoId,
       porcentajeComision,
     } = data;
     const bcryptPassword = await encryptPassword(password);
@@ -22,7 +22,7 @@ export class PersonalService {
 
     const personal = await prisma.personal.create({
       data: {
-        puesto,
+        puestoId,
         nombre,
         nombreAbreviado,
         dni,
@@ -66,6 +66,7 @@ export class PersonalService {
       email,
       telefono,
       direccion,
+      puestoId,
       porcentajeComision,
     } = data;
     const bcryptPassword = await encryptPassword(password);
@@ -84,6 +85,7 @@ export class PersonalService {
         passwordEncrypted: password.length > 0 ? cipherPassword : undefined,
         telefono,
         direccion,
+        puestoId,
         porcentajeComision,
       },
     });

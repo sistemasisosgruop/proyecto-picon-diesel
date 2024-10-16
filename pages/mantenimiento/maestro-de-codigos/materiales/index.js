@@ -266,7 +266,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       { Header: "Denominación", accessor: "denominacion" },
       { Header: "Stock", accessor: "stock" },
       { Header: "Código de Fabricante", accessor: "codigoFabricante" },
-      { Header: "Marca", accessor: "marcaId", },
+      { Header: "Marca", accessor: "marca.marca", },
       { Header: "Nombre Interno", accessor: "nombreInterno", },
       { Header: "Nombre Comercial", accessor: "nombreComercial", }
     ],
@@ -322,6 +322,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       },
       { Header: "Código Tobera", accessor: "codigoTobera" },
       { Header: "Tipo Tobera", accessor: "tipoTobera" },
+      { Header: "Marca Tobera", accessor: "marcaToberaId" },
     ],
     []
   );
@@ -368,7 +369,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       "get",
       `/api/mantenimiento/maestro-de-codigos/configuracion/maquinas?empresaId=${empresaId}&filter=${target.value}`
     );
-
+   
     setAplicacionMaquinas(data?.data);
   };
 
@@ -387,7 +388,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       "get",
       `/api/mantenimiento/empresas/info-material/${empresaId}`
     );
-
+    
     return data;
   };
   const { data: formInfo } = useQuery("formInfo", getFormInfo, {
@@ -428,7 +429,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
     }
   }, [isOpenModal]); // El useEffect se ejecuta cuando el modal se abre
 
-
+  console.log('Data de getFormInfo',{formInfo})
   const caracteristicas = useMemo(() => formInfo?.data?.caracteristica ?? [], [formInfo?.data]);
   const familias = useMemo(() => formInfo?.data.familia, [formInfo?.data]);
 
@@ -916,13 +917,18 @@ function prevPage(){
                     // setNombreComercial(currentSubFamilia?.descripcion);
                   }}
                 >
-                  {subfamilias?.map((item) => {
+                  {subfamilias && subfamilias.length > 0 ? (
+                  subfamilias?.map((item) => {
                     return (
                       <Option key={item.id} value={item.id}>
                         {item?.descripcion}
                       </Option>
                     );
-                  })}
+                  })
+
+                  ) : (
+                    <Option value="">No hay marcas disponibles</Option>
+                  )}
                 </Select>
                   <Input
                     label="Correlativo"

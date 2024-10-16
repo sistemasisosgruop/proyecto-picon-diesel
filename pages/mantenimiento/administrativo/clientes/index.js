@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { FormContext } from "../../../../contexts/form.context";
+import { GroupInputs } from "app/components/elements/Form";
 
 const schema = yup.object().shape({
   nombre: yup.string().required(),
@@ -41,6 +42,12 @@ export default function Clientes() {
     telefono: null,
     tipoClienteId: null,
     numeroDocumento: null,
+    estado:null,
+    direccion:null,
+    pais:null,
+    formaPago:null,
+    notas:null,
+    
   });
   const [changeData, setChangeData] = useState(false);
   const { updateForm, elementId, resetInfo, setGetPath, setNeedRefetch } = useContext(FormContext);
@@ -57,6 +64,11 @@ export default function Clientes() {
       telefono: null,
       tipoClienteId: null,
       numeroDocumento: null,
+      estado:null,
+      direccion:null,
+      pais:null,
+      formaPago:null,
+      notas:null,
     });
   }, [resetInfo]);
 
@@ -193,32 +205,53 @@ export default function Clientes() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input
-            label="Nombre o Razon Social"
-            onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-            defaultValue={isEdit ? updateForm?.nombre : undefined}
-          />
-          <div className="flex gap-5">
-            <Select
-              label="Tipo de documento"
-              value={isEdit ? updateForm?.tipoDocumento?.toLowerCase() : undefined}
-              onChange={(value) =>
-                setForm({
-                  ...form,
-                  tipoDocumento: value.toString().toUpperCase(),
-                })
-              }
-            >
-              <Option value="dni">DNI</Option>
-              <Option value="ruc">RUC</Option>
-            </Select>
+          <GroupInputs>
+   
+            <div className="flex gap-5">
+              <Select
+                label="Tipo de documento"
+                value={isEdit ? updateForm?.tipoDocumento?.toLowerCase() : undefined}
+                onChange={(value) =>
+                  setForm({
+                    ...form,
+                    tipoDocumento: value.toString().toUpperCase(),
+                  })
+                }
+              >
+                <Option value="dni">DNI</Option>
+                <Option value="ruc">RUC</Option>
+              </Select>
+              <Input
+                label="N° de documento"
+                type="number"
+                onChange={(e) => setForm({ ...form, numeroDocumento: e.target.value })}
+                defaultValue={isEdit ? updateForm?.numeroDocumento : undefined}
+              />
+              </div>
+
+          </GroupInputs>
+          <GroupInputs>
             <Input
-              label="N° de documento"
-              type="number"
-              onChange={(e) => setForm({ ...form, numeroDocumento: e.target.value })}
-              defaultValue={isEdit ? updateForm?.numeroDocumento : undefined}
-            />
-          </div>
+                label="Nombre o Razon Social"
+                onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+                defaultValue={isEdit ? updateForm?.nombre : undefined}
+              />
+            <Select
+                label="Estado"
+                value={isEdit ? updateForm?.estado?.toLowerCase() : undefined}
+                onChange={(value) =>
+                  setForm({
+                    ...form,
+                    tipoDocumento: value.toString().toUpperCase(),
+                  })
+                }
+              >
+                <Option value="dni">Activo</Option>
+                <Option value="ruc">Inactivo</Option>
+              </Select>
+          </GroupInputs>
+          
+          
           <div className="flex gap-5">
             <Input
               label="Correo"
