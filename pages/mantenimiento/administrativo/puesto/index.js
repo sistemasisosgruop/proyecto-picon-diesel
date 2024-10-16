@@ -20,7 +20,7 @@ import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { FormContext } from "../../../../contexts/form.context";
 import { Group, GroupInputs } from "app/components/elements/Form";
-
+import { TrushSquare } from "iconsax-react";
 
 const schema = yup.object().shape({
 //   nombre: yup.string().required(),
@@ -39,6 +39,7 @@ export default function Puesto() {
     });
     const [modulosList, setModulosList] = useState([])
     const [subModulosList, setsubModulosList] = useState([])
+    const [allSubModulosList, setAllSubModulosList] = useState([])
     const [permisoNew,setPermisoNew] = useState({
         moduloId:null,
         submoduloId: null,
@@ -114,44 +115,24 @@ export default function Puesto() {
         //   submodulo:null,
           permisos:[]
         });
-        // refetch();   
+        refetch();   
       }, [changeData]);
     
       const columns = useMemo(
         () => [
           { Header: "#", accessor: "id" },
           { Header: "Nombre", accessor: "nombre" },
-          { Header: "Referencia", accessor: "referencia" },
-          { Header: "Estado", accessor: "estado" },
         ],
         []
       );
     
-
-      //! ACA PONER EL GET DE DATA PARA LA TABLA PUESTOS:
-
-    //   const getCostos = async () => {
-    //     const { data } = await axiosRequest(
-    //       "get",
-    //       `/api/mantenimiento/centro-costos?empresaId=${empresaId}`
-    //     );
-    
-    //     return data;
-    //   };
-    //   const { data, refetch } = useQuery("costos", getCostos, {
-    //     initialData: {
-    //       data: [],
-    //     },
-    //   });
-    
-    //   const costos = useMemo(() => data?.data, [data?.data]);
 
       const getPuestos = async () => {
         const { data } = await axiosRequest(
           "get",
           `/api/mantenimiento/puesto`
         );
-          console.log('Puestos:',{data})
+          // console.log('Puestos:',{data})
         return data;
       };
       const { data, refetch } = useQuery("puestos", getPuestos, {
@@ -162,19 +143,31 @@ export default function Puesto() {
     
       const puestos = useMemo(() => data?.data, [data?.data]);
 
+
     //* OBTENCION DE MODULOS
       const getModulos = async () => {
         try {
-            const { data } = await axiosRequest(
-                "get",
-                `/api/mantenimiento/modulo`
-            );
-                setModulosList(data.data)
-                console.log('Modulos', data.data)
+          const { data } = await axiosRequest("get", `/api/mantenimiento/modulo`);
+          
+          const modulosList = data.data;
+          setModulosList(modulosList);
+          // console.log('Modulos:', modulosList);
 
+          const allSubModulosArray = [];
+          for (const modulo of modulosList) {
+            try {
+              const {data} = await getSubModulos(modulo.id);
+              allSubModulosArray.push(...data.data);         
             } catch (error) {
-                console.error('Error fetching modulos:', error);
-              }
+              console.error(`Error fetching submodulos for modulo ${modulo.id}:`, error);
+            }
+          }
+          // Actualizar el estado con la lista de todos los submódulos
+          setAllSubModulosList(allSubModulosArray);
+          // console.log({allSubModulosArray})
+        } catch (error) {
+          console.error('Error fetching modulos:', error);
+        }
       };
     //* OBTENCION DE SUBMODULOS
       const getSubModulos = async (id) => {
@@ -182,16 +175,17 @@ export default function Puesto() {
           "get",
           `/api/mantenimiento/submodulo?moduloId=${id}`
         );
-        console.log('SUBMODULOS PARA MODULO:',{id}, data.data)
+        // console.log('SUBMODULOS PARA MODULO:',{id}, data.data)
             setsubModulosList(data.data)
-
+          return {data}
       };
       
   
         useEffect(() => {
         if (isOpenModal) {
             getModulos(); // Llamamos a la función para obtener las marcas cuando se abre el modal
-        console.log({modulosList})
+            console.log({modulosList})
+            console.log({allSubModulosList})
         }
     }, [isOpenModal]); // El useEffect se ejecuta cuando el modal se abre
 
@@ -222,7 +216,7 @@ export default function Puesto() {
           
     
     useEffect(() => {
-        console.log('Form actualizado:', {form})
+        // console.log('Form actualizado:', {form})
       }, [form]);
 
     return(
@@ -266,7 +260,6 @@ export default function Puesto() {
 
                 <GroupInputs>
                     <Select label={"Modulo"}
-                    // value={isEdit ? updateForm?.modulo : undefined} // Mostrar valor en modo edit
                     onChange={(value) => {
                         const currentModulo = modulosList?.find((item) => item.id === Number(value));
                         getSubModulos(currentModulo.id);
@@ -287,7 +280,6 @@ export default function Puesto() {
                     </Select>
 
                     <Select label="Submodulo"
-                    // value={isEdit? updateForm?.submodulo : undefined} // Mostrar valor en modo edición
                     onChange={(value) => {
                         // setForm({ ...form, submodulo: value } );
                         setPermisoNew({...permisoNew, submoduloId: value})
@@ -327,32 +319,50 @@ export default function Puesto() {
                 </Group>
                 <table>
                     <thead>
-                        <tr>
-                        <th>ID</th>
-                        <th>Módulo</th>
-                        <th>Submódulo</th>
-                        <th>Permisos</th>
+                      <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                        <th style={{ fontWeight: 'bold' }}>#</th>
+                        <th style={{ fontWeight: 'bold' }}>Módulo</th>
+                        <th style={{ fontWeight: 'bold' }}>Submódulo</th>
+                        <th style={{ fontWeight: 'bold' }}>Permisos</th>
+                        <th style={{ fontWeight: 'bold' }}>Eliminar</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {form.permisos.map((permiso, index) => (
-                        <tr key={index}>
-                            {/* Orden del permiso en el array */}
-                            <td>{index + 1}</td>
-                            {/* Módulo */}
-                            <td>{permiso.moduloId}</td> {/* Mostrar el módulo */}
-                            {/* Submódulo ID */}
-                            <td>{permiso.submoduloId}</td>
+                      {form.permisos.map((permiso, index) => {
+                        console.log('Fila de permisos modal:',{form})
+                        // Encuentra el módulo correspondiente al permiso
+                        let modulo = modulosList.find(mod => mod.id === permiso.moduloId);
+                        if(!modulo){
+                          modulo = modulosList.find(mod => mod.id === permiso.submodulo.moduloId);
+                        }
+                        // Encuentra el submódulo correspondiente al permiso
+                        const submodulo = allSubModulosList.find(sub => sub.id === permiso.submoduloId);
 
-                            {/* Lista de permisos en true */}
+                        return (
+                          <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                            <td>{index + 1}</td>
+                            <td>{modulo ? modulo.nombre : 'Módulo no encontrado'}</td> {/* Muestra el nombre del módulo */}
+                            <td>{submodulo ? submodulo.nombre : 'Submódulo no encontrado'}</td> {/* Muestra el nombre del submódulo */}
                             <td>
-                            {permiso.leer && <span>Leer </span>}
-                            {permiso.crear && <span>Crear </span>}
-                            {permiso.actualizar && <span>Editar </span>}
-                            {permiso.eliminar && <span>Eliminar </span>}
+                              {permiso.leer && <span>Leer </span>}
+                              {permiso.crear && <span>Crear </span>}
+                              {permiso.actualizar && <span>Editar </span>}
+                              {permiso.eliminar && <span>Eliminar </span>}
                             </td>
-                        </tr>
-                        ))}
+                            <td>
+                              <button
+                                onClick={() => {
+                                  const updatedPermisos = [...form.permisos];
+                                  updatedPermisos.splice(index, 1); // Eliminar permiso
+                                  setForm({ ...form, permisos: updatedPermisos });
+                                }}
+                              >
+                                <TrushSquare />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                     </table>
                 </Group>
@@ -363,8 +373,6 @@ export default function Puesto() {
           </div>
         </form>
       </Modal>
-
-
 
         {/* Modal Eliminar */}
       <ModalConfirmDelete

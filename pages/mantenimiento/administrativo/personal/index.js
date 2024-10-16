@@ -47,6 +47,8 @@ export default function Personal() {
   const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
     useModal();
   const [empresaId] = useLocalStorage("empresaId");
+  const [puestos, setPuestos] = useState();
+
   const [form, setForm] = useState({
     nombre: null,
     email: null,
@@ -150,11 +152,21 @@ export default function Personal() {
     []
   );
 
+  const getPuestos = async () => {
+    const { data } = await axiosRequest(
+      "get",
+      `/api/mantenimiento/puesto`
+    );
+
+    return data;
+  };
+
   const getPersonal = async () => {
     const { data } = await axiosRequest(
       "get",
-      `/api/mantenimiento/personal?empresaId=${empresaId}`
+      `/api/mantenimiento/personal`
     );
+    console.log('PEsonal lista:',personal);
     return data;
   };
 
