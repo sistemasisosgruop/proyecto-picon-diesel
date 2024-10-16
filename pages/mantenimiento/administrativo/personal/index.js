@@ -1,4 +1,4 @@
-import { Input } from "@material-tailwind/react";
+import { Checkbox, Input, Option, Select } from "@material-tailwind/react";
 import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
@@ -25,7 +25,7 @@ const schema = yup.object().shape({
   email: yup.string().email().required(),
   password: yup.string().required(),
   telefono: yup.string().required(),
-  puesto: yup.string().required(),
+  puestoId: yup.string().nullable(),
   direccion: yup.string().required(),
   dni:yup.string().required(),
   nombreAbreviado:yup.string().nullable(),
@@ -36,7 +36,7 @@ const schemaUpdate = yup.object().shape({
   email: yup.string().email().required(),
   password: yup.string().nullable(),
   telefono: yup.string().required(),
-  puesto: yup.string().required(),
+  puestoId: yup.string().nullable(),
   direccion: yup.string().required(),
   dni:yup.string().required(),
   nombreAbreviado:yup.string().nullable(),
@@ -47,14 +47,14 @@ export default function Personal() {
   const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
     useModal();
   const [empresaId] = useLocalStorage("empresaId");
-  const [puestos, setPuestos] = useState();
+  const [puestos, setPuestos] = useState([]);
 
   const [form, setForm] = useState({
     nombre: null,
     email: null,
     password: null,
     telefono: null,
-    puesto: null,
+    puestoId: null,
     direccion: null,
     nombreAbreviado:null,
     dni:null,
@@ -71,6 +71,7 @@ export default function Personal() {
     await axiosRequest("post", "/api/mantenimiento/personal", {
       ...form,
       empresaId: parseInt(empresaId),
+      porcentajeComision: parseInt(form.porcentajeComision),
     });
 
     toast.success(`💾 Registro guardado exitosamente!`, successProps);
@@ -80,6 +81,7 @@ export default function Personal() {
     await schemaUpdate.validate(form, { abortEarly: false });
     await axiosRequest("put", `/api/mantenimiento/personal/${elementId}`, {
       ...form,
+      porcentajeComision: parseInt(form.porcentajeComision),
     });
 
     toast.success(`💾 Registro guardado exitosamente!`, successProps);
@@ -115,7 +117,7 @@ export default function Personal() {
       email: null,
       password: null,
       telefono: null,
-      puesto: null,
+      puestoId: null,
       direccion: null,
       nombreAbreviado:null,
       dni:null,
@@ -130,7 +132,7 @@ export default function Personal() {
       email: null,
       password: null,
       telefono: null,
-      puesto: null,
+      puestoId: null,
       direccion: null,
       nombreAbreviado:null,
       dni:null,
@@ -141,13 +143,13 @@ export default function Personal() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      { Header: "Codigo", accessor: "codigo" },
+      // { Header: "Codigo", accessor: "codigo" },
       { Header: "Nombre", accessor: "nombre" },
       { Header: "Correo", accessor: "email" },
       { Header: "Teléfono", accessor: "telefono" },
-      { Header: "Cargo", accessor: "cargo" },
-      { Header: "Area", accessor: "area" },
-      { Header: "Estado", accessor: "estado" },
+      { Header: "Puesto", accessor: "puesto.nombre" },
+      // { Header: "Area", accessor: "area" },
+      // { Header: "Estado", accessor: "estado" },
     ],
     []
   );
@@ -157,8 +159,9 @@ export default function Personal() {
       "get",
       `/api/mantenimiento/puesto`
     );
-
-    return data;
+    setPuestos(data.data)
+    console.log('puestos:',data.data);
+    return data.data;
   };
 
   const getPersonal = async () => {
@@ -166,7 +169,7 @@ export default function Personal() {
       "get",
       `/api/mantenimiento/personal`
     );
-    console.log('PEsonal lista:',personal);
+    console.log('Personal lista:',data);
     return data;
   };
 
@@ -188,7 +191,15 @@ export default function Personal() {
   );
 
 
+useEffect(()=>{
+  getPuestos()
 
+},[isOpenModal])
+
+useEffect(()=>{
+  console.log({form})
+
+},[form])
 
   
   return (
@@ -262,11 +273,27 @@ export default function Personal() {
             />
 
           <div className="flex gap-5">
-          <Input
-            label="Puesto"
-            onChange={(e) => setForm({ ...form, puesto: e.target.value })}
-            defaultValue={isEdit ? updateForm?.puesto : undefined}
-          />
+
+          <Select label="Puesto"
+            value={isEdit ? updateForm?.puestoId : undefined}
+                    onChange={(value) => {
+                        setForm({ ...form, puestoId: value } );
+                        // setPermisoNew({...permisoNew, submoduloId: value})
+                    }}
+                    >
+                    {puestos && puestos.length > 0 ? (
+                    puestos?.map((item) => {
+                        return (
+                        <Option key={item.id} value={item.id}>
+                            {item?.nombre}
+                        </Option>
+                        );
+                    })
+                    ) : (
+                        <Option value="">No hay marcas disponibles</Option>
+                    )}
+            </Select>
+
           <Input
             label="Porcentaje de comision"
             onChange={(e) => setForm({ ...form, porcentajeComision: e.target.value })}
