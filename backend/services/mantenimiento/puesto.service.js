@@ -1,14 +1,14 @@
-import prisma from '../../prisma.js';
+import prisma from "../../prisma.js";
 
 export class PuestoService {
   static async createPuesto(data) {
     const { nombre, permisos } = data;
-    console.log(data, ' crear puesto');
+    console.log(data, " crear puesto");
     const validarNombre = await prisma.puesto.findFirst({
       where: { nombre: nombre.toUpperCase() },
     });
     if (validarNombre) {
-      throw new Error('El nombre ya existe. Intenta con otro.');
+      throw new Error("El nombre ya existe. Intenta con otro.");
     }
     const newPuesto = await prisma.puesto.create({ data: { nombre: nombre.toUpperCase() } });
 
@@ -33,13 +33,13 @@ export class PuestoService {
 
   static async updatePuesto(puestoId, puesto) {
     const { nombre, permisos } = puesto;
-    console.log(puesto, 'DATA UPDATE');
+    console.log(puesto, "DATA UPDATE");
     const validarNombre = await prisma.puesto.findFirst({
       where: { nombre: nombre.toUpperCase(), id: { not: puestoId } },
     });
 
     if (validarNombre) {
-      throw new Error('El nombre ya existe. Intenta con otro.');
+      throw new Error("El nombre ya existe. Intenta con otro.");
     }
 
     const newPermisos = [];
@@ -55,8 +55,8 @@ export class PuestoService {
         });
       }
     }
-    console.log(puestoId, 'PUESTO ');
-    console.log(newPermisos, 'PERMISOS');
+    console.log(puestoId, "PUESTO ");
+    console.log(newPermisos, "PERMISOS");
     const createPermisos = prisma.permiso.createMany({ data: newPermisos });
     const delteOldPermisos = prisma.permiso.deleteMany({ where: { puestoId: Number(puestoId) } });
     await prisma.$transaction([delteOldPermisos, createPermisos]);
@@ -70,7 +70,23 @@ export class PuestoService {
 
   static async getPuestos(queryParams) {
     // const { empresaId } = queryParams;
-    const data = await prisma.puesto.findMany();
+    const data = await prisma.puesto.findMany({
+      include: {
+        permisos: {
+          include: {
+            submodulo: {
+              include: {
+                modulo: {
+                  select: {
+                    nombre: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
     return data;
   }
 
