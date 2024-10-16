@@ -74,7 +74,7 @@ export class TiposViasService {
       },
       where: { empresaId },
     });
-    console.log(lastRow, "last");
+
     const ultimosTresDigitos = lastRow?.codigo?.slice(-3);
     if (lastRow && Number(ultimosTresDigitos)) {
       const nextCodigo = parseInt(ultimosTresDigitos, 10) + 1;

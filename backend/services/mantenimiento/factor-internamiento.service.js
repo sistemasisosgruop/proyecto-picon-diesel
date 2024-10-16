@@ -1,5 +1,5 @@
 import prisma from "../../prisma";
-import { generateFactorInternamiento } from "../../utils/codes";
+// import { generateFactorInternamiento } from "../../utils/codes";
 import { formatAmount } from "../../utils/format-amount";
 
 export class FactorInternamiento {
@@ -8,20 +8,14 @@ export class FactorInternamiento {
 
     const factor = await prisma.factorInternamiento.create({
       data: {
+        codigo: await this.generarCodigo(empresaId),
         valor: formatAmount(valor).toUnit(),
         fecha,
         empresaId,
       },
     });
 
-    return prisma.factorInternamiento.update({
-      where: {
-        id: factor.id,
-      },
-      data: {
-        codigo: generateFactorInternamiento(factor.id),
-      },
-    });
+    return factor;
   }
 
   static async updateFactorInternamiento(id, data) {
@@ -68,5 +62,32 @@ export class FactorInternamiento {
     });
 
     return result;
+  }
+
+  static async generarCodigo(empresaId) {
+    const prefijo = "FI";
+    let codigo;
+
+    const lastRow = await prisma.factorInternamiento.findFirst({
+      orderBy: {
+        codigo: "desc",
+      },
+      select: {
+        codigo: true,
+      },
+      where: { empresaId },
+    });
+
+    const ultimosTresDigitos = lastRow?.codigo?.slice(-3);
+    if (lastRow && Number(ultimosTresDigitos)) {
+      const nextCodigo = parseInt(ultimosTresDigitos, 10) + 1;
+      codigo = String(nextCodigo).padStart(3, "0");
+    } else {
+      const totalRows = await prisma.factorInternamiento.count({
+        where: { empresaId },
+      });
+      codigo = "00" + (totalRows + 1);
+    }
+    return prefijo + codigo;
   }
 }
