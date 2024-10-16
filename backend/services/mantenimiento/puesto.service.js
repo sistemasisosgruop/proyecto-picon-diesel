@@ -13,7 +13,7 @@ export class PuestoService {
     const newPuesto = await prisma.puesto.create({ data: { nombre: nombre.toUpperCase() } });
 
     const newPermisos = [];
-    if (permisos && permisos.legth > 0) {
+    if (permisos && permisos.length > 0) {
       for (const permiso of permisos) {
         newPermisos.push({
           puestoId: newPuesto.id,
