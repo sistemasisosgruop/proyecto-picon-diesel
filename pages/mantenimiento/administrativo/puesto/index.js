@@ -146,6 +146,21 @@ export default function Puesto() {
     
     //   const costos = useMemo(() => data?.data, [data?.data]);
 
+      const getPuestos = async () => {
+        const { data } = await axiosRequest(
+          "get",
+          `/api/mantenimiento/puesto`
+        );
+          console.log('Puestos:',{data})
+        return data;
+      };
+      const { data, refetch } = useQuery("puestos", getPuestos, {
+        initialData: {
+          data: [],
+        },
+      });
+    
+      const puestos = useMemo(() => data?.data, [data?.data]);
 
     //* OBTENCION DE MODULOS
       const getModulos = async () => {
@@ -224,12 +239,12 @@ export default function Puesto() {
           </div>
         </Title>
         {/* Table list */}
-        {/* <TableComplete
-          columns={columns}
-          data={costos}
-          openModal={openModal}
-          setIsOpenModalDelete={setIsOpenModalDelete}
-        /> */}
+        <TableComplete
+            columns={columns}
+            data={puestos}
+            openModal={openModal}
+            setIsOpenModalDelete={setIsOpenModalDelete}
+        />
       </TemplateAdministrativo>
         
 
