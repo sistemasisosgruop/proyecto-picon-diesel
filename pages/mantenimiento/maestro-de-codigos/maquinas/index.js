@@ -249,7 +249,7 @@ export default function Maquinas() {
       { Header: "Código Tobera", accessor: "codigoTobera" },
       { Header: "Tipo Tobera", accessor: "tipoTobera" },
       { Header: "Código Orig. Tobera", accessor: "codigoOriginalTobera" },
-      // { Header: "Marca Tobera", accessor: "marcaToberaId" },             //! Agregar marca a tobera
+      { Header: "Marca Tobera", accessor: "marcaToberaId" },             //! Agregar marca a tobera
     ],
     []
   );
@@ -386,7 +386,7 @@ export default function Maquinas() {
             {/* Datos de la maquina */}
             <Group title={"Datos de la Máquina"}>
               <GroupInputs>
-                {/* <Select
+                <Select
                   label={"Fábrica Máquina"}
                   onChange={(value) => setForm({ ...form, fabricaMaquinaId: value })}
                   value={isEdit ? updateForm?.fabricaMaquinaId : undefined}
@@ -407,10 +407,10 @@ export default function Maquinas() {
                       {modelo}
                     </Option>
                   ))}
-                </Select> */}
+                </Select>
               </GroupInputs>
               <GroupInputs>
-                {/* <Select
+                <Select
                   label={"Nombre de Máquina"}
                   onChange={(value) => setForm({ ...form, nombreMaquinaId: value })}
                   value={isEdit ? updateForm?.nombreMaquinaId : undefined}
@@ -420,7 +420,7 @@ export default function Maquinas() {
                       {nombre}
                     </Option>
                   ))}
-                </Select> */}
+                </Select>
                 <Select
                   label={"Procedencia"}
                   onChange={(value) => setForm({ ...form, paisId: value })}
@@ -518,7 +518,7 @@ export default function Maquinas() {
                     <Option value="">No hay marcas disponibles</Option>
                   )}
                 </Select>
-                {/* <Select
+                <Select
                   label={"Descripción de Bomba de Inyección"}
                   onChange={(value) => setForm({ ...form, descripcionBombaInyeccionId: value })}
                   value={isEdit ? updateForm?.descripcionBombaInyeccionId : undefined}
@@ -528,10 +528,10 @@ export default function Maquinas() {
                       {descripcion}
                     </Option>
                   ))}
-                </Select> */}
+                </Select>
               </GroupInputs>
               <GroupInputs>
-                {/* <Select
+                <Select
                   label={"Procedencia"}
                   value={isEdit ? updateForm?.bombaInyeccionPaisId : undefined}
                   onChange={(value) => setForm({ ...form, bombaInyeccionPaisId: value })}
@@ -541,7 +541,7 @@ export default function Maquinas() {
                       {nombre}
                     </Option>
                   ))}
-                </Select> */}
+                </Select>
                 <Input
                   label={"Código original de Bomba de Inyección"}
                   onChange={(e) =>
@@ -585,7 +585,7 @@ export default function Maquinas() {
                   )}
                 </Select>
 
-                {/* <Select
+                <Select
                   label={"Descripción del Inyector"}
                   value={isEdit ? updateForm?.descripcionInyectorId : undefined}
                   onChange={(value) => setForm({ ...form, descripcionInyectorId: value })}
@@ -595,7 +595,7 @@ export default function Maquinas() {
                       {descripcion}
                     </Option>
                   ))}
-                </Select> */}
+                </Select>
               </GroupInputs>
               <GroupInputs>
                 <Select

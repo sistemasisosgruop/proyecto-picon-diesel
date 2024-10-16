@@ -27,6 +27,9 @@ const schema = yup.object().shape({
   telefono: yup.string().required(),
   puesto: yup.string().required(),
   direccion: yup.string().required(),
+  dni:yup.string().required(),
+  nombreAbreviado:yup.string().nullable(),
+  porcentajeComision:yup.string().nullable(),
 });
 const schemaUpdate = yup.object().shape({
   nombre: yup.string().required(),
@@ -35,6 +38,9 @@ const schemaUpdate = yup.object().shape({
   telefono: yup.string().required(),
   puesto: yup.string().required(),
   direccion: yup.string().required(),
+  dni:yup.string().required(),
+  nombreAbreviado:yup.string().nullable(),
+  porcentajeComision:yup.string().nullable(),
 });
 
 export default function Personal() {
@@ -48,6 +54,9 @@ export default function Personal() {
     telefono: null,
     puesto: null,
     direccion: null,
+    nombreAbreviado:null,
+    dni:null,
+    porcentajeComision:null
   });
   const { updateForm, elementId, resetInfo, setCsvPath, changeData, setChangeData } =
     useContext(FormContext);
@@ -106,6 +115,9 @@ export default function Personal() {
       telefono: null,
       puesto: null,
       direccion: null,
+      nombreAbreviado:null,
+      dni:null,
+      porcentajeComision:null
     });
     refetch();
   }, [changeData]);
@@ -118,6 +130,9 @@ export default function Personal() {
       telefono: null,
       puesto: null,
       direccion: null,
+      nombreAbreviado:null,
+      dni:null,
+      porcentajeComision:null
     });
   }, [resetInfo]);
 
@@ -140,7 +155,6 @@ export default function Personal() {
       "get",
       `/api/mantenimiento/personal?empresaId=${empresaId}`
     );
-
     return data;
   };
 
@@ -150,6 +164,7 @@ export default function Personal() {
     },
   });
 
+  
   const personal = useMemo(
     () =>
       data?.data.map((personal) => ({
@@ -160,6 +175,10 @@ export default function Personal() {
     [data?.data]
   );
 
+
+
+
+  
   return (
     <>
       <TemplateAdministrativo>
@@ -196,6 +215,18 @@ export default function Personal() {
           />
           <div className="flex gap-5">
             <Input
+              label="Nombre Abreviado"
+              onChange={(e) => setForm({ ...form, nombreAbreviado: e.target.value })}
+              defaultValue={isEdit ? updateForm?.nombreAbreviado : undefined}
+            />
+            <Input
+              label="DNI"
+              onChange={(e) => setForm({ ...form, dni: e.target.value })}
+              defaultValue={isEdit ? updateForm?.dni : undefined}
+            />
+          </div>
+   
+            <Input
               label="Correo"
               type="email"
               onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -206,8 +237,7 @@ export default function Personal() {
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               defaultValue={isEdit ? updateForm?.password : undefined}
             />
-          </div>
-          <div className="flex gap-5">
+
             <Input
               label="Teléfono"
               onChange={(e) => setForm({ ...form, telefono: e.target.value })}
@@ -218,12 +248,20 @@ export default function Personal() {
               onChange={(e) => setForm({ ...form, direccion: e.target.value })}
               defaultValue={isEdit ? updateForm?.direccion : undefined}
             />
-          </div>
+
+          <div className="flex gap-5">
           <Input
             label="Puesto"
             onChange={(e) => setForm({ ...form, puesto: e.target.value })}
             defaultValue={isEdit ? updateForm?.puesto : undefined}
           />
+          <Input
+            label="Porcentaje de comision"
+            onChange={(e) => setForm({ ...form, porcentajeComision: e.target.value })}
+            defaultValue={isEdit ? updateForm?.porcentajeComision : undefined}
+          />
+          </div>
+         
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
             <ButtonSave onClick={saveData} />

@@ -8,6 +8,11 @@ export default function TemplateAdministrativo({children}) {
   const items = [
     {
       icon: <UserOctagon />,
+      modulo: "Puesto",
+      href: "/mantenimiento/administrativo/puesto",
+    },
+    {
+      icon: <UserOctagon />,
       modulo: "Personal",
       href: "/mantenimiento/administrativo/personal",
     },

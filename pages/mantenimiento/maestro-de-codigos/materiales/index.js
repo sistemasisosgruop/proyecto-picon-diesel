@@ -266,7 +266,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       { Header: "Denominación", accessor: "denominacion" },
       { Header: "Stock", accessor: "stock" },
       { Header: "Código de Fabricante", accessor: "codigoFabricante" },
-      { Header: "Marca", accessor: "marcaId", },
+      { Header: "Marca", accessor: "marca.marca", },
       { Header: "Nombre Interno", accessor: "nombreInterno", },
       { Header: "Nombre Comercial", accessor: "nombreComercial", }
     ],
@@ -322,6 +322,7 @@ const [subsUpdate,setSubsUpdate]= useState(0);
       },
       { Header: "Código Tobera", accessor: "codigoTobera" },
       { Header: "Tipo Tobera", accessor: "tipoTobera" },
+      { Header: "Marca Tobera", accessor: "marcaToberaId" },
     ],
     []
   );
