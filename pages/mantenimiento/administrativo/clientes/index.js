@@ -286,7 +286,7 @@ const handleDeleteTrabajador = (index,event) => {
   event.preventDefault();
   const updatedTrabajadores = form.trabajadores.filter((_, i) => i !== index);
   // console.log('Eliminando',{index},{updatedTrabajadores});
-  setUpdateForm({ ...updateForm, trabajadores: updatedTrabajadores }); // Crea un nuevo array sin el trabajador eliminado
+  setUpdateForm({ ...updateForm, trabajadores: updatedTrabajadores }); // ACTUALIZAR EN EL UPDATEFORM
   setForm({ ...form, trabajadores: updatedTrabajadores }); // Crea un nuevo array sin el trabajador eliminado
   
 };
