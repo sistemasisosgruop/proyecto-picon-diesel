@@ -167,7 +167,7 @@ export default function Personal() {
   const getPersonal = async () => {
     const { data } = await axiosRequest(
       "get",
-      `/api/mantenimiento/personal`
+      `/api/mantenimiento/personal?empresaId=${empresaId}`  //! cambiar
     );
     console.log('Personal lista:',data);
     return data;

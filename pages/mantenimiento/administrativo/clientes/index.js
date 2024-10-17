@@ -95,8 +95,8 @@ export default function Clientes() {
     notas:null,
     trabajadores:[]
   });
-  const [changeData, setChangeData] = useState(false);
-  const { updateForm, setUpdateForm,elementId, resetInfo, setGetPath, setNeedRefetch } = useContext(FormContext);
+  // const [changeData, setChangeData] = useState(false);
+  const { updateForm, setUpdateForm,elementId, resetInfo, setGetPath, setNeedRefetch, changeData,setChangeData } = useContext(FormContext);
 
   useEffect(() => {
     setForm(updateForm);
@@ -170,6 +170,7 @@ export default function Clientes() {
         await createRegistro();
       }
       setChangeData(!changeData);
+      console.log('cambiandodata')
       closeModal();
     } catch (error) {
       toast.error(<ToastAlert error={error} />, errorProps);
