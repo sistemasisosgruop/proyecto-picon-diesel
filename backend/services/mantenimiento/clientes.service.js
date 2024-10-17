@@ -77,6 +77,7 @@ export class ClienteService {
       formaPago,
       email,
       // empresaId,
+
       direccion,
       paisId,
       notas,
@@ -141,6 +142,7 @@ export class ClienteService {
       notas,
       trabajadores,
       paisId,
+      estado,
     } = data;
 
     const formatTrabajadores = [];
@@ -159,7 +161,7 @@ export class ClienteService {
         });
       }
     }
-    const cliente = prisma.cliente.update({
+    const cliente = await prisma.cliente.update({
       where: {
         id,
       },
@@ -174,6 +176,7 @@ export class ClienteService {
         direccion,
         notas,
         paisId,
+        estado,
         trabajadores: formatTrabajadores,
       },
     });
