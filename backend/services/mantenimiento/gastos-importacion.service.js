@@ -1,27 +1,19 @@
 import prisma from "../../prisma";
-import { generateCodeGastoImportacion } from "../../utils/codes";
+// import { generateCodeGastoImportacion } from "../../utils/codes";
 
 export class GastosImportacionService {
   static async createGastoImportacion(data) {
     const { nombre, descripcion, empresaId } = data;
     const gasto = await prisma.gastoImportacion.create({
       data: {
+        codigo: await this.generarCodigo(empresaId),
         nombre,
         descripcion,
         empresaId,
       },
     });
 
-    const result = await prisma.gastoImportacion.update({
-      where: {
-        id: gasto.id,
-      },
-      data: {
-        codigo: generateCodeGastoImportacion(gasto.id),
-      },
-    });
-
-    return result;
+    return gasto;
   }
 
   static async updateGastoImportacion(id, data) {
@@ -68,5 +60,32 @@ export class GastosImportacionService {
     });
 
     return result;
+  }
+
+  static async generarCodigo(empresaId) {
+    const prefijo = "GAS";
+    let codigo;
+
+    const lastRow = await prisma.gastoImportacion.findFirst({
+      orderBy: {
+        codigo: "desc",
+      },
+      select: {
+        codigo: true,
+      },
+      where: { empresaId },
+    });
+
+    const ultimosTresDigitos = lastRow?.codigo?.slice(-3);
+    if (lastRow && Number(ultimosTresDigitos)) {
+      const nextCodigo = parseInt(ultimosTresDigitos, 10) + 1;
+      codigo = String(nextCodigo).padStart(3, "0");
+    } else {
+      const totalRows = await prisma.gastoImportacion.count({
+        where: { empresaId },
+      });
+      codigo = "00" + (totalRows + 1);
+    }
+    return prefijo + codigo;
   }
 }

@@ -109,32 +109,14 @@ export class PersonalService {
   static async getAllPersonal(empresaId) {
     const result = await prisma.personal.findMany({
       include: {
-        puesto: {
-          select: {
-            nombre: true,
-            permisos: {
-              include: {
-                submodulo: {
-                  select: {
-                    nombre: true,
-                    modulo: {
-                      select: {
-                        nombre: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
+        empresa: true,
       },
       where: {
-        // empresa: {
-        //   some: {
-        //     id: empresaId,
-        //   },
-        // },
+        empresa: {
+          some: {
+            id: empresaId,
+          },
+        },
         estado: "Activo",
       },
     });

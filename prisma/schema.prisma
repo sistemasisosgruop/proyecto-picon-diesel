@@ -304,6 +304,7 @@ model Cliente {
   estado          EstadoEnum        @default(Activo)
   tipoCliente     TipoCliente?      @relation(fields: [tipoClienteId], references: [id])
   tipoClienteId   Int?
+  direccion       String?
   // empresa         Empresa?          @relation(fields: [empresaId], references: [id])
   // empresaId       Int?
   pais            Pais              @relation(fields: [paisId], references: [id])
