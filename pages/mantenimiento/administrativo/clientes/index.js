@@ -1,6 +1,6 @@
 "use client";
-import { Input, Option, Select } from "@material-tailwind/react";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { Input, Option, Select,Textarea,Checkbox } from "@material-tailwind/react";
+import { useContext, useEffect, useMemo, useState, Fragment} from "react";
 import {
   ButtonAdd,
   ButtonCancel,
@@ -8,7 +8,7 @@ import {
   ButtonSave,
 } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
-import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
+import { Modal,ModalLg, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
 import TemplateAdministrativo from "../../../../app/components/templates/mantenimiento/TemplateAdministrativo";
 import { useModal } from "../../../../app/hooks/useModal";
@@ -20,7 +20,8 @@ import { toast } from "react-toastify";
 import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { FormContext } from "../../../../contexts/form.context";
-import { GroupInputs } from "app/components/elements/Form";
+import { Group, GroupInputs } from "app/components/elements/Form";
+
 
 const schema = yup.object().shape({
   nombre: yup.string().required(),
@@ -35,6 +36,30 @@ export default function Clientes() {
   const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
     useModal();
   const [empresaId] = useLocalStorage("empresaId");
+  const[paises,setPaises]=useState([]);
+  const[isOpenSubModal,setIsOpenSubModal]=useState(false);
+
+
+  const openSubModal =()=>{
+    setIsOpenSubModal(true)
+  }
+  const closeSubModal =()=>{
+    setIsOpenSubModal(false)
+  }
+
+  const [trabajadorForm, setTrabajadorForm] = useState({
+    nombreTrabajador: null,
+    cargo: null,
+    dni: null,
+    correo: null,
+    telefono: null,
+    nroLicencia: null,
+    placa:null,
+    envioCorreo:false,
+    transportista:false,
+    
+  });
+  
   const [form, setForm] = useState({
     nombre: null,
     email: null,
@@ -44,7 +69,7 @@ export default function Clientes() {
     numeroDocumento: null,
     estado:null,
     direccion:null,
-    pais:null,
+    paisId:null,
     formaPago:null,
     notas:null,
     
@@ -66,7 +91,7 @@ export default function Clientes() {
       numeroDocumento: null,
       estado:null,
       direccion:null,
-      pais:null,
+      paisId:null,
       formaPago:null,
       notas:null,
     });
@@ -124,6 +149,11 @@ export default function Clientes() {
       telefono: null,
       tipoClienteId: null,
       numeroDocumento: null,
+      estado:null,
+      direccion:null,
+      paisId:null,
+      formaPago:null,
+      notas:null,
     });
     refetch();
   }, [changeData]);
@@ -180,6 +210,33 @@ export default function Clientes() {
     [data?.data]
   );
 
+ //* OBTENER MARCAS:
+ const getPaises = async () => {
+  try {
+    const { data } = await axiosRequest(
+      'get',
+      `/api/mantenimiento/paises?empresaId=${1}`
+    );
+    console.log('Paises obtenidos:', data); 
+    setPaises(data.data); 
+  } catch (error) {
+    console.error('Error fetching marcas:', error);
+  }
+};
+
+useEffect(() => {
+  if (isOpenModal) {
+    getPaises(); 
+  }
+}, [isOpenModal]); 
+
+useEffect(() => {
+    console.log({trabajadorForm})
+}, [trabajadorForm]); 
+useEffect(() => {
+  console.log({form})
+}, [form]); 
+
   return (
     <>
       <TemplateAdministrativo>
@@ -198,16 +255,33 @@ export default function Clientes() {
         />
       </TemplateAdministrativo>
       {/* Modal agregar */}
-      <Modal
+      
+      {!isOpenSubModal && (
+      <ModalLg
         title={isEdit ? "Editar Cliente" : "Nuevo Cliente"}
         isOpen={isOpenModal}
         closeModal={closeModal}
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
+        <Group title={"Datos del personal"}>
+          
           <GroupInputs>
-   
-            <div className="flex gap-5">
+
+          <Select
+            label="Tipo de Cliente"
+            onChange={(value) => setForm({ ...form, tipoClienteId: value })}
+            value={isEdit ? updateForm?.tipoClienteId : undefined}
+          >
+            {tipoClientes?.data?.map((item) => {
+              return (
+                <Option key={item.id} value={item.id}>
+                  {item.tipo}
+                </Option>
+              );
+            })}
+          </Select>
+
               <Select
                 label="Tipo de documento"
                 value={isEdit ? updateForm?.tipoDocumento?.toLowerCase() : undefined}
@@ -227,7 +301,7 @@ export default function Clientes() {
                 onChange={(e) => setForm({ ...form, numeroDocumento: e.target.value })}
                 defaultValue={isEdit ? updateForm?.numeroDocumento : undefined}
               />
-              </div>
+        
 
           </GroupInputs>
           <GroupInputs>
@@ -238,58 +312,245 @@ export default function Clientes() {
               />
             <Select
                 label="Estado"
-                value={isEdit ? updateForm?.estado?.toLowerCase() : undefined}
+                value={isEdit ? updateForm?.estado : undefined}
                 onChange={(value) =>
                   setForm({
                     ...form,
-                    tipoDocumento: value.toString().toUpperCase(),
+                    estado: value.toString(),
                   })
                 }
               >
-                <Option value="dni">Activo</Option>
-                <Option value="ruc">Inactivo</Option>
+                <Option value="Activo">Activo</Option>
+                <Option value="Inactivo">Inactivo</Option>
               </Select>
           </GroupInputs>
+          <GroupInputs>
+              <Input
+                    label="Direccion"
+                    onChange={(e) => setForm({ ...form, direccion: e.target.value })}
+                    defaultValue={isEdit ? updateForm?.direccion : undefined}
+                  />
+              <Input
+                  label="Teléfono"
+                  onChange={(e) => setForm({ ...form, telefono: e.target.value })}
+                  defaultValue={isEdit ? updateForm?.telefono : undefined}
+                />
+          </GroupInputs>
+
+          <GroupInputs>
+              
+                <Select
+                  label={"País"}
+                  onChange={(value) => setForm({ ...form, paisId: value })}
+                  value={isEdit ? updateForm?.paisId : undefined}
+                >
+                  {paises?.map(({ id, nombre }) => (
+                    <Option key={id} value={id}>
+                      {nombre}
+                    </Option>
+                  ))}
+                </Select>
+                <Input
+                  label="Correo"
+                  type="email"
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  defaultValue={isEdit ? updateForm?.email : undefined}
+                />
+                 <Input
+                  label="Forma de Pago"            
+                  onChange={(e) => setForm({ ...form, formaPago: e.target.value })}
+                  defaultValue={isEdit ? updateForm?.formaPago : undefined}
+                />
+         
+            </GroupInputs>
+            <GroupInputs>
+              <Textarea
+                label="Notas"
+                onChange={(e) => setForm({ ...form, notas: e.target.value })}
+                defaultValue={isEdit ? updateForm?.notas : undefined}
+              />
+              
+              <ButtonSave onClick={openSubModal} label="Añadir trabajadores"/>
+            </GroupInputs>
+
           
-          
-          <div className="flex gap-5">
-            <Input
-              label="Correo"
-              type="email"
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              defaultValue={isEdit ? updateForm?.email : undefined}
-            />
-            <Input
-              label="Teléfono"
-              onChange={(e) => setForm({ ...form, telefono: e.target.value })}
-              defaultValue={isEdit ? updateForm?.telefono : undefined}
-            />
-          </div>
-          <Select
-            label="Tipo"
-            onChange={(value) => setForm({ ...form, tipoClienteId: value })}
-            value={isEdit ? updateForm?.tipoClienteId : undefined}
-          >
-            {tipoClientes?.data?.map((item) => {
-              return (
-                <Option key={item.id} value={item.id}>
-                  {item.tipo}
-                </Option>
-              );
-            })}
-          </Select>
+            </Group>
+            
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
             <ButtonSave onClick={saveData} />
           </div>
         </form>
-      </Modal>
+      </ModalLg>
+      )}
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         title={"Eliminar Cliente"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}
       />
+
+
+
+     {isOpenSubModal && (
+        <Fragment>
+          {/* Modal Overlay */}
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              backgroundColor: "rgba(0, 0, 0, 0.25)",
+              zIndex: 99998, // Z-index alto para overlay, mayor que el z-50 de ModalLg
+              pointerEvents: "auto", // Asegura que capture eventos de clic
+            }}
+            onClick={closeSubModal}
+          />
+
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 99999, // Z-index alto para el contenido del modal, mayor que el z-50 de ModalLg
+              pointerEvents: "auto", // Asegura que capture eventos de clic
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "white",
+                borderRadius: "15px",
+                padding: "20px",
+                width: "45%",
+                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                transform: isOpenSubModal ? "scale(1)" : "scale(0.95)",
+                transition: "all 0.3s ease-out",
+                pointerEvents: "auto", // Asegura que capture eventos de clic
+              }}
+              onClick={(e) => e.stopPropagation()} 
+            >
+              {/* Modal Header */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <h3 style={{ margin: 0, fontSize: "18px" }}>{isEdit ? "Editar Trabajador" : "Nuevo Trabajador"}</h3>
+              </div>
+
+              {/* Modal Content */}
+              <div
+                style={{
+                  marginBottom: "15px",
+                  lineHeight: "1.6",
+                }}
+              >
+                <Group title={'Contacto'}>
+                  <Input
+                    label="Nombre del Trabajador"            
+                    onChange={(e) => setTrabajadorForm({ ...trabajadorForm, nombreTrabajador: e.target.value })}
+                    // defaultValue={isEdit ? updateForm?.formaPago : undefined}
+                  />
+                  <GroupInputs>
+                  <Input
+                    label="Cargo"            
+                    onChange={(e) => setTrabajadorForm({ ...trabajadorForm, cargo: e.target.value })}
+                    // defaultValue={isEdit ? updateForm?.formaPago : undefined}
+                  />
+                  <Input
+                    label="DNI"            
+                    onChange={(e) => setTrabajadorForm({ ...trabajadorForm, dni: e.target.value })}
+                    // defaultValue={isEdit ? updateForm?.formaPago : undefined}
+                  />
+                  </GroupInputs>
+                  <GroupInputs>
+                      <Input
+                        label="Correo"            
+                        type="email"
+                        onChange={(e) => setTrabajadorForm({ ...trabajadorForm, correo: e.target.value })}
+                        // defaultValue={isEdit ? updateForm?.formaPago : undefined}
+                      />
+                      <Input
+                        label="Telefono"            
+                        onChange={(e) => setTrabajadorForm({ ...trabajadorForm, telefono: e.target.value })}
+                        // defaultValue={isEdit ? updateForm?.formaPago : undefined}
+                      />
+                  </GroupInputs>
+                  <GroupInputs>
+                      <Input
+                        label="N° Licencia"            
+                        onChange={(e) => setTrabajadorForm({ ...trabajadorForm, nroLicencia: e.target.value })}
+                        // defaultValue={isEdit ? updateForm?.formaPago : undefined}
+                      />
+                      <Input
+                        label="Placa"            
+                        onChange={(e) => setTrabajadorForm({ ...trabajadorForm, placa: e.target.value })}
+                        // defaultValue={isEdit ? updateForm?.formaPago : undefined}
+                      />
+                  </GroupInputs>
+
+                         <Checkbox label='Envío de Correo' onChange={(e)=>{
+                            setTrabajadorForm({...trabajadorForm, envioCorreo: e.target.checked})
+                        }}/>
+
+                          <Checkbox label='Transportista' onChange={(e)=>{
+                            setTrabajadorForm({...trabajadorForm, transportista: e.target.checked})
+                        }}/>
+
+
+                </Group>
+              </div>
+
+              {/* Modal Footer */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-evenly",
+                }}
+              >
+                <button
+                  onClick={closeSubModal}
+                  style={{
+                    padding: "10px 20px",
+                    backgroundColor: "#FF0033",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    zIndex: 99999
+                  }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  // onClick={closeSubModal}
+                  style={{
+                    padding: "10px 20px",
+                    backgroundColor: "#2196F3 ",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    zIndex: 99999
+                  }}
+                >
+                  Guardar
+                </button>
+              </div>
+            </div>
+          </div>
+        </Fragment>
+      )}
     </>
   );
 }
