@@ -140,6 +140,7 @@ export class ClienteService {
       direccion,
       notas,
       trabajadores,
+      paisId,
     } = data;
 
     const formatTrabajadores = [];
@@ -172,6 +173,7 @@ export class ClienteService {
         email,
         direccion,
         notas,
+        paisId,
         trabajadores: formatTrabajadores,
       },
     });
@@ -180,12 +182,9 @@ export class ClienteService {
   }
 
   static async deleteCliente(id) {
-    const cliente = prisma.cliente.update({
+    const cliente = await prisma.cliente.delete({
       where: {
         id,
-      },
-      data: {
-        estado: "Inactivo",
       },
     });
 
@@ -196,7 +195,7 @@ export class ClienteService {
     const cliente = await prisma.cliente.findMany({
       where: {
         // empresaId,
-        estado: "Activo",
+        // estado: "Activo",
         ...(filterName && {
           OR: [
             {
