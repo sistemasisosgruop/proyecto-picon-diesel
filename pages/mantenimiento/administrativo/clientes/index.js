@@ -63,7 +63,7 @@ export default function Clientes() {
     setIsOpenSubModal(false)
     setIsEditTrabajador(false)
     setTrabajadorEditId(null)
-    cleanTrabajadorForm()       //LIMPIANDO EL TRABAJADOR FORM
+    // cleanTrabajadorForm()       //LIMPIANDO EL TRABAJADOR FORM
 
   }
 
@@ -362,10 +362,12 @@ useEffect(() => {
                 label="Tipo de documento"
                 value={isEdit ? updateForm?.tipoDocumento?.toLowerCase() : form.tipoDocumento}
                 onChange={(value) =>
-                  setForm({
+                  {setForm({
                     ...form,
                     tipoDocumento: value.toString().toUpperCase(),
-                  })
+                  });
+                  setUpdateForm(form);
+                }
                 }
               >
                 <Option value="dni">DNI</Option>
