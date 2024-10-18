@@ -22,7 +22,7 @@ import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   nombre: yup.string().required(),
-  codigo: yup.string().required(),
+  // codigo: yup.string().required(),
   descripcion: yup.string().required(),
 });
 
@@ -160,6 +160,7 @@ export default function Incoterms() {
         <form className="flex flex-col gap-5">
           <Input
             label="Código"
+            disabled
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
             defaultValue={isEdit ? updateForm?.codigo : undefined}
           />

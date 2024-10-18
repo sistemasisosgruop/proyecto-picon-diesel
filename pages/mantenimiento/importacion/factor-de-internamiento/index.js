@@ -30,6 +30,7 @@ export default function FactorInternamiento() {
     useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
+    concepto:null,
     valor: null,
     fecha: null,
   });
@@ -43,6 +44,7 @@ export default function FactorInternamiento() {
 
   useEffect(() => {
     setForm({
+      concepto:null,
       valor: null,
       fecha: null,
     });
@@ -95,6 +97,7 @@ export default function FactorInternamiento() {
 
   useEffect(() => {
     setForm({
+      concepto:null,
       valor: null,
       fecha: null,
     });
@@ -104,7 +107,8 @@ export default function FactorInternamiento() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      { Header: "Codigo", accessor: "codigo" },
+      // { Header: "Codigo", accessor: "codigo" },
+      { Header: "Concepto", accessor: "concepto" },
       { Header: "Valor", accessor: "valor" },
       { Header: "Fecha", accessor: "fecha" },
     ],
@@ -136,7 +140,7 @@ export default function FactorInternamiento() {
   return (
     <>
       <TemplateImportacion>
-        <Title text={"Lista Factor de internamiento"}>
+        <Title text={"Factor de internamiento"}>
           <div className="flex gap-4">
             <ButtonImportData
               handleClick={() =>
@@ -162,6 +166,11 @@ export default function FactorInternamiento() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
+        <Input
+            label="Concepto"
+            onChange={(e) => setForm({ ...form, concepto: e.target.value })}
+            defaultValue={isEdit ? updateForm?.concepto : undefined}
+          />
           <Input
             label="Valor"
             type="number"

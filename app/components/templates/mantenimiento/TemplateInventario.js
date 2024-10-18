@@ -21,21 +21,21 @@ export default function TemplateInventario({ children }) {
 			modulo: "Motivo movimiento de almacén",
 			href: "/mantenimiento/inventario/motivo-movimiento-almacen",
 		},
-		{
-			icon: <TruckFast />,
-			modulo: "Agencia de Transporte",
-			href: "/mantenimiento/inventario/agencia-de-transporte",
-		},
-		{
-			icon: <Truck />,
-			modulo: "Vehículos",
-			href: "/mantenimiento/inventario/vehiculos",
-		},
-		{
-			icon: <People />,
-			modulo: "Choferes",
-			href: "/mantenimiento/inventario/choferes",
-		},
+		// {
+		// 	icon: <TruckFast />,
+		// 	modulo: "Agencia de Transporte",
+		// 	href: "/mantenimiento/inventario/agencia-de-transporte",
+		// },
+		// {
+		// 	icon: <Truck />,
+		// 	modulo: "Vehículos",
+		// 	href: "/mantenimiento/inventario/vehiculos",
+		// },
+		// {
+		// 	icon: <People />,
+		// 	modulo: "Choferes",
+		// 	href: "/mantenimiento/inventario/choferes",
+		// },
 	];
 
 	return (

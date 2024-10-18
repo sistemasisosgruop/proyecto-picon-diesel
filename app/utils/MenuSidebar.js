@@ -27,7 +27,7 @@ export const menuSidebar = [
       },
       {
         subItem: "Importación",
-        href: "/mantenimiento/importacion/agente-de-aduanas",
+        href: "/mantenimiento/importacion/incoterms",
       },
       {
         subItem: "Inventario",
