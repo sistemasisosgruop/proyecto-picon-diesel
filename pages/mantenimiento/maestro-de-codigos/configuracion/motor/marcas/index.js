@@ -42,7 +42,7 @@ export default function MarcasMotor() {
 
   const createRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
-    await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/configuracion/marca-motor", {
+    await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/configuracion/marca", {
       ...form,
       empresaId: parseInt(empresaId),
     });
@@ -54,7 +54,7 @@ export default function MarcasMotor() {
     await schema.validate(form, { abortEarly: false });
     await axiosRequest(
       "put",
-      `/api/mantenimiento/maestro-de-codigos/configuracion/marca-motor/${elementId}`,
+      `/api/mantenimiento/maestro-de-codigos/configuracion/marca/${elementId}`,
       {
         ...form,
       }
@@ -66,7 +66,7 @@ export default function MarcasMotor() {
     try {
       await axiosRequest(
         "delete",
-        `/api/mantenimiento/maestro-de-codigos/configuracion/marca-motor/${elementId}`
+        `/api/mantenimiento/maestro-de-codigos/configuracion/marca/${elementId}`
       );
       toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
       closeModal();
@@ -109,7 +109,7 @@ export default function MarcasMotor() {
   const getMarcasMotores = async () => {
     const { data } = await axiosRequest(
       "get",
-      `/api/mantenimiento/maestro-de-codigos/configuracion/marca-motor?empresaId=${empresaId}`
+      `/api/mantenimiento/maestro-de-codigos/configuracion/marca?empresaId=${empresaId}`
     );
 
     return data;
@@ -126,13 +126,13 @@ export default function MarcasMotor() {
   return (
     <>
       <TemplateMaestroCodigos>
-        <TemplateConfiguracionMotor>
-          <Title text={"Marcas de Motores"}>
+        {/* <TemplateConfiguracionMotor> */}
+          <Title text={"Marcas"}>
             <div className="flex gap-4">
               <ButtonImportData
                 handleClick={() =>
                   setCsvPath(
-                    `/api/mantenimiento/maestro-de-codigos/configuracion/marca-motor/upload?empresaId=${empresaId}`
+                    `/api/mantenimiento/maestro-de-codigos/configuracion/marca/upload?empresaId=${empresaId}`
                   )
                 }
               />
@@ -146,7 +146,7 @@ export default function MarcasMotor() {
             openModal={openModal}
             setIsOpenModalDelete={setIsOpenModalDelete}
           />
-        </TemplateConfiguracionMotor>
+        {/* </TemplateConfiguracionMotor> */}
       </TemplateMaestroCodigos>
       {/* Modal agregar */}
       <Modal

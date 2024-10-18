@@ -203,16 +203,23 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                 <TableDOptions>
                   <ButtonEdit
                     onClick={() => {
+
                       const initialCaracteristicas = [];
+                      
                       row.original.caracteristicaToMaterial.forEach(
+                        
                         ({ caracteristica, isChecked, valor }) => {
+                          
                           const data = {
-                            caracteristicaId: caracteristica.id,
+                            // caracteristicaId: caracteristica.id, //! cambiando
+                            caracteristica:{id:caracteristica.id},
                             isChecked,
                             valor,
                           };
                           initialCaracteristicas.push(data);
+                          console.log('Editando, caracteristicas:',{initialCaracteristicas})
                         }
+                        
                       );
 
                       setCaracteristicasForm(initialCaracteristicas);

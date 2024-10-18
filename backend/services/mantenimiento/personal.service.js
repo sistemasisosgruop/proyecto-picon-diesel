@@ -6,13 +6,15 @@ export class PersonalService {
   static async createPersonal(data) {
     const {
       nombre,
+      nombreAbreviado,
+      dni,
       password,
       email,
       telefono,
       direccion,
       empresaId,
       role,
-      puesto,
+      puestoId,
       porcentajeComision,
     } = data;
     const bcryptPassword = await encryptPassword(password);
@@ -20,8 +22,10 @@ export class PersonalService {
 
     const personal = await prisma.personal.create({
       data: {
-        puesto,
+        puestoId,
         nombre,
+        nombreAbreviado,
+        dni,
         email,
         password: bcryptPassword,
         telefono,
@@ -54,7 +58,17 @@ export class PersonalService {
   }
 
   static async updatePersonal(id, data) {
-    const { nombre, password, email, telefono, direccion, porcentajeComision } = data;
+    const {
+      nombre,
+      nombreAbreviado,
+      dni,
+      password,
+      email,
+      telefono,
+      direccion,
+      puestoId,
+      porcentajeComision,
+    } = data;
     const bcryptPassword = await encryptPassword(password);
     const cipherPassword = encrypt(password);
 
@@ -64,11 +78,14 @@ export class PersonalService {
       },
       data: {
         nombre,
+        nombreAbreviado,
+        dni,
         email,
         password: password.length > 0 ? bcryptPassword : undefined,
         passwordEncrypted: password.length > 0 ? cipherPassword : undefined,
         telefono,
         direccion,
+        puestoId,
         porcentajeComision,
       },
     });
@@ -91,6 +108,9 @@ export class PersonalService {
 
   static async getAllPersonal(empresaId) {
     const result = await prisma.personal.findMany({
+      include: {
+        empresa: true,
+      },
       where: {
         empresa: {
           some: {
@@ -103,7 +123,7 @@ export class PersonalService {
 
     return result.map((personal) => ({
       ...personal,
-      password: decrypt(personal?.passwordEncrypted ?? ""),
+      // password: decrypt(personal?.passwordEncrypted ?? ""),
     }));
   }
 }

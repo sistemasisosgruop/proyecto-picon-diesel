@@ -1,11 +1,12 @@
 import prisma from "../../prisma";
-import { generateCodeAlmacen } from "../../utils/codes";
+// import { generateCodeAlmacen } from "../../utils/codes";
 
 export class AlmacenService {
   static async create(data) {
     const { direccion, nombre, telefono, empresaId } = data;
     const almacen = await prisma.almacen.create({
       data: {
+        codigo: await this.generarCodigo(empresaId),
         direccion,
         nombre,
         telefono,
@@ -13,15 +14,7 @@ export class AlmacenService {
       },
     });
 
-    const result = await prisma.almacen.update({
-      where: {
-        id: almacen.id,
-      },
-      data: {
-        codigo: generateCodeAlmacen(almacen.id),
-      },
-    });
-    return result;
+    return almacen;
   }
 
   static async update(id, data) {
@@ -65,5 +58,32 @@ export class AlmacenService {
     const almacen = await prisma.almacen.findMany({ where: { empresaId } });
 
     return almacen;
+  }
+
+  static async generarCodigo(empresaId) {
+    const prefijo = "ALM";
+    let codigo;
+
+    const lastRow = await prisma.almacen.findFirst({
+      orderBy: {
+        codigo: "desc",
+      },
+      select: {
+        codigo: true,
+      },
+      where: { empresaId },
+    });
+
+    const ultimosTresDigitos = lastRow?.codigo?.slice(-3);
+    if (lastRow && Number(ultimosTresDigitos)) {
+      const nextCodigo = parseInt(ultimosTresDigitos, 10) + 1;
+      codigo = String(nextCodigo).padStart(3, "0");
+    } else {
+      const totalRows = await prisma.almacen.count({
+        where: { empresaId },
+      });
+      codigo = "00" + (totalRows + 1);
+    }
+    return prefijo + codigo;
   }
 }

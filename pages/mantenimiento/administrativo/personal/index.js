@@ -1,4 +1,4 @@
-import { Input } from "@material-tailwind/react";
+import { Checkbox, Input, Option, Select } from "@material-tailwind/react";
 import { useContext, useEffect, useMemo, useState } from "react";
 import {
   ButtonAdd,
@@ -25,29 +25,40 @@ const schema = yup.object().shape({
   email: yup.string().email().required(),
   password: yup.string().required(),
   telefono: yup.string().required(),
-  puesto: yup.string().required(),
+  puestoId: yup.string().nullable(),
   direccion: yup.string().required(),
+  dni:yup.string().required(),
+  nombreAbreviado:yup.string().nullable(),
+  porcentajeComision:yup.string().nullable(),
 });
 const schemaUpdate = yup.object().shape({
   nombre: yup.string().required(),
   email: yup.string().email().required(),
   password: yup.string().nullable(),
   telefono: yup.string().required(),
-  puesto: yup.string().required(),
+  puestoId: yup.string().nullable(),
   direccion: yup.string().required(),
+  dni:yup.string().required(),
+  nombreAbreviado:yup.string().nullable(),
+  porcentajeComision:yup.string().nullable(),
 });
 
 export default function Personal() {
   const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
     useModal();
   const [empresaId] = useLocalStorage("empresaId");
+  const [puestos, setPuestos] = useState([]);
+
   const [form, setForm] = useState({
     nombre: null,
     email: null,
     password: null,
     telefono: null,
-    puesto: null,
+    puestoId: null,
     direccion: null,
+    nombreAbreviado:null,
+    dni:null,
+    porcentajeComision:null
   });
   const { updateForm, elementId, resetInfo, setCsvPath, changeData, setChangeData } =
     useContext(FormContext);
@@ -60,6 +71,7 @@ export default function Personal() {
     await axiosRequest("post", "/api/mantenimiento/personal", {
       ...form,
       empresaId: parseInt(empresaId),
+      porcentajeComision: parseInt(form.porcentajeComision),
     });
 
     toast.success(`💾 Registro guardado exitosamente!`, successProps);
@@ -69,6 +81,7 @@ export default function Personal() {
     await schemaUpdate.validate(form, { abortEarly: false });
     await axiosRequest("put", `/api/mantenimiento/personal/${elementId}`, {
       ...form,
+      porcentajeComision: parseInt(form.porcentajeComision),
     });
 
     toast.success(`💾 Registro guardado exitosamente!`, successProps);
@@ -104,8 +117,11 @@ export default function Personal() {
       email: null,
       password: null,
       telefono: null,
-      puesto: null,
+      puestoId: null,
       direccion: null,
+      nombreAbreviado:null,
+      dni:null,
+      porcentajeComision:null
     });
     refetch();
   }, [changeData]);
@@ -116,31 +132,44 @@ export default function Personal() {
       email: null,
       password: null,
       telefono: null,
-      puesto: null,
+      puestoId: null,
       direccion: null,
+      nombreAbreviado:null,
+      dni:null,
+      porcentajeComision:null
     });
   }, [resetInfo]);
 
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      { Header: "Codigo", accessor: "codigo" },
+      // { Header: "Codigo", accessor: "codigo" },
       { Header: "Nombre", accessor: "nombre" },
       { Header: "Correo", accessor: "email" },
       { Header: "Teléfono", accessor: "telefono" },
-      { Header: "Cargo", accessor: "cargo" },
-      { Header: "Area", accessor: "area" },
-      { Header: "Estado", accessor: "estado" },
+      { Header: "Puesto", accessor: "puesto.nombre" },
+      // { Header: "Area", accessor: "area" },
+      // { Header: "Estado", accessor: "estado" },
     ],
     []
   );
 
+  const getPuestos = async () => {
+    const { data } = await axiosRequest(
+      "get",
+      `/api/mantenimiento/puesto`
+    );
+    setPuestos(data.data)
+    console.log('puestos:',data.data);
+    return data.data;
+  };
+
   const getPersonal = async () => {
     const { data } = await axiosRequest(
       "get",
-      `/api/mantenimiento/personal?empresaId=${empresaId}`
+      `/api/mantenimiento/personal?empresaId=${empresaId}`  //! cambiar
     );
-
+    console.log('Personal lista:',data);
     return data;
   };
 
@@ -150,6 +179,7 @@ export default function Personal() {
     },
   });
 
+  
   const personal = useMemo(
     () =>
       data?.data.map((personal) => ({
@@ -160,6 +190,18 @@ export default function Personal() {
     [data?.data]
   );
 
+
+useEffect(()=>{
+  getPuestos()
+
+},[isOpenModal])
+
+useEffect(()=>{
+  console.log({form})
+
+},[form])
+
+  
   return (
     <>
       <TemplateAdministrativo>
@@ -196,6 +238,18 @@ export default function Personal() {
           />
           <div className="flex gap-5">
             <Input
+              label="Nombre Abreviado"
+              onChange={(e) => setForm({ ...form, nombreAbreviado: e.target.value })}
+              defaultValue={isEdit ? updateForm?.nombreAbreviado : undefined}
+            />
+            <Input
+              label="DNI"
+              onChange={(e) => setForm({ ...form, dni: e.target.value })}
+              defaultValue={isEdit ? updateForm?.dni : undefined}
+            />
+          </div>
+   
+            <Input
               label="Correo"
               type="email"
               onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -206,8 +260,7 @@ export default function Personal() {
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               defaultValue={isEdit ? updateForm?.password : undefined}
             />
-          </div>
-          <div className="flex gap-5">
+
             <Input
               label="Teléfono"
               onChange={(e) => setForm({ ...form, telefono: e.target.value })}
@@ -218,12 +271,36 @@ export default function Personal() {
               onChange={(e) => setForm({ ...form, direccion: e.target.value })}
               defaultValue={isEdit ? updateForm?.direccion : undefined}
             />
-          </div>
+
+          <div className="flex gap-5">
+
+          <Select label="Puesto"
+            value={isEdit ? updateForm?.puestoId : undefined}
+                    onChange={(value) => {
+                        setForm({ ...form, puestoId: value } );
+                        // setPermisoNew({...permisoNew, submoduloId: value})
+                    }}
+                    >
+                    {puestos && puestos.length > 0 ? (
+                    puestos?.map((item) => {
+                        return (
+                        <Option key={item.id} value={item.id}>
+                            {item?.nombre}
+                        </Option>
+                        );
+                    })
+                    ) : (
+                        <Option value="">No hay marcas disponibles</Option>
+                    )}
+            </Select>
+
           <Input
-            label="Puesto"
-            onChange={(e) => setForm({ ...form, puesto: e.target.value })}
-            defaultValue={isEdit ? updateForm?.puesto : undefined}
+            label="Porcentaje de comision"
+            onChange={(e) => setForm({ ...form, porcentajeComision: e.target.value })}
+            defaultValue={isEdit ? updateForm?.porcentajeComision : undefined}
           />
+          </div>
+         
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
             <ButtonSave onClick={saveData} />

@@ -49,7 +49,7 @@ export default function DescripcionInyector() {
       "/api/mantenimiento/maestro-de-codigos/configuracion/descripcion-inyector",
       {
         ...form,
-        empresaId: parseInt(empresaId),
+        // empresaId: parseInt(empresaId),
       }
     );
 
@@ -103,7 +103,7 @@ export default function DescripcionInyector() {
   const getDescripcionInyectores = async () => {
     const { data } = await axiosRequest(
       "get",
-      `/api/mantenimiento/maestro-de-codigos/configuracion/descripcion-inyector?empresaId=${empresaId}`
+      `/api/mantenimiento/maestro-de-codigos/configuracion/descripcion-inyector`
     );
 
     return data;

@@ -97,7 +97,7 @@ export default function TiposClientes() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      { Header: "Codigo", accessor: "codigo" },
+      // { Header: "Codigo", accessor: "codigo" },
       { Header: "Tipo de cliente", accessor: "tipo" },
       { Header: "Estado", accessor: "estado" },
     ],
@@ -109,7 +109,7 @@ export default function TiposClientes() {
       "get",
       `/api/mantenimiento/clientes/tipos?empresaId=${empresaId}`
     );
-
+      console.log('Tipos de clientes:', data);
     return data;
   };
   const { data, refetch } = useQuery("tipoClientes", getTipoClientes, {

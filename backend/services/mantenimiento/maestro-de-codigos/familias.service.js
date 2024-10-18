@@ -2,7 +2,7 @@ import prisma from "../../../prisma";
 
 export class FamiliaService {
   static async createFamilia(data) {
-    const { descripcion, empresaId } = data;
+    const { descripcion } = data;
 
     const lastFamilia = await prisma.familia.findFirst({
       orderBy: {
@@ -11,7 +11,7 @@ export class FamiliaService {
       select: {
         codigo: true,
       },
-      where: { empresaId },
+      // where: { empresaId },
     });
     console.log(lastFamilia, "lastFamilia");
     let codigo;
@@ -26,7 +26,7 @@ export class FamiliaService {
       data: {
         codigo,
         descripcion,
-        empresaId,
+        // empresaId,
       },
     });
 
@@ -60,20 +60,19 @@ export class FamiliaService {
 
   static async getFamilias(empresaId, filter) {
     return prisma.familia.findMany({
-      where: {
-        empresaId,
-      },
+      // where: {
+      //   empresaId,
+      // },
     });
   }
 
   static async getFamilia(id) {
- 
     const familia = await prisma.familia.findUnique({
       where: {
-        id: Number(id), 
+        id: Number(id),
       },
     });
-  
+
     return familia;
   }
 

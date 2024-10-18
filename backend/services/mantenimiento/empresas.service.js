@@ -1,5 +1,5 @@
-import prisma from '../../prisma';
-import { generateCode } from '../../utils/codes';
+import prisma from "../../prisma";
+import { generateCode } from "../../utils/codes";
 
 export class EmpresasService {
   static async createEmpresa(data) {
@@ -67,7 +67,7 @@ export class EmpresasService {
       where: { personal: { some: { id: adminId } } },
     });
 
-    return empresas.map(({ logo, ...data }) => ({ ...data, logo: logo ?? '' }));
+    return empresas.map(({ logo, ...data }) => ({ ...data, logo: logo ?? "" }));
   }
 
   static async getEmpresa(id) {
@@ -86,19 +86,28 @@ export class EmpresasService {
         id,
       },
       include: {
-        fabricaMaquina: true,
-        modeloMaquina: true,
-        nombreMaquina: true,
+        // fabricaMaquina: true,
+        // modeloMaquina: true,
+        // nombreMaquina: true,
         paises: true,
         marcaMotor: true,
-        marca: true,
-        descripcionBombaInyeccion: true,
+        // marca: true,
+        // descripcionBombaInyeccion: true,
         marcaFabricaInyector: true,
-        descripcionInyector: true,
+        // descripcionInyector: true,
       },
     });
 
-    return result;
+    const info = {
+      ...result,
+      marca: await prisma.marca.findMany(),
+      fabricaMaquina: await prisma.fabricaMaquina.findMany(),
+      modeloMaquina: await prisma.modeloMaquina.findMany(),
+      nombreMaquina: await prisma.nombreMaquina.findMany(),
+      descripcionBombaInyeccion: await prisma.descripcionBombaInyeccion.findMany(),
+      descripcionInyector: await prisma.descripcionInyector.findMany(),
+    };
+    return info;
   }
 
   static async getInfoForMaterial(id) {
@@ -107,11 +116,15 @@ export class EmpresasService {
         id,
       },
       include: {
-        familia: true,
-        caracteristica: true,
+        // familia: true,
+        // caracteristica: true,
       },
     });
-
-    return result;
+    const resumen = {
+      ...result,
+      familia: await prisma.familia.findMany(),
+      caracteristica: await prisma.caracteristica.findMany(),
+    };
+    return resumen;
   }
 }

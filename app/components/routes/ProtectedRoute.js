@@ -12,7 +12,7 @@ export const ProtectedRoute = ({ router, children }) => {
     }
 
     if (isBrowser() && auth.isAuthenticated) {
-      router.push("/mantenimiento/datos-empresa");
+      // router.push("/mantenimiento/datos-empresa"); //! DESCOMENTAR
     }
   }, []);
 

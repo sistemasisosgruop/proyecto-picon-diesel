@@ -22,7 +22,7 @@ import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
   nombre: yup.string().required(),
-  responsable: yup.string().required(),
+  referencia: yup.string().required(),
 });
 
 export default function CentroCostos() {
@@ -31,7 +31,7 @@ export default function CentroCostos() {
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
     nombre: null,
-    responsable: null,
+    referencia: null,
   });
 
   const { updateForm, elementId, resetInfo, changeData, setChangeData, setCsvPath } =
@@ -44,7 +44,7 @@ export default function CentroCostos() {
   useEffect(() => {
     setForm({
       nombre: null,
-      responsable: null,
+      referencia: null,
     });
   }, [resetInfo]);
 
@@ -94,7 +94,7 @@ export default function CentroCostos() {
   useEffect(() => {
     setForm({
       nombre: null,
-      responsable: null,
+      referencia: null,
     });
     refetch();
   }, [changeData]);
@@ -102,9 +102,9 @@ export default function CentroCostos() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      { Header: "Codigo", accessor: "codigo" },
+      // { Header: "Codigo", accessor: "codigo" },
       { Header: "Nombre", accessor: "nombre" },
-      { Header: "Responsable", accessor: "responsable" },
+      { Header: "Referencia", accessor: "referencia" },
       { Header: "Estado", accessor: "estado" },
     ],
     []
@@ -162,9 +162,9 @@ export default function CentroCostos() {
               defaultValue={isEdit ? updateForm?.nombre : undefined}
             />
             <Input
-              label="Responsable"
-              onChange={(e) => setForm({ ...form, responsable: e.target.value })}
-              defaultValue={isEdit ? updateForm?.responsable : undefined}
+              label="Referencia"
+              onChange={(e) => setForm({ ...form, referencia: e.target.value })}
+              defaultValue={isEdit ? updateForm?.referencia : undefined}
             />
           </div>
           <div className="w-full flex justify-end gap-5">

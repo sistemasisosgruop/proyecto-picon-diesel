@@ -49,9 +49,9 @@ export class ClienteService {
 
   static async getAllTipoCliente(empresaId) {
     const tipoCliente = await prisma.tipoCliente.findMany({
-      where: {
-        empresaId,
-      },
+      // where: {
+      //   empresaId,
+      // },
     });
 
     return tipoCliente;
@@ -77,7 +77,10 @@ export class ClienteService {
       formaPago,
       email,
       // empresaId,
+
+      direccion,
       paisId,
+      notas,
       trabajadores,
     } = data;
     console.log(data, "DATA CLIENTES");
@@ -107,8 +110,10 @@ export class ClienteService {
         formaPago,
         email,
         // empresaId,
+        direccion,
         tipoClienteId,
         paisId,
+        notas,
         trabajadores: formatTrabajadores,
       },
     });
@@ -133,7 +138,11 @@ export class ClienteService {
       formaPago,
       telefono,
       email,
+      direccion,
+      notas,
       trabajadores,
+      paisId,
+      estado,
     } = data;
 
     const formatTrabajadores = [];
@@ -152,7 +161,7 @@ export class ClienteService {
         });
       }
     }
-    const cliente = prisma.cliente.update({
+    const cliente = await prisma.cliente.update({
       where: {
         id,
       },
@@ -164,6 +173,10 @@ export class ClienteService {
         telefono,
         formaPago,
         email,
+        direccion,
+        notas,
+        paisId,
+        estado,
         trabajadores: formatTrabajadores,
       },
     });
@@ -172,12 +185,9 @@ export class ClienteService {
   }
 
   static async deleteCliente(id) {
-    const cliente = prisma.cliente.update({
+    const cliente = await prisma.cliente.delete({
       where: {
         id,
-      },
-      data: {
-        estado: "Inactivo",
       },
     });
 
@@ -188,7 +198,7 @@ export class ClienteService {
     const cliente = await prisma.cliente.findMany({
       where: {
         // empresaId,
-        estado: "Activo",
+        // estado: "Activo",
         ...(filterName && {
           OR: [
             {
