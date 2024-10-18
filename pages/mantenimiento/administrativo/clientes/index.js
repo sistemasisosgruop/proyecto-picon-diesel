@@ -63,12 +63,11 @@ export default function Clientes() {
     setIsOpenSubModal(false)
     setIsEditTrabajador(false)
     setTrabajadorEditId(null)
-    // cleanTrabajadorForm()       //LIMPIANDO EL TRABAJADOR FORM
-
+    cleanTrabajadorForm()       //LIMPIANDO EL TRABAJADOR FORM
   }
 
 
-  const [trabajadorForm, setTrabajadorForm] = useState({
+  const [trabajadorForm, setTrabajadorForm] = useState({    //FORM TEMPORAL DEL TRABAJDOR NUEVO/EDIT
     nombreTrabajador: null,
     cargo: null,
     dni: null,
@@ -78,7 +77,6 @@ export default function Clientes() {
     placa:null,
     envioCorreo:false,
     transportista:false,
-
   });
   
   const [form, setForm] = useState({
@@ -95,13 +93,7 @@ export default function Clientes() {
     notas:null,
     trabajadores:[]
   });
-  // const [changeData, setChangeData] = useState(false);
   const { updateForm, setUpdateForm,elementId, resetInfo, setGetPath, setNeedRefetch, changeData,setChangeData } = useContext(FormContext);
-
-  useEffect(() => {
-    setForm(updateForm);
-    console.log('el updateform es:',{updateForm});
-  }, [updateForm]);
 
   useEffect(() => {
     setForm({
@@ -198,7 +190,6 @@ export default function Clientes() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      // { Header: "Codigo", accessor: "codigo" },
       { Header: "Nombre/Razón Social", accessor: "nombre" },
       { Header: "Tipo Documento", accessor: "tipoDocumento" },
       { Header: "N° de Documento", accessor: "numeroDocumento" },
@@ -206,9 +197,7 @@ export default function Clientes() {
       { Header: "Teléfono", accessor: "telefono" },
       { Header: "Correo", accessor: "email" },
       { Header: "Estado", accessor: "estado" },
-    ],
-    []
-  );
+    ], [] );
 
   const getTipoClientes = async () => {
     const { data } = await axiosRequest( "get",`/api/mantenimiento/clientes/tipos?empresaId=${empresaId}`);
@@ -242,10 +231,7 @@ export default function Clientes() {
  //* OBTENER MARCAS:
  const getPaises = async () => {
   try {
-    const { data } = await axiosRequest(
-      'get',
-      `/api/mantenimiento/paises?empresaId=${1}`
-    );
+    const { data } = await axiosRequest( 'get',`/api/mantenimiento/paises?empresaId=${1}` );
     console.log('Paises obtenidos:', data); 
     setPaises(data.data); 
   } catch (error) {
@@ -253,10 +239,7 @@ export default function Clientes() {
   }
 };
 useEffect(() => {
-
     getPaises(); 
-
-
 }, []); 
 
 
@@ -286,33 +269,63 @@ const handleEditTrabajador = (arrayPosition,event)=>{
 const handleDeleteTrabajador = (index,event) => {
   event.preventDefault();
   const updatedTrabajadores = form.trabajadores.filter((_, i) => i !== index);
-  // console.log('Eliminando',{index},{updatedTrabajadores});
-  setUpdateForm({ ...updateForm, trabajadores: updatedTrabajadores }); // ACTUALIZAR EN EL UPDATEFORM
-  setForm({ ...form, trabajadores: updatedTrabajadores }); // Crea un nuevo array sin el trabajador eliminado
+  console.log('Eliminando',{index},{updatedTrabajadores});
+
+  if (isEdit){
+    setUpdateForm({ ...updateForm, trabajadores: updatedTrabajadores }); // ACTUALIZAR EN EL UPDATEFORM
+  }
+  else{
+    setForm({ ...form, trabajadores: updatedTrabajadores }); // Crea un nuevo array sin el trabajador eliminado
+  }
+  
   
 };
 
-const saveTrabajador = ()=>{
-  if (isEditTrabajador) {    // Se está editando un trabajador existente
-    const updatedTrabajadores = [...form.trabajadores]; // Clonamos el array de trabajadores
+const saveTrabajador = (e) => {
+  event.preventDefault();
+  const trabajadoresList = (isEdit && updateForm?.trabajadores?.length > 0) 
+  ? updateForm.trabajadores 
+  : (form.trabajadores || []); // Asegúrate de que sea un array
+
+  if (isEditTrabajador) {
+    const updatedTrabajadores = [...trabajadoresList]; // Clonamos el array de trabajadores
     updatedTrabajadores[trabajadorEditId] = trabajadorForm; // Reemplazamos el trabajador en la posición del índice por trabajadorForm
-    setForm({ ...form, trabajadores: updatedTrabajadores }); // Actualizamos el estado con los trabajadores modificados
-    setUpdateForm({ ...updateForm, trabajadores: updatedTrabajadores });
-  } else {// Se está añadiendo un nuevo trabajador
-    setForm({ ...form, trabajadores: [...form.trabajadores, trabajadorForm] });
-    setUpdateForm({ ...updateForm, trabajadores: [...updateForm.trabajadores, trabajadorForm] });
+    console.log('Trabajadores anteriores:',{trabajadoresList},'Trabajadores updateados', { updatedTrabajadores });
+    if (isEdit){
+      setUpdateForm({ ...updateForm, trabajadores: updatedTrabajadores }); // Actualizamos el estado con los trabajadores modificados
+    }
+    else{
+      setForm({ ...form, trabajadores: updatedTrabajadores }); // Actualizamos el estado con los trabajadores modificados
+    }
+    
+    
+  } else { // Se está añadiendo un nuevo trabajador
+    console.log('Nuevo trabajado', { trabajadorForm });
+    if (isEdit){
+    setUpdateForm({ ...updateForm, trabajadores: [...trabajadoresList, trabajadorForm] });}
+    else{
+      setForm({ ...form, trabajadores: [...trabajadoresList, trabajadorForm] });
+    }
+    
+    
   }
-  closeSubModal();  //Cerrar la submodal trabajador
-}
+  closeSubModal();  // Cerrar la submodal trabajador
+};
 
 
 useEffect(() => {
     console.log({trabajadorForm})
 }, [trabajadorForm]); 
+
 useEffect(() => {
-  console.log({form})
-  
+  console.log('Cambiando',{form})
+  // setUpdateForm(form);
 }, [form]); 
+
+useEffect(() => {
+  console.log('Cambiando',{updateForm})
+  setForm(updateForm);
+}, [updateForm]); 
 
   return (
     <>
@@ -347,8 +360,11 @@ useEffect(() => {
 
           <Select
             label="Tipo de Cliente"
-            onChange={(value) => {setForm({ ...form, tipoClienteId: value }); setUpdateForm(form);}}
-            value={isEdit ? updateForm?.tipoClienteId : form.tipoClienteId}
+            value={isEdit && updateForm?.tipoClienteId ? updateForm.tipoClienteId : form?.tipoClienteId || ''}
+            onChange={(value) => {setForm({ ...form, tipoClienteId: value }); 
+
+          }
+          }
           >
             {tipoClientes?.data?.map((item) => {
               return (
@@ -361,58 +377,58 @@ useEffect(() => {
 
               <Select
                 label="Tipo de documento"
-                value={isEdit ? updateForm?.tipoDocumento?.toLowerCase() : form.tipoDocumento}
+                value={isEdit && updateForm?.tipoDocumento ? updateForm.tipoDocumento : form?.tipoDocumento || ''}
                 onChange={(value) =>
                   {setForm({
                     ...form,
-                    tipoDocumento: value.toString().toUpperCase(),
+                    tipoDocumento: value,
                   });
-                  setUpdateForm(form);
+                  // setUpdateForm(form);
                 }
                 }
               >
-                <Option value="dni">DNI</Option>
-                <Option value="ruc">RUC</Option>
+                <Option value="DNI">DNI</Option>
+                <Option value="RUC">RUC</Option>
               </Select>
               <Input
                 label="N° de documento"
                 type="number"
                 onChange={(e) => setForm({ ...form, numeroDocumento: e.target.value })}
-                defaultValue={isEdit ? updateForm?.numeroDocumento : form.numeroDocumento}
+                defaultValue={isEdit && updateForm?.numeroDocumento !== undefined ? updateForm.numeroDocumento : form?.numeroDocumento || ''}
               />
         
 
           </GroupInputs>
           <GroupInputs>
-            <Input
-                label="Nombre o Razon Social"
-                onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-                defaultValue={isEdit ? updateForm?.nombre : form.nombre}
-              />
-            <Select
-                label="Estado"
-                value={isEdit ? updateForm?.estado : form.estado}
-                onChange={(value) =>
-                  setForm({
-                    ...form,
-                    estado: value.toString(),
-                  })
-                }
-              >
-                <Option value="Activo">Activo</Option>
-                <Option value="Inactivo">Inactivo</Option>
-              </Select>
+                <Input
+                  label="Nombre o Razon Social"
+                  onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+                  defaultValue={isEdit && updateForm?.nombre !== undefined ? updateForm.nombre : form?.nombre || ''}
+                />
+                <Select
+                  label="Estado"
+                  value={isEdit && updateForm?.estado !== undefined ? updateForm.estado : form?.estado || ''}
+                  onChange={(value) =>
+                    setForm({
+                      ...form,
+                      estado: value.toString(),
+                    })
+                  }
+                >
+                  <Option value="Activo">Activo</Option>
+                  <Option value="Inactivo">Inactivo</Option>
+                </Select>
           </GroupInputs>
           <GroupInputs>
               <Input
                     label="Direccion"
                     onChange={(e) => setForm({ ...form, direccion: e.target.value })}
-                    defaultValue={isEdit ? updateForm?.direccion : form.direccion}
+                    defaultValue={isEdit && updateForm?.direccion !== undefined ? updateForm.direccion : form?.direccion || ''} 
                   />
               <Input
                   label="Teléfono"
                   onChange={(e) => setForm({ ...form, telefono: e.target.value })}
-                  defaultValue={isEdit ? updateForm?.telefono : form.telefono}
+                  defaultValue={isEdit && updateForm?.telefono !== undefined ? updateForm.telefono : form?.telefono || ''}
                 />
           </GroupInputs>
 
@@ -420,7 +436,7 @@ useEffect(() => {
               
                 <Select
                   label={"País"}
-                  value={isEdit ? updateForm?.paisId : form.paisId}
+                  value={isEdit && updateForm?.paisId !== undefined ? updateForm.paisId : form?.paisId || ''}
                   onChange={(value) => setForm({ ...form, paisId: value })}
                   
                 >
@@ -434,12 +450,12 @@ useEffect(() => {
                   label="Correo"
                   type="email"
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  defaultValue={isEdit ? updateForm?.email : form.email}
+                  defaultValue={isEdit && updateForm?.email !== undefined ? updateForm.email : form?.email || ''}
                 />
                  <Input
                   label="Forma de Pago"            
                   onChange={(e) => setForm({ ...form, formaPago: e.target.value })}
-                  defaultValue={isEdit ? updateForm?.formaPago : form.formaPago}
+                  defaultValue={isEdit && updateForm?.formaPago !== undefined ? updateForm.formaPago : form?.formaPago || ''}
                 />
          
             </GroupInputs>
@@ -447,7 +463,7 @@ useEffect(() => {
               <Textarea
                 label="Notas"
                 onChange={(e) => setForm({ ...form, notas: e.target.value })}
-                defaultValue={isEdit ? updateForm?.notas : form.notas}
+                defaultValue={isEdit && updateForm?.notas !== undefined ? updateForm.notas : form?.notas || ''}
               />
               
               <ButtonSave onClick={openSubModal} label="Añadir trabajadores"/>
@@ -472,9 +488,9 @@ useEffect(() => {
                   </tr>
                 </thead>
                 <tbody>
-                  {(isEdit ? updateForm?.trabajadores : form.trabajadores)?.length > 0 ? (
-                    (isEdit ? updateForm.trabajadores : form.trabajadores).map((trabajador, index) => (
-                      <tr key={index}>
+                {(isEdit ? updateForm?.trabajadores?.length > 0 : form?.trabajadores?.length > 0) ? (
+                (isEdit ? updateForm.trabajadores : form.trabajadores).map((trabajador, index) => (
+                  <tr key={index}>
                         <td style={{ padding: "8px", borderTop: "1px solid #ddd", borderBottom: "1px solid #ddd" }}>{trabajador.nombreTrabajador}</td>
                         <td style={{ padding: "8px", borderTop: "1px solid #ddd", borderBottom: "1px solid #ddd" }}>{trabajador.cargo}</td>
                         <td style={{ padding: "8px", borderTop: "1px solid #ddd", borderBottom: "1px solid #ddd" }}>{trabajador.dni}</td>

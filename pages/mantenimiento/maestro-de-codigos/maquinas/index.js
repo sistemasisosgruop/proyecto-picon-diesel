@@ -22,13 +22,10 @@ import { errorProps, successProps } from "../../../../app/utils/alert-config";
 import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { FormContext } from "../../../../contexts/form.context";
 
-
-
-
 const schema = yup.object().shape({
   codigoOriginal: yup.string().required(),
   modeloMotor: yup.string().required(),
-  numeroCilindros: yup.number().required(),
+  numeroCilindros: yup.string().required(),
   codigoFabricaBombaInyeccion: yup.string().required(),
   tipoBombaInyeccion: yup.string().required(),
   codigoOriginalBombaInyeccion: yup.string().required(),
@@ -42,11 +39,11 @@ const schema = yup.object().shape({
   modeloMaquinaId: yup.number().required(),
   nombreMaquinaId: yup.number().required(),
   paisId: yup.number().required(),
-  marcaMotorId: yup.number().required(),    //! MARCA
+  marcaMotorId: yup.number().required(),
   motorPaisId: yup.number().required(),
-  marcaFabricaSistemaInyeccionId: yup.number().required(),//! MARCA
+  marcaFabricaSistemaInyeccionId: yup.number().required(),
   descripcionBombaInyeccionId: yup.number().required(),
-  marcaFabricaInyectorId: yup.number().required(), //! MARCA
+  marcaFabricaInyectorId: yup.number().required(),
   descripcionInyectorId: yup.number().required(),
   inyectorPaisId: yup.number().required(),
   bombaInyeccionPaisId: yup.number().required(),
@@ -56,8 +53,6 @@ export default function Maquinas() {
   const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
     useModal();
   const [empresaId] = useLocalStorage("empresaId");
-  const [marcas, setMarcas] = useState([]);
-
   const [form, setForm] = useState({
     fabricaMaquinaId: null,
     modeloMaquinaId: null,
@@ -65,25 +60,25 @@ export default function Maquinas() {
     paisId: null,
     codigoOriginal: null,
     modeloMotor: null,
-    marcaMotorId: null,                       //! MARCA
+    marcaMotorId: null,
     motorPaisId: null,
     numeroCilindros: null,
     codigoFabricaBombaInyeccion: null,
     tipoBombaInyeccion: null,
-    marcaFabricaSistemaInyeccionId: null,     //! MARCA
+    marcaFabricaSistemaInyeccionId: null,
     descripcionBombaInyeccionId: null,
     bombaInyeccionPaisId: null,
     codigoOriginalBombaInyeccion: null,
     codigoFabricaInyector: null,
     tipoFabricaInyector: null,
-    marcaFabricaInyectorId: null,             //! MARCA
+    marcaFabricaInyectorId: null,
     descripcionInyectorId: null,
     inyectorPaisId: null,
     codigoOriginalInyector: null,
     codigoTobera: null,
     tipoTobera: null,
-    codigoOriginalTobera:null,    
-    marcaToberaId:null                        //! MARCA
+    codigoOriginalTobera:null,   //! Se agregó 
+    marcaToberaId:null// Agregado
   });
   const {
     updateForm,
@@ -107,25 +102,25 @@ export default function Maquinas() {
       paisId: null,
       codigoOriginal: null,
       modeloMotor: null,
-      marcaMotorId: null,               //! MARCA
+      marcaMotorId: null,
       motorPaisId: null,
       numeroCilindros: null,
       codigoFabricaBombaInyeccion: null,
       tipoBombaInyeccion: null,
-      marcaFabricaSistemaInyeccionId: null,   //! MARCA
+      marcaFabricaSistemaInyeccionId: null,
       descripcionBombaInyeccionId: null,
       bombaInyeccionPaisId: null,
       codigoOriginalBombaInyeccion: null,
       codigoFabricaInyector: null,
       tipoFabricaInyector: null,
-      marcaFabricaInyectorId: null,        //! MARCA
+      marcaFabricaInyectorId: null,
       descripcionInyectorId: null,
       inyectorPaisId: null,
       codigoOriginalInyector: null,
       codigoTobera: null,
       tipoTobera: null,
-      codigoOriginalTobera:null,   
-      marcaToberaId:null       //! MARCA
+      codigoOriginalTobera:null,     //! Se agregó 
+      marcaToberaId:null    // Agregado
     });
   }, [resetInfo]);
 
@@ -147,25 +142,25 @@ export default function Maquinas() {
       paisId: null,
       codigoOriginal: null,
       modeloMotor: null,
-      marcaMotorId: null,                       //! MARCA
+      marcaMotorId: null,
       motorPaisId: null,
       numeroCilindros: null,
       codigoFabricaBombaInyeccion: null,
       tipoBombaInyeccion: null,
-      marcaFabricaSistemaInyeccionId: null,     //! MARCA
+      marcaFabricaSistemaInyeccionId: null,
       descripcionBombaInyeccionId: null,
       bombaInyeccionPaisId: null,
       codigoOriginalBombaInyeccion: null,
       codigoFabricaInyector: null,
       tipoFabricaInyector: null,
-      marcaFabricaInyectorId: null,            //! MARCA
+      marcaFabricaInyectorId: null,
       descripcionInyectorId: null,
       inyectorPaisId: null,
       codigoOriginalInyector: null,
       codigoTobera: null,
       tipoTobera: null,
       codigoOriginalTobera:null,
-      marcaToberaId: null                      //! MARCA
+      marcaToberaId: null
     });
     refetch();
   }, [changeData]);
@@ -175,9 +170,9 @@ export default function Maquinas() {
     await schema.validate(form, { abortEarly: false });
     await axiosRequest("post", "/api/mantenimiento/maestro-de-codigos/configuracion/maquinas", {
       ...form,
-      // empresaId: parseInt(empresaId),
-      numeroCilindros: parseInt(form.numeroCilindros),
+      empresaId: parseInt(empresaId),
     });
+
     toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
 
@@ -187,11 +182,12 @@ export default function Maquinas() {
     await axiosRequest(
       "put",
       `/api/mantenimiento/maestro-de-codigos/configuracion/maquinas/${elementId}`,
-      { ...form, }
+      {
+        ...form,
+      }
     );
     toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
-
   const deleteData = async () => {
     try {
       await axiosRequest(
@@ -235,26 +231,57 @@ export default function Maquinas() {
       { Header: "Marca del Motor", accessor: "marcaMotor" },
       { Header: "Procedencia del Motor", accessor: "procedenciaMotor" },
       { Header: "N° de cilindros", accessor: "numeroCilindros" },
-      { Header: "Código fábrica Bomba de Inyeccion", accessor: "codigoFabricaBombaInyeccion"},
-      { Header: "Tipo de Bomba de Inyeccion",    accessor: "tipoBombaInyeccion",   },
-      { Header: "Marca fábrica de Sistema deInyeccion", accessor: "marcaFabricaSistemaInyeccion",  },
-      { Header: "Descripción de Bomba de Inyeccion", accessor: "descripcionBombasInyeccion", },
-      { Header: "Procedencia Bomba de Inyeccion", accessor: "procedenciaBombaInyeccion",  },
-      { Header: "Código Original de Bomba de Inyección", accessor: "codigoOriginalBombaInyeccion",},
-      { Header: "Código fábrica de Inyector",  accessor: "codigoFabricaInyector",   },
-      { Header: "Tipo fábrica de Inyector", accessor: "tipoFabricaInyector", },
-      { Header: "Marca fábrica de Inyector", accessor: "marcaFabricaInyector",      },   
+      {
+        Header: "Código fábrica Bomba de Inyeccion",
+        accessor: "codigoFabricaBombaInyeccion",
+      },
+      {
+        Header: "Tipo de Bomba de Inyeccion",
+        accessor: "tipoBombaInyeccion",
+      },
+      {
+        Header: "Marca fábrica de Sistema deInyeccion",
+        accessor: "marcaFabricaSistemaInyeccion",
+      },
+      {
+        Header: "Descripción de Bomba de Inyeccion",
+        accessor: "descripcionBombasInyeccion",
+      },
+      {
+        Header: "Procedencia Bomba de Inyeccion",
+        accessor: "procedenciaBombaInyeccion",
+      },
+      {
+        Header: "Código Original de Bomba de Inyección",
+        accessor: "codigoOriginalBombaInyeccion",
+      },
+      {
+        Header: "Código fábrica de Inyector",
+        accessor: "codigoFabricaInyector",
+      },
+      {
+        Header: "Tipo fábrica de Inyector",
+        accessor: "tipoFabricaInyector",
+      },
+      {
+        Header: "Marca fábrica de Inyector",
+        accessor: "marcaFabricaInyector",
+      },
       { Header: "Descripción Inyector", accessor: "descripcionInyector" },
-      { Header: "Código Original de Inyector",  accessor: "codigoOriginalInyector",  },      
+      {
+        Header: "Código Original de Inyector",
+        accessor: "codigoOriginalInyector",
+      },
       { Header: "Código Tobera", accessor: "codigoTobera" },
       { Header: "Tipo Tobera", accessor: "tipoTobera" },
       { Header: "Código Orig. Tobera", accessor: "codigoOriginalTobera" },
-      { Header: "Marca Tobera", accessor: "marcaToberaId" },             //! Agregar marca a tobera
+      // { Header: "Marca Tobera", accessor: "marcaToberaId" },             //! Agregar marca a tobera
     ],
     []
   );
 
   const getMaquinas = async () => {
+    
     const { data } = await axiosRequest(
       "get",
       `/api/mantenimiento/maestro-de-codigos/configuracion/maquinas?empresaId=${3}`
@@ -267,30 +294,6 @@ export default function Maquinas() {
       data: [],
     },
   });
-
-    //* OBTENER MARCAS:
-    const getMarcas = async () => {
-      try {
-        const { data } = await axiosRequest(
-          'get',
-          `/api/mantenimiento/maestro-de-codigos/configuracion/marca?empresaId=${empresaId}`
-        );
-        // console.log('Marcas obtenidas:', data); 
-        setMarcas(data.data); 
-      } catch (error) {
-        console.error('Error fetching marcas:', error);
-      }
-    };
-  
-    useEffect(() => {
-      if (isOpenModal) {
-        getMarcas(); 
-        console.log({marcas})
-      }
-    }, [isOpenModal]); // El useEffect se ejecuta cuando el modal se abre
-
-
-
   const data = useMemo(
     () =>
       maquinasResponse?.data?.map((maquina) => {
@@ -332,7 +335,7 @@ export default function Maquinas() {
 
   const getFormInfo = async () => {
     const { data } = await axiosRequest("get", `/api/mantenimiento/empresas/info/${empresaId}`);
-    console.log('Form Info Empresas:', data);
+
     return data;
   };
   const { data: formInfo } = useQuery("formInfo", getFormInfo, {
@@ -449,22 +452,28 @@ export default function Maquinas() {
                 />
               </GroupInputs>
               <GroupInputs>
-
-                <Select label={"Marca del Motor"}
+                {/* <Select
+                  label={"Marca del Motor"}
                   onChange={(value) => setForm({ ...form, marcaMotorId: value })}
                   value={isEdit ? updateForm?.marcaMotorId : undefined}
                 >
-                  {marcas && marcas.length > 0 ? (
-                    marcas.map((item) => (
-                      <Option key={item.id} value={item.id}>
-                        {item.marca}
-                      </Option>
-                    ))
-                  ) : (
-                    <Option value="">No hay marcas disponibles</Option>
-                  )}
-                </Select>
-
+                  {marcaMotores?.map(({ id, marca }) => (
+                    <Option key={id} value={id}>
+                      {marca}
+                    </Option>
+                  ))}
+                </Select> */}
+                {/* <Select
+                  label={"Marca del Motor"}
+                  onChange={(value) => setForm({ ...form, marcaMotorId: value })}
+                  value={isEdit ? updateForm?.marcaMotorId : undefined}
+                >
+                  {marcaMotores?.map(({ id, marca }) => (
+                    <Option key={id} value={id}>
+                      {marca}
+                    </Option>
+                  ))}
+                </Select> */}
                 <Select
                   label={"Procedencia"}
                   onChange={(value) => setForm({ ...form, motorPaisId: value })}
@@ -503,21 +512,17 @@ export default function Maquinas() {
                 />
               </GroupInputs>
               <GroupInputs>
- 
-                  <Select label={"Marca Sistema Inyección"}
+                {/* <Select
+                  label={"Marca fábrica de Sistema de Inyección"}
                   onChange={(value) => setForm({ ...form, marcaFabricaSistemaInyeccionId: value })}
                   value={isEdit ? updateForm?.marcaFabricaSistemaInyeccionId : undefined}
                 >
-                  {marcas && marcas.length > 0 ? (
-                    marcas.map((item) => (
-                      <Option key={item.id} value={item.id}>
-                        {item.marca}
-                      </Option>
-                    ))
-                  ) : (
-                    <Option value="">No hay marcas disponibles</Option>
-                  )}
-                </Select>
+                  {marcaFabricaSistemaInyeccion?.map(({ id, marca }) => (
+                    <Option key={id} value={id}>
+                      {marca}
+                    </Option>
+                  ))}
+                </Select> */}
                 <Select
                   label={"Descripción de Bomba de Inyección"}
                   onChange={(value) => setForm({ ...form, descripcionBombaInyeccionId: value })}
@@ -569,22 +574,17 @@ export default function Maquinas() {
                 />
               </GroupInputs>
               <GroupInputs>
-
-                <Select label={"Marca fábrica del Inyector"}
+                {/* <Select
+                  label={"Marca fábrica del Inyector"}
                   value={isEdit ? updateForm?.marcaFabricaInyectorId : undefined}
                   onChange={(value) => setForm({ ...form, marcaFabricaInyectorId: value })}
                 >
-                  {marcas && marcas.length > 0 ? (
-                    marcas.map((item) => (
-                      <Option key={item.id} value={item.id}>
-                        {item.marca}
-                      </Option>
-                    ))
-                  ) : (
-                    <Option value="">No hay marcas disponibles</Option>
-                  )}
-                </Select>
-
+                  {marcaFabricaInyector?.map(({ id, marca }) => (
+                    <Option key={id} value={id}>
+                      {marca}
+                    </Option>
+                  ))}
+                </Select> */}
                 <Select
                   label={"Descripción del Inyector"}
                   value={isEdit ? updateForm?.descripcionInyectorId : undefined}
@@ -636,23 +636,17 @@ export default function Maquinas() {
                   defaultValue={isEdit ? updateForm?.codigoOriginalTobera : undefined}
                   onChange={(e) => setForm({ ...form, codigoOriginalTobera: e.target.value })}
                 />
-
-
-                <Select label={"Marca Tobera"}
-                  value={isEdit ? updateForm?.marcaToberaId : undefined}
-                  onChange={(value) => setForm({ ...form, marcaToberaId: value })}
+                {/* <Select
+                  label={"Marca Tobera"}
+                  onChange={(value) => setForm({ ...form, marcaMotorId: value })}
+                  value={isEdit ? updateForm?.marcaMotorId : undefined}
                 >
-                  {marcas && marcas.length > 0 ? (
-                    marcas.map((item) => (
-                      <Option key={item.id} value={item.id}>
-                        {item.marca}
-                      </Option>
-                    ))
-                  ) : (
-                    <Option value="">No hay marcas disponibles</Option>
-                  )}
-                </Select>
-
+                  {marcaMotores?.map(({ id, marca }) => (
+                    <Option key={id} value={id}>
+                      {marca}
+                    </Option>
+                  ))}
+                </Select> */}
               </GroupInputs>
             </Group>
             
