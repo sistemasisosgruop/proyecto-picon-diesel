@@ -19,8 +19,10 @@ import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { toast } from "react-toastify";
 import { useQuery } from "react-query";
 import { FormContext } from "../../../../contexts/form.context";
+// import { connect } from "http2";
 
 const schema = yup.object().shape({
+  concepto: yup.string().required(),
   valor: yup.number().required(),
   fecha: yup.string().required(),
 });
@@ -53,6 +55,7 @@ export default function FactorInternamiento() {
   const createRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
     await axiosRequest("post", "/api/mantenimiento/factor-internamiento", {
+      concepto: form.concepto,
       valor: parseFloat(form.valor),
       fecha: new Date(form.fecha).toISOString(),
       empresaId: parseInt(empresaId),
@@ -64,6 +67,7 @@ export default function FactorInternamiento() {
   const updateRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
     await axiosRequest("put", `/api/mantenimiento/factor-internamiento/${elementId}`, {
+      concepto: form.concepto,
       valor: parseFloat(form.valor),
       fecha: new Date(form.fecha).toISOString(),
     });
