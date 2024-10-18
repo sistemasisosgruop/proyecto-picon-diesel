@@ -4,10 +4,11 @@ import { formatAmount } from "../../utils/format-amount";
 
 export class FactorInternamiento {
   static async createFactorInternamiento(data) {
-    const { valor, fecha, empresaId } = data;
+    const { concepto, valor, fecha, empresaId } = data;
 
     const factor = await prisma.factorInternamiento.create({
       data: {
+        concepto,
         codigo: await this.generarCodigo(empresaId),
         valor: formatAmount(valor).toUnit(),
         fecha,
@@ -19,12 +20,13 @@ export class FactorInternamiento {
   }
 
   static async updateFactorInternamiento(id, data) {
-    const { valor, fecha } = data;
+    const { concepto, valor, fecha } = data;
     const result = prisma.factorInternamiento.update({
       where: {
         id,
       },
       data: {
+        concepto,
         valor: formatAmount(valor).toUnit(),
         fecha,
       },

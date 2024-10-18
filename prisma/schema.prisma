@@ -191,6 +191,7 @@ model GastoImportacion {
 model FactorInternamiento {
   id        Int      @id @default(autoincrement())
   codigo    String? 
+  concepto  String?
   valor     Decimal  @default(0) @db.Decimal(12, 2)
   fecha     DateTime
   empresa   Empresa? @relation(fields: [empresaId], references: [id])
@@ -1648,4 +1649,35 @@ enum RolesEnum {
   Administrador
   Vendedor
   Tecnico
+}
+
+
+
+model Moneda {
+   @@map("moneda")
+  id         Int            @id @default(autoincrement())
+  codigoIso  String         @unique  // Código ISO 4217 de la moneda (USD, EUR, PEN)
+  nombre     String         // Nombre completo de la moneda (Dólar estadounidense, Euro, etc.)
+  simbolo    String         // Símbolo de la moneda ($, €, etc.)
+  tiposCambioOrigen  TipoCambio[] @relation("MonedaOrigen")  // Relación con tipos_cambio como origen
+  tiposCambioDestino TipoCambio[] @relation("MonedaDestino") // Relación con tipos_cambio como destino
+}
+
+model TipoCambio {
+   @@map("tipo_cambio")
+  id               Int      @id @default(autoincrement())
+  monedaOrigenId   Int      // ID de la moneda de origen
+  monedaDestinoId  Int      // ID de la moneda de destino
+  fecha            DateTime // Fecha del tipo de cambio
+  tipoCompra       Float    // Valor de compra
+  tipoVenta        Float    // Valor de venta
+  fuente           String?  // Fuente del tipo de cambio (opcional)
+
+  // Relación con la moneda de origen
+  monedaOrigen     Moneda   @relation("MonedaOrigen", fields: [monedaOrigenId], references: [id])
+  // Relación con la moneda de destino
+  monedaDestino    Moneda   @relation("MonedaDestino", fields: [monedaDestinoId], references: [id])
+
+  // Índice único para evitar duplicados (monedaOrigenId, monedaDestinoId, fecha)
+  @@unique([monedaOrigenId, monedaDestinoId, fecha])
 }
