@@ -103,7 +103,7 @@ export default function DocumentosContables() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      { Header: "Codigo", accessor: "codigo" },
+      // { Header: "Codigo", accessor: "codigo" },
       { Header: "N° de serie", accessor: "numeroDeSerie" },
       { Header: "Nombre", accessor: "nombre" },
       { Header: "Abreviatura", accessor: "abreviatura" },
@@ -151,19 +151,20 @@ export default function DocumentosContables() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <div className="flex gap-5">
-            <Input
+          {/* <div className="flex gap-5"> */}
+            {/* <Input
               label="Código"
+              disabled
               onChange={(e) => setForm({ ...form, codigo: e.target.value })}
               defaultValue={isEdit ? updateForm?.codigo : undefined}
-            />
+            /> */}
             <Input
               label="N° de serie"
               onChange={(e) => setForm({ ...form, numeroDeSerie: e.target.value })}
               defaultValue={isEdit ? updateForm?.numeroDeSerie : undefined}
             />
-          </div>
-          <div className="flex gap-5">
+          {/* </div> */}
+          {/* <div className="flex gap-5"> */}
             <Input
               label="Nombre"
               onChange={(e) => setForm({ ...form, nombre: e.target.value })}
@@ -174,7 +175,7 @@ export default function DocumentosContables() {
               onChange={(e) => setForm({ ...form, abreviatura: e.target.value })}
               defaultValue={isEdit ? updateForm?.abreviatura : undefined}
             />
-          </div>
+          {/* </div> */}
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
             <ButtonSave onClick={saveData} />
