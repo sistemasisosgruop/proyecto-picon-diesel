@@ -98,7 +98,7 @@ export default function MotivoGuiaRemision() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      { Header: "Codigo", accessor: "codigo" },
+      // { Header: "Codigo", accessor: "codigo" },
       { Header: "Motivo", accessor: "motivo" },
       { Header: "Descripción", accessor: "descripcion" },
     ],

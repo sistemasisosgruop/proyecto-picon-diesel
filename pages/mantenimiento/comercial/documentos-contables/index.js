@@ -16,7 +16,7 @@ import { useQuery } from "react-query";
 import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
-  codigo: yup.string().required(),
+  // codigo: yup.string().nullable(),
   numeroDeSerie: yup.string().required(),
   nombre: yup.string().required(),
   abreviatura: yup.string().required(),
