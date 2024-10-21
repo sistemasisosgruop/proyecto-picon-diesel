@@ -1,5 +1,5 @@
-import { AuthService } from "../../../../backend/services/auth/auth.service";
-import { TipoCambioService } from "../../../../backend/services/mantenimiento/tipo-cambio.service";
+import { AuthService } from "../../../../../backend/services/auth/auth.service";
+import { FormaDePagoService } from "../../../../../backend/services/mantenimiento/comercial/forma-de-pago.service";
 
 export default async function handler(req, res) {
   try {
@@ -7,12 +7,13 @@ export default async function handler(req, res) {
     user && AuthService.AdministradorFeatures(user.roles);
 
     if (req.method === "POST") {
-      const result = await TipoCambioService.create(req.body);
+      const result = await FormaDePagoService.create(req.body);
       return res.status(200).json(result);
     }
 
     if (req.method === "GET") {
-      const result = await TipoCambioService.getAll();
+      const empresaId = Number(req.query.empresaId);
+      const result = await FormaDePagoService.getAll(empresaId);
       return res.status(200).json({ data: result });
     }
   } catch (error) {

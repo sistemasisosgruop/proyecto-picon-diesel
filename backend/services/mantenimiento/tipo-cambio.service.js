@@ -1,28 +1,61 @@
 import prisma from "../../prisma";
-import { generateCodeTipoCambio } from "../../utils/codes";
+// import { generateCodeTipoCambio } from "../../utils/codes";
 
 export class TipoCambioService {
   static async create(data) {
-    const { empresaId, ...props } = data;
-    const tipoDeCambio = await prisma.tipoDeCambio.create({
-      data: {
-        ...props,
-        empresaId,
+    console.log(data, "DATA CREAR TIPO DE CAMB IO");
+    const { empresaId, fecha, ...props } = data;
+    const fechaCompleta = new Date(fecha);
+    const fechaFormat = new Date(
+      fechaCompleta.getFullYear(),
+      fechaCompleta.getMonth(),
+      fechaCompleta.getDay()
+    );
+    console.log(fechaFormat, "fechaFormat");
+    const findUnique = await prisma.tipoDeCambio.findFirst({
+      where: {
+        fecha: fechaFormat,
+        monedaOrigenId: data.momonedaOrigenId,
+        monedaDestinoId: data.monedaOrigenId,
       },
     });
 
-    const result = await prisma.tipoDeCambio.update({
-      where: {
-        id: tipoDeCambio.id,
-      },
+    if (findUnique) {
+      throw new Error("El registro de monedas y fecha ya existen");
+    }
+
+    const tipoDeCambio = await prisma.tipoDeCambio.create({
       data: {
-        codigo: generateCodeTipoCambio(tipoDeCambio.id),
+        fecha: fechaFormat,
+        ...props,
+        // empresaId,
       },
     });
-    return result;
+
+    return tipoDeCambio;
   }
 
   static async update(id, data) {
+    const fechaCompleta = new Date(data.fecha);
+    const fechaFormat = new Date(
+      fechaCompleta.getFullYear(),
+      fechaCompleta.getMonth(),
+      fechaCompleta.getDay()
+    );
+
+    const findUnique = await prisma.tipoDeCambio.findFirst({
+      where: {
+        fecha: fechaFormat,
+        monedaOrigenId: data.momonedaOrigenId,
+        monedaDestinoId: data.monedaOrigenId,
+        id: { not: id },
+      },
+    });
+
+    if (findUnique) {
+      throw new Error("El registro de monedas y fecha ya existen");
+    }
+
     const tipoDeCambio = await prisma.tipoDeCambio.update({
       where: {
         id,
@@ -55,33 +88,25 @@ export class TipoCambioService {
     return tipoDeCambio;
   }
 
-  static async getAll(empresaId) {
+  static async getAll() {
     const tipoDeCambios = await prisma.tipoDeCambio.findMany({
-      where: {
-        empresaId,
+      include: {
+        monedaOrigen: true,
+        monedaDestino: true,
       },
+      orderBy: [
+        {
+          monedaOrigenId: "asc",
+        },
+        {
+          monedaDestinoId: "asc",
+        },
+        {
+          fecha: "desc",
+        },
+      ],
     });
 
     return tipoDeCambios;
-  }
-
-  static async getLast(empresaId, last) {
-    
-    const lastTipoDeCambio = await prisma.tipoDeCambio.findFirst({
-      where: {
-        empresaId,
-        AND: [
-          {
-            de: {
-              equals: last
-            }
-          }
-        ]
-      },
-      orderBy: {
-        fecha: 'desc'
-      }
-    })
-    return lastTipoDeCambio;
   }
 }
