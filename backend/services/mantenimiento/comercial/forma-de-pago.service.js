@@ -1,9 +1,10 @@
-import prisma from "../../prisma";
+import prisma from "../../../prisma";
+// import { generateCodeFormaDePago } from "../../utils/codes";
 
-export class DetraccionService {
+export class FormaDePagoService {
   static async create(data) {
     const { empresaId, ...props } = data;
-    const detraccion = await prisma.detraccion.create({
+    const pagoCredito = await prisma.formaDePago.create({
       data: {
         ...props,
         codigo: await this.generarCodigo(empresaId),
@@ -11,11 +12,11 @@ export class DetraccionService {
       },
     });
 
-    return detraccion;
+    return pagoCredito;
   }
 
   static async update(id, data) {
-    const detraccion = await prisma.detraccion.update({
+    const pagoCredito = await prisma.formaDePago.update({
       where: {
         id,
       },
@@ -24,47 +25,44 @@ export class DetraccionService {
       },
     });
 
-    return detraccion;
+    return pagoCredito;
   }
 
   static async delete(id) {
-    const detraccion = await prisma.detraccion.delete({
+    const pagoCredito = await prisma.formaDePago.delete({
       where: {
         id,
       },
     });
 
-    return detraccion;
+    return pagoCredito;
   }
 
   static async get(id) {
-    const detraccion = await prisma.detraccion.findUnique({
+    const pagoCredito = await prisma.formaDePago.findUnique({
       where: {
         id,
       },
     });
 
-    return detraccion;
+    return pagoCredito;
   }
 
   static async getAll(empresaId) {
-    const detracciones = await prisma.detraccion.findMany({
+    const pagoCreditos = await prisma.formaDePago.findMany({
       where: {
         empresaId,
       },
-      orderBy: {
-        codigo: "asc",
-      },
     });
 
-    return detracciones;
+    return pagoCreditos;
   }
 
   static async generarCodigo(empresaId) {
-    const prefijo = "DET";
+    const prefijo = "FDP";
     let codigo;
 
-    const lastRow = await prisma.detraccion.findFirst({
+    const lastRow = await prisma.formaDePago.findFirst({
       orderBy: {
         codigo: "desc",
       },
@@ -79,7 +77,7 @@ export class DetraccionService {
       const nextCodigo = parseInt(ultimosTresDigitos, 10) + 1;
       codigo = String(nextCodigo).padStart(3, "0");
     } else {
-      const totalRows = await prisma.detraccion.count({
+      const totalRows = await prisma.formaDePago.count({
         where: { empresaId },
       });
       codigo = "00" + (totalRows + 1);

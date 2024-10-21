@@ -42,10 +42,10 @@ model Empresa {
   agenciaTransporte            AgenciaTransporte[]
   vehiculo                     Vehiculo[]
   chofer                       Chofer[]
-  tipoDeCambio                 TipoDeCambio[]
+  // tipoDeCambio                 TipoDeCambio[]
   parametroDescuento           ParametroDescuento[]
-  formaDePagoContado           FormaDePagoContado[]
-  formaDePagoCredito           FormaDePagoCredito[]
+  // formaDePagoContado           FormaDePagoContado[]
+  formaDePago                  FormaDePago[]
   documentoContable            DocumentoContable[]
   documentoAdministrativo      DocumentoAdministrativo[]
   detraccion                   Detraccion[]
@@ -462,20 +462,29 @@ model Chofer {
 }
 
 model TipoDeCambio {
-  id             Int              @id @default(autoincrement())
-  codigo         String?          @unique
-  de             String
-  a              String
-  valor          Decimal          @default(0) @db.Decimal(12, 2)
-  fecha          DateTime
-  empresa        Empresa?         @relation(fields: [empresaId], references: [id])
-  empresaId      Int
+  id               Int      @id @default(autoincrement())
+  monedaOrigenId   Int      // ID de la moneda de origen
+  monedaDestinoId  Int      // ID de la moneda de destino
+  fecha            DateTime // Fecha del tipo de cambio
+  valorCompra       Decimal    // Valor de compra
+  valorVenta        Decimal    // Valor de venta
+  fuente           String?  // Fuente del tipo de cambio (opcional)
+
+  // Relación con la moneda de origen
+  monedaOrigen     Moneda   @relation("MonedaOrigen", fields: [monedaOrigenId], references: [id])
+  // Relación con la moneda de destino
+  monedaDestino    Moneda   @relation("MonedaDestino", fields: [monedaDestinoId], references: [id])
+
+  // empresa        Empresa?         @relation(fields: [empresaId], references: [id])
+  // empresaId      Int
   Cotizacion     Cotizacion[]
   // GuiaDeRemision GuiaDeRemision[]
   Factura        Factura[]
   guiaRemisionServicios GuiaRemisionServicios[]
   facturaServicios  FacturaServicios[]
 
+  // Índice único para evitar duplicados (monedaOrigenId, monedaDestinoId, fecha)
+  @@unique([monedaOrigenId, monedaDestinoId, fecha])
   @@map("tipo_de_cambio")
 }
 
@@ -489,11 +498,13 @@ model ParametroDescuento {
   @@map("parametro_descuento")
 }
 
-model FormaDePagoContado {
+model FormaDePago {
   id             Int              @id @default(autoincrement())
+  tipo           FormasDePagoEnum 
   codigo         String?          @unique
   nombre         String
-  empresa        Empresa?         @relation(fields: [empresaId], references: [id])
+  numeroDeDias   Int?             @map("numero_de_dias")
+  empresa        Empresa         @relation(fields: [empresaId], references: [id])
   empresaId      Int
   Cotizacion     Cotizacion[]
   // GuiaDeRemision GuiaDeRemision[]
@@ -501,24 +512,40 @@ model FormaDePagoContado {
   guiaRemisionServicios GuiaRemisionServicios[]
   facturaServicios  FacturaServicios[]
 
-  @@map("forma_de_pago_contado")
+  @@map("forma_de_pago")
 }
 
-model FormaDePagoCredito {
-  id             Int              @id @default(autoincrement())
-  codigo         String?          @unique
-  nombre         String
-  numeroDeDias   Int              @map("numero_de_dias")
-  empresa        Empresa?         @relation(fields: [empresaId], references: [id])
-  empresaId      Int
-  Cotizacion     Cotizacion[]
-  // GuiaDeRemision GuiaDeRemision[]
-  Factura        Factura[]
-  guiaRemisionServicios GuiaRemisionServicios[]
-  facturaServicios  FacturaServicios[]
 
-  @@map("forma_de_pago_credito")
-}
+// model FormaDePagoContado {
+//   id             Int              @id @default(autoincrement())
+//   codigo         String?          @unique
+//   nombre         String
+//   empresa        Empresa?         @relation(fields: [empresaId], references: [id])
+//   empresaId      Int
+//   Cotizacion     Cotizacion[]
+//   // GuiaDeRemision GuiaDeRemision[]
+//   Factura        Factura[]
+//   guiaRemisionServicios GuiaRemisionServicios[]
+//   facturaServicios  FacturaServicios[]
+
+//   @@map("forma_de_pago_contado")
+// }
+
+// model FormaDePagoCredito {
+//   id             Int              @id @default(autoincrement())
+//   codigo         String?          @unique
+//   nombre         String
+//   numeroDeDias   Int              @map("numero_de_dias")
+//   empresa        Empresa?         @relation(fields: [empresaId], references: [id])
+//   empresaId      Int
+//   Cotizacion     Cotizacion[]
+//   // GuiaDeRemision GuiaDeRemision[]
+//   Factura        Factura[]
+//   guiaRemisionServicios GuiaRemisionServicios[]
+//   facturaServicios  FacturaServicios[]
+
+//   @@map("forma_de_pago_credito")
+// }
 
 model DocumentoContable {
   id            Int      @id @default(autoincrement())
@@ -918,10 +945,10 @@ model Cotizacion {
   subtotalValorNeto      Decimal               @default(0) @db.Decimal(12, 2)
   igv                    Decimal               @default(0) @db.Decimal(12, 2)
   totalSoles             Decimal               @default(0) @db.Decimal(12, 2)
-  formaPagoContado       FormaDePagoContado?   @relation(fields: [formaPagoContadoId], references: [id])
-  formaPagoContadoId     Int?
-  formaPagoCredito       FormaDePagoCredito?   @relation(fields: [formaPagoCreditoId], references: [id])
-  formaPagoCreditoId     Int?
+  formaDePago               FormaDePago           @relation(fields: [formaDePagoId], references: [id])
+  formaDePagoId             Int
+  // formaPagoCredito       FormaDePagoCredito?   @relation(fields: [formaPagoCreditoId], references: [id])
+  // formaPagoCreditoId     Int?
   tipoDeCambio           TipoDeCambio?         @relation(fields: [tipoDeCambioId], references: [id])
   tipoDeCambioId         Int?
   cliente                Cliente?              @relation(fields: [clienteId], references: [id])
@@ -1114,10 +1141,10 @@ model Factura {
   fechaDeValidez     DateTime
   diasDeValidez      Int
   moneda             String?
-  formaPagoContado   FormaDePagoContado? @relation(fields: [formaPagoContadoId], references: [id])
-  formaPagoContadoId Int?
-  formaPagoCredito   FormaDePagoCredito? @relation(fields: [formaPagoCreditoId], references: [id])
-  formaPagoCreditoId Int?
+  formaDePagoContado   FormaDePago? @relation(fields: [formaDePagoId], references: [id])
+  formaDePagoId       Int?
+  // formaPagoCredito   FormaDePagoCredito @relation(fields: [formaPagoCreditoId], references: [id])
+  // formaPagoCreditoId Int
   tipoDeCambio       TipoDeCambio?       @relation(fields: [tipoDeCambioId], references: [id])
   tipoDeCambioId     Int?
   estado             String?
@@ -1500,10 +1527,10 @@ model GuiaRemisionServicios {
   diasValidez             Int
   fechaValidez            DateTime           @default(now())
   moneda                  String
-  formaPagoContado        FormaDePagoContado? @relation(fields: [formaPagoContadoId], references: [id])
-  formaPagoContadoId      Int?
-  formaPagoCredito        FormaDePagoCredito? @relation(fields: [formaPagoCreditoId], references: [id])
-  formaPagoCreditoId      Int?
+  formaDePago               FormaDePago @relation(fields: [formaDePagoId], references: [id])
+  formaDePagoId             Int
+  // formaPagoCredito        FormaDePagoCredito? @relation(fields: [formaPagoCreditoId], references: [id])
+  // formaPagoCreditoId      Int?
   tipoDeCambio            TipoDeCambio?       @relation(fields: [tipoDeCambioId], references: [id])
   tipoDeCambioId          Int?
   estado                  String?
@@ -1568,10 +1595,10 @@ model FacturaServicios {
   diasValidez             Int
   fechaValidez            DateTime           @default(now())
   moneda                  String
-  formaPagoContado        FormaDePagoContado? @relation(fields: [formaPagoContadoId], references: [id])
-  formaPagoContadoId      Int?
-  formaPagoCredito        FormaDePagoCredito? @relation(fields: [formaPagoCreditoId], references: [id])
-  formaPagoCreditoId      Int?
+  formaDePago        FormaDePago? @relation(fields: [formaDePagoId], references: [id])
+  formaDePagoId      Int?
+  // formaPagoCredito        FormaDePagoCredito? @relation(fields: [formaPagoCreditoId], references: [id])
+  // formaPagoCreditoId      Int
   tipoDeCambio            TipoDeCambio?       @relation(fields: [tipoDeCambioId], references: [id])
   tipoDeCambioId          Int?
   estado                  String?
@@ -1651,6 +1678,11 @@ enum RolesEnum {
   Tecnico
 }
 
+enum FormasDePagoEnum {
+  Contado
+  Credito
+}
+
 
 
 model Moneda {
@@ -1659,25 +1691,6 @@ model Moneda {
   codigoIso  String         @unique  // Código ISO 4217 de la moneda (USD, EUR, PEN)
   nombre     String         // Nombre completo de la moneda (Dólar estadounidense, Euro, etc.)
   simbolo    String         // Símbolo de la moneda ($, €, etc.)
-  tiposCambioOrigen  TipoCambio[] @relation("MonedaOrigen")  // Relación con tipos_cambio como origen
-  tiposCambioDestino TipoCambio[] @relation("MonedaDestino") // Relación con tipos_cambio como destino
-}
-
-model TipoCambio {
-   @@map("tipo_cambio")
-  id               Int      @id @default(autoincrement())
-  monedaOrigenId   Int      // ID de la moneda de origen
-  monedaDestinoId  Int      // ID de la moneda de destino
-  fecha            DateTime // Fecha del tipo de cambio
-  tipoCompra       Float    // Valor de compra
-  tipoVenta        Float    // Valor de venta
-  fuente           String?  // Fuente del tipo de cambio (opcional)
-
-  // Relación con la moneda de origen
-  monedaOrigen     Moneda   @relation("MonedaOrigen", fields: [monedaOrigenId], references: [id])
-  // Relación con la moneda de destino
-  monedaDestino    Moneda   @relation("MonedaDestino", fields: [monedaDestinoId], references: [id])
-
-  // Índice único para evitar duplicados (monedaOrigenId, monedaDestinoId, fecha)
-  @@unique([monedaOrigenId, monedaDestinoId, fecha])
+  tiposCambioOrigen  TipoDeCambio[] @relation("MonedaOrigen")  // Relación con tipos_cambio como origen
+  tiposCambioDestino TipoDeCambio[] @relation("MonedaDestino") // Relación con tipos_cambio como destino
 }

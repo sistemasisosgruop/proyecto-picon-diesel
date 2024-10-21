@@ -6,6 +6,7 @@ export class DocumentoContableService {
     const documentoContable = await prisma.documentoContable.create({
       data: {
         ...props,
+        codigo: await this.generarCodigo(empresaId),
         empresaId,
       },
     });
@@ -57,5 +58,32 @@ export class DocumentoContableService {
     });
 
     return documentosContables;
+  }
+
+  static async generarCodigo(empresaId) {
+    const prefijo = "DC";
+    let codigo;
+
+    const lastRow = await prisma.documentoContable.findFirst({
+      orderBy: {
+        codigo: "desc",
+      },
+      select: {
+        codigo: true,
+      },
+      where: { empresaId },
+    });
+
+    const ultimosTresDigitos = lastRow?.codigo?.slice(-3);
+    if (lastRow && Number(ultimosTresDigitos)) {
+      const nextCodigo = parseInt(ultimosTresDigitos, 10) + 1;
+      codigo = String(nextCodigo).padStart(3, "0");
+    } else {
+      const totalRows = await prisma.documentoContable.count({
+        where: { empresaId },
+      });
+      codigo = "00" + (totalRows + 1);
+    }
+    return prefijo + codigo;
   }
 }
