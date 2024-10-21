@@ -38,7 +38,7 @@ export const menuSidebar = [
         href: "/mantenimiento/comercial/tipo-de-cambio",
       },
       {
-        subItem: "Presupuesto",
+        subItem: "Servicio",
         href: "/mantenimiento/presupuesto/servicios",
       },
     ],

@@ -1,4 +1,4 @@
-import { Input } from "@material-tailwind/react";
+import { Input,Select, Option } from "@material-tailwind/react";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { ButtonAdd, ButtonCancel, ButtonSave } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
@@ -16,9 +16,10 @@ import { toast } from "react-toastify";
 import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
-  de: yup.string().required(),
-  a: yup.string().required(),
-  valor: yup.number().required(),
+  monedaOrigenId: yup.string().required(),
+  monedaDestinoId: yup.string().required(),
+  valorCompra: yup.number().required(),
+  valorVenta: yup.number().required(),
   fecha: yup.string().required(),
 });
 
@@ -27,11 +28,13 @@ export default function TipoDeCambio() {
     useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
-    de: null,
-    a: null,
-    valor: null,
+    monedaOrigenId: null,
+    monedaDestinoId: null,
+    valorCompra: null,
+    valorVenta: null,
     fecha: null,
   });
+  const [monedas,setMonedas] = useState([]) 
   const { updateForm, elementId, resetInfo, changeData, setChangeData } = useContext(FormContext);
 
   useEffect(() => {
@@ -40,20 +43,22 @@ export default function TipoDeCambio() {
 
   useEffect(() => {
     setForm({
-      de: null,
-      a: null,
-      valor: null,
+      monedaOrigenId: null,
+      monedaDestinoId: null,
+      valorCompra: null,
+      valorVenta: null,
       fecha: null,
     });
   }, [resetInfo]);
 
   const createRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
+    
     await axiosRequest("post", "/api/mantenimiento/tipo-de-cambio", {
       ...form,
       fecha: new Date(form.fecha).toISOString(),
-      valor: parseFloat(form.valor),
-      empresaId: parseInt(empresaId),
+      valorCompra: parseFloat(form.valorCompra),
+      valorVenta: parseFloat(form.valorVenta),
     });
 
     toast.success(`💾 Registro guardado exitosamente!`, successProps);
@@ -61,10 +66,12 @@ export default function TipoDeCambio() {
 
   const updateRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
+    let {id,monedaDestino, monedaOrigen, ...formAux} = form;
     await axiosRequest("put", `/api/mantenimiento/tipo-de-cambio/${elementId}`, {
-      ...form,
+      ...formAux,
       fecha: new Date(form.fecha).toISOString(),
-      valor: parseFloat(form.valor),
+      valorCompra: parseFloat(form.valorCompra),
+      valorVenta: parseFloat(form.valorVenta),
     });
 
     toast.success(`💾 Registro guardado exitosamente!`, successProps);
@@ -82,6 +89,7 @@ export default function TipoDeCambio() {
   const saveData = async () => {
     try {
       if (isEdit) {
+        console.log('Editando')
         await updateRegistro();
       } else {
         await createRegistro();
@@ -95,9 +103,10 @@ export default function TipoDeCambio() {
 
   useEffect(() => {
     setForm({
-      de: null,
-      a: null,
-      valor: null,
+      monedaOrigenId: null,
+      monedaDestinoId: null,
+      valorCompra: null,
+      valorVenta: null,
       fecha: null,
     });
     refetch();
@@ -106,10 +115,11 @@ export default function TipoDeCambio() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      { Header: "Codigo", accessor: "codigo" },
-      { Header: "De", accessor: "de" },
-      { Header: "A", accessor: "a" },
-      { Header: "Valor", accessor: "valor" },
+      // { Header: "Codigo", accessor: "codigo" },
+      { Header: "De", accessor: "monedaOrigen.nombre" },
+      { Header: "A", accessor: "monedaDestino.nombre" },
+      { Header: "Valor compra", accessor: "valorCompra" },
+      { Header: "Valor venta", accessor: "valorVenta" },
       { Header: "Fecha", accessor: "fecha" },
     ],
     []
@@ -118,7 +128,7 @@ export default function TipoDeCambio() {
   const getTiposCambio = async () => {
     const { data } = await axiosRequest(
       "get",
-      `/api/mantenimiento/tipo-de-cambio?empresaId=${empresaId}`
+      `/api/mantenimiento/tipo-de-cambio`
     );
 
     return data;
@@ -138,6 +148,24 @@ export default function TipoDeCambio() {
       })),
     [data?.data]
   );
+
+
+  const getMonedas = async ()=>{
+    const {data} =  await axiosRequest(
+      "get",
+      `/api/mantenimiento/comercial/moneda`
+    );
+      setMonedas(data.data);
+      console.log(data.data)
+    return data;
+  }
+useEffect(()=>{
+  getMonedas();
+},[])
+
+useEffect(()=>{
+  console.log('Cambiando form:',form)
+},[form])
 
   return (
     <>
@@ -164,31 +192,67 @@ export default function TipoDeCambio() {
         {/* Form */}
         <form className="flex flex-col gap-5">
           <div className="flex gap-5">
-            <Input
-              label="De"
-              onChange={(e) => setForm({ ...form, de: e.target.value })}
-              defaultValue={isEdit ? updateForm?.de : undefined}
-            />
-            <Input
-              label="A"
-              onChange={(e) => setForm({ ...form, a: e.target.value })}
-              defaultValue={isEdit ? updateForm?.a : undefined}
-            />
+
+            <Select label="De"
+                    value={isEdit ? updateForm?.monedaOrigenId : undefined}
+                    onChange={(value) => {
+                      setForm({...form, monedaOrigenId: value})
+                    }}
+                    >
+                    {monedas && monedas.length > 0 ? (
+                    monedas?.map((item) => {
+                        return (
+                        <Option key={item.id} value={item.id}>
+                            {item?.nombre}
+                        </Option>
+                        );
+                    })
+                    ) : (
+                        <Option value="">No hay monedas disponibles</Option>
+                    )}
+              </Select>
+              <Select label="A"
+                    value={isEdit ? updateForm?.monedaDestinoId : undefined}
+                    onChange={(value) => {
+                        setForm({...form, monedaDestinoId: value})
+                    }}
+                    >
+                    {monedas && monedas.length > 0 ? (
+                    monedas?.map((item) => {
+                        return (
+                        <Option key={item.id} value={item.id}>
+                            {item?.nombre}
+                        </Option>
+                        );
+                    })
+                    ) : (
+                        <Option value="">No hay monedas disponibles</Option>
+                    )}
+              </Select>
+
+
           </div>
           <div className="flex gap-5">
             <Input
-              label="Valor"
+              label="Valor compra"
               type="number"
-              onChange={(e) => setForm({ ...form, valor: e.target.value })}
-              defaultValue={isEdit ? updateForm?.valor : undefined}
+              onChange={(e) => setForm({ ...form, valorCompra: e.target.value })}
+              defaultValue={isEdit ? updateForm?.valorCompra : undefined}
             />
             <Input
+              label="Valor venta"
+              type="number"
+              onChange={(e) => setForm({ ...form, valorVenta: e.target.value })}
+              defaultValue={isEdit ? updateForm?.valorVenta : undefined}
+            />
+
+          </div>
+          <Input
               label="Fecha"
               type="date"
               onChange={(e) => setForm({ ...form, fecha: e.target.value })}
               defaultValue={isEdit ? updateForm?.fecha : undefined}
             />
-          </div>
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
             <ButtonSave onClick={saveData} />

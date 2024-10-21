@@ -34,7 +34,7 @@ export default function TemplatePresupuesto({ children }) {
 
 	return (
 		<Container>
-			<Title text={"Presupuesto"} />
+			<Title text={"Servicio"} />
 			<ContainerMenu>
 				<LayoutSubSubMenu items={items} />
 				<Content>{children}</Content>
