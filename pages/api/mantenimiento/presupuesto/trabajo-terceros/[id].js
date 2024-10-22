@@ -1,4 +1,4 @@
-import { TrabajoTercerosService } from "../../../../../backend/services/mantenimiento/trabajo-terceros.service";
+import { TrabajoTercerosService } from "../../../../../backend/services/mantenimiento/presupuesto/trabajo-terceros.service";
 import { AuthService } from "../../../../../backend/services/auth/auth.service";
 
 export default async function handler(req, res) {

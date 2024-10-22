@@ -619,6 +619,7 @@ model SubFamiliaPresupuesto {
   familiaId            Int
   materialPresupuestos MaterialPresupuesto[]
   servicios             Servicio[]
+  trabajoTerceros       TrabajoTerceros[]
   @@map("sub_familia_presupuesto")
 }
 
@@ -661,10 +662,15 @@ model Servicio {
 
 model TrabajoTerceros {
   id         Int      @id @default(autoincrement())
-  codigo     String   @unique
+  codigo     String   
   definicion String
-  precio     Decimal  @default(0) @db.Decimal(12, 2)
-  empresa    Empresa? @relation(fields: [empresaId], references: [id])
+  tiempoHora  Decimal
+  precioHora  Decimal
+  precioTotal     Decimal  @default(0) @db.Decimal(12, 2)
+  
+  subFamilia   SubFamiliaPresupuesto @relation(fields: [subFamiliaId], references: [id])
+  subFamiliaId Int
+  empresa    Empresa @relation(fields: [empresaId], references: [id])
   empresaId  Int
   presupuestos  PresupuestoToTrabajoTerceros[]
   ordenesTrabajo  OrdenTrabajoToTrabajoTerceros[]

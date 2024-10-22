@@ -1,8 +1,8 @@
 import prisma from "../prisma";
 
-export async function generarCodigoGeneric(modelo, empresaId, prefijo) {
+export async function generarCodigoGeneric(modelo, prefijo, whereFilter) {
   let codigo = prefijo ?? "";
-
+  console.log(modelo, prefijo, whereFilter, "GENERAR CODIGO");
   // Buscar el último código generado en la tabla especificada
   const lastRow = await prisma[modelo].findFirst({
     orderBy: {
@@ -11,7 +11,7 @@ export async function generarCodigoGeneric(modelo, empresaId, prefijo) {
     select: {
       codigo: true,
     },
-    where: { empresaId },
+    where: whereFilter,
   });
   console.log(lastRow, "lastRow");
   // Obtener los últimos 3 dígitos del código encontrado
@@ -23,7 +23,7 @@ export async function generarCodigoGeneric(modelo, empresaId, prefijo) {
     codigo = String(nextCodigo).padStart(3, "0");
   } else {
     const totalRows = await prisma[modelo].count({
-      where: { empresaId },
+      where: whereFilter,
     });
     codigo = "00" + (totalRows + 1);
   }

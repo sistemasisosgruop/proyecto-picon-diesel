@@ -1,5 +1,5 @@
 import { AuthService } from "../../../../../backend/services/auth/auth.service";
-import { TrabajoTercerosService } from "../../../../../backend/services/mantenimiento/trabajo-terceros.service";
+import { TrabajoTercerosService } from "../../../../../backend/services/mantenimiento/presupuesto/trabajo-terceros.service";
 
 export default async function handler(req, res) {
   try {
@@ -18,9 +18,8 @@ export default async function handler(req, res) {
       return res.status(200).json({ data: result });
     }
   } catch (error) {
-
     return res
-    .status(400)
-    .json({ error: error.message, code: error?.code, fields: error?.meta?.target ?? [] });
+      .status(400)
+      .json({ error: error.message, code: error?.code, fields: error?.meta?.target ?? [] });
   }
 }

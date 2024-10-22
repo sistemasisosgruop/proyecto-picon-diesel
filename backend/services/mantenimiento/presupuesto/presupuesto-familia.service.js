@@ -6,7 +6,7 @@ export class PresupuestoFamiliaService {
     const { empresaId, ...data } = body;
     const familia = await prisma.familiaPresupuesto.create({
       data: {
-        codigo: await generarCodigoGeneric("familiaPresupuesto", empresaId, ""),
+        codigo: await generarCodigoGeneric("familiaPresupuesto", "", { empresaId }),
         ...data,
         empresaId,
       },

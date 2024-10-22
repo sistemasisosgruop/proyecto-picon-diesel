@@ -1,10 +1,18 @@
-import { Decimal } from "@prisma/client/runtime/library";
+import { generarCodigoGeneric } from "backend/helpers/helper";
 import prisma from "../../../prisma";
+import { Decimal } from "@prisma/client/runtime/library";
 
-export class ServicioService {
+export class TrabajoTercerosService {
   static async create(body) {
-    const { subFamiliaId, definicion, precioHora, tiempoHora } = body;
-
+    const { definicion, tiempoHora, precioHora, subFamiliaId } = body;
+    const valUnique = await prisma.trabajoTerceros.findFirst({
+      where: {
+        definicion,
+      },
+    });
+    if (valUnique) {
+      throw new Error("El nombre ya existe.");
+    }
     const subFamilia = await prisma.subFamiliaPresupuesto.findUnique({
       where: {
         id: Number(subFamiliaId),
@@ -22,26 +30,33 @@ export class ServicioService {
     if (!familia) {
       throw new Error("No existe codigo Familia.");
     }
-
-    const codigoGen = await this.generarCodigo(familia.id);
-    const servicio = await prisma.servicio.create({
+    const trabajo = await prisma.trabajoTerceros.create({
       data: {
-        codigo: codigoGen + "-" + tiempoHora + "-" + precioHora,
+        codigo: await generarCodigoGeneric("trabajoTerceros", "TT", { subFamiliaId }),
         definicion,
-        precioHora,
         tiempoHora,
-        precioTotal: new Decimal(precioHora).mul(new Decimal(tiempoHora)),
+        precioHora,
+        precioTotal: new Decimal(tiempoHora).mul(new Decimal(precioHora)),
         subFamiliaId: subFamilia.id,
         empresaId: familia.empresaId,
       },
     });
 
-    return servicio;
+    return trabajo;
   }
 
   static async update(id, body) {
-    const { subFamiliaId, definicion, precioHora, tiempoHora } = body;
+    const { definicion, tiempoHora, precioHora, subFamiliaId } = body;
 
+    const valUnique = await prisma.trabajoTerceros.findFirst({
+      where: {
+        definicion,
+        id: { not: id },
+      },
+    });
+    if (valUnique) {
+      throw new Error("El nombre ya existe.");
+    }
     const subFamilia = await prisma.subFamiliaPresupuesto.findUnique({
       where: {
         id: Number(subFamiliaId),
@@ -59,40 +74,36 @@ export class ServicioService {
     if (!familia) {
       throw new Error("No existe codigo Familia.");
     }
-    const currService = await prisma.servicio.findUnique({ where: { id } });
-    if (!currService) {
-      throw new Error("No existe Servicio.");
-    }
-    const servicio = await prisma.servicio.update({
+
+    const trabajo = await prisma.trabajoTerceros.update({
       where: {
         id,
       },
       data: {
-        codigo: currService.codigo.split("-")[0] + "-" + tiempoHora + "-" + precioHora,
         definicion,
-        precioHora,
         tiempoHora,
-        precioTotal: new Decimal(precioHora).mul(new Decimal(tiempoHora)),
+        precioHora,
+        precioTotal: new Decimal(tiempoHora).mul(new Decimal(precioHora)),
         subFamiliaId: subFamilia.id,
         empresaId: familia.empresaId,
       },
     });
 
-    return servicio;
+    return trabajo;
   }
 
   static async delete(id) {
-    const servicio = await prisma.servicio.delete({
+    const trabajo = await prisma.trabajoTerceros.delete({
       where: {
         id,
       },
     });
 
-    return servicio;
+    return trabajo;
   }
 
   static async getAll(empresaId, filterName) {
-    return prisma.servicio.findMany({
+    return prisma.trabajoTerceros.findMany({
       include: {
         subFamilia: {
           include: {
@@ -121,39 +132,12 @@ export class ServicioService {
   }
 
   static async get(id) {
-    const servicio = await prisma.servicio.findUnique({
+    const trabajo = await prisma.trabajoTerceros.findUnique({
       where: {
         id: Number(id),
       },
     });
 
-    return servicio;
-  }
-
-  static async generarCodigo(subFamiliaId) {
-    const prefijo = "TT";
-    let codigo;
-
-    const lastRow = await prisma.servicio.findFirst({
-      orderBy: {
-        codigo: "desc",
-      },
-      select: {
-        codigo: true,
-      },
-      where: { subFamiliaId },
-    });
-
-    const ultimosTresDigitos = lastRow?.codigo?.slice(-3);
-    if (lastRow && Number(ultimosTresDigitos)) {
-      const nextCodigo = parseInt(ultimosTresDigitos, 10) + 1;
-      codigo = String(nextCodigo).padStart(3, "0");
-    } else {
-      const totalRows = await prisma.servicio.count({
-        where: { subFamiliaId },
-      });
-      codigo = "00" + (totalRows + 1);
-    }
-    return prefijo + codigo;
+    return trabajo;
   }
 }
