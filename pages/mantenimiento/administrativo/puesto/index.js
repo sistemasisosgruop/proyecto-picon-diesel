@@ -265,7 +265,6 @@ export default function Puesto() {
                         getSubModulos(currentModulo.id);
                         // setForm({ ...form, modulo: value })
                         setPermisoNew({...permisoNew, moduloId: value})
-                        
                     }}
                     >
                     {modulosList && modulosList.length > 0 ? (

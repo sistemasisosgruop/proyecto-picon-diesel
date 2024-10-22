@@ -19,8 +19,10 @@ import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { toast } from "react-toastify";
 import { useQuery } from "react-query";
 import { FormContext } from "../../../../contexts/form.context";
+// import { connect } from "http2";
 
 const schema = yup.object().shape({
+  concepto: yup.string().required(),
   valor: yup.number().required(),
   fecha: yup.string().required(),
 });
@@ -30,6 +32,7 @@ export default function FactorInternamiento() {
     useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
+    concepto:null,
     valor: null,
     fecha: null,
   });
@@ -43,6 +46,7 @@ export default function FactorInternamiento() {
 
   useEffect(() => {
     setForm({
+      concepto:null,
       valor: null,
       fecha: null,
     });
@@ -51,6 +55,7 @@ export default function FactorInternamiento() {
   const createRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
     await axiosRequest("post", "/api/mantenimiento/factor-internamiento", {
+      concepto: form.concepto,
       valor: parseFloat(form.valor),
       fecha: new Date(form.fecha).toISOString(),
       empresaId: parseInt(empresaId),
@@ -62,6 +67,7 @@ export default function FactorInternamiento() {
   const updateRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
     await axiosRequest("put", `/api/mantenimiento/factor-internamiento/${elementId}`, {
+      concepto: form.concepto,
       valor: parseFloat(form.valor),
       fecha: new Date(form.fecha).toISOString(),
     });
@@ -95,6 +101,7 @@ export default function FactorInternamiento() {
 
   useEffect(() => {
     setForm({
+      concepto:null,
       valor: null,
       fecha: null,
     });
@@ -104,7 +111,8 @@ export default function FactorInternamiento() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      { Header: "Codigo", accessor: "codigo" },
+      // { Header: "Codigo", accessor: "codigo" },
+      { Header: "Concepto", accessor: "concepto" },
       { Header: "Valor", accessor: "valor" },
       { Header: "Fecha", accessor: "fecha" },
     ],
@@ -136,7 +144,7 @@ export default function FactorInternamiento() {
   return (
     <>
       <TemplateImportacion>
-        <Title text={"Lista Factor de internamiento"}>
+        <Title text={"Factor de internamiento"}>
           <div className="flex gap-4">
             <ButtonImportData
               handleClick={() =>
@@ -162,6 +170,11 @@ export default function FactorInternamiento() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
+        <Input
+            label="Concepto"
+            onChange={(e) => setForm({ ...form, concepto: e.target.value })}
+            defaultValue={isEdit ? updateForm?.concepto : undefined}
+          />
           <Input
             label="Valor"
             type="number"

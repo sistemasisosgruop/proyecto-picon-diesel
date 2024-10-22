@@ -249,7 +249,7 @@ export default function Maquinas() {
       { Header: "Código Tobera", accessor: "codigoTobera" },
       { Header: "Tipo Tobera", accessor: "tipoTobera" },
       { Header: "Código Orig. Tobera", accessor: "codigoOriginalTobera" },
-      { Header: "Marca Tobera", accessor: "marcaToberaId" },             //! Agregar marca a tobera
+      // { Header: "Marca Tobera", accessor: "marcaToberaId" },             //! Agregar marca a tobera
     ],
     []
   );
@@ -259,7 +259,7 @@ export default function Maquinas() {
       "get",
       `/api/mantenimiento/maestro-de-codigos/configuracion/maquinas?empresaId=${3}`
     );
-    console.log({empresaId},'Maquinas Lista',data);
+    // console.log({empresaId},'Maquinas Lista',data);
     return data;
   };
   const { data: maquinasResponse, refetch } = useQuery("maquinas", getMaquinas, {
@@ -332,7 +332,7 @@ export default function Maquinas() {
 
   const getFormInfo = async () => {
     const { data } = await axiosRequest("get", `/api/mantenimiento/empresas/info/${empresaId}`);
-    console.log('Form Info Empresas:', data);
+
     return data;
   };
   const { data: formInfo } = useQuery("formInfo", getFormInfo, {
@@ -449,7 +449,17 @@ export default function Maquinas() {
                 />
               </GroupInputs>
               <GroupInputs>
-
+                {/* <Select
+                  label={"Marca del Motor"}
+                  onChange={(value) => setForm({ ...form, marcaMotorId: value })}
+                  value={isEdit ? updateForm?.marcaMotorId : undefined}
+                >
+                  {marcaMotores?.map(({ id, marca }) => (
+                    <Option key={id} value={id}>
+                      {marca}
+                    </Option>
+                  ))}
+                </Select> */}
                 <Select label={"Marca del Motor"}
                   onChange={(value) => setForm({ ...form, marcaMotorId: value })}
                   value={isEdit ? updateForm?.marcaMotorId : undefined}
@@ -503,7 +513,17 @@ export default function Maquinas() {
                 />
               </GroupInputs>
               <GroupInputs>
- 
+                {/* <Select
+                  label={"Marca fábrica de Sistema de Inyección"}
+                  onChange={(value) => setForm({ ...form, marcaFabricaSistemaInyeccionId: value })}
+                  value={isEdit ? updateForm?.marcaFabricaSistemaInyeccionId : undefined}
+                >
+                  {marcaFabricaSistemaInyeccion?.map(({ id, marca }) => (
+                    <Option key={id} value={id}>
+                      {marca}
+                    </Option>
+                  ))}
+                </Select> */}
                   <Select label={"Marca Sistema Inyección"}
                   onChange={(value) => setForm({ ...form, marcaFabricaSistemaInyeccionId: value })}
                   value={isEdit ? updateForm?.marcaFabricaSistemaInyeccionId : undefined}
@@ -569,7 +589,17 @@ export default function Maquinas() {
                 />
               </GroupInputs>
               <GroupInputs>
-
+                {/* <Select
+                  label={"Marca fábrica del Inyector"}
+                  value={isEdit ? updateForm?.marcaFabricaInyectorId : undefined}
+                  onChange={(value) => setForm({ ...form, marcaFabricaInyectorId: value })}
+                >
+                  {marcaFabricaInyector?.map(({ id, marca }) => (
+                    <Option key={id} value={id}>
+                      {marca}
+                    </Option>
+                  ))}
+                </Select> */}
                 <Select label={"Marca fábrica del Inyector"}
                   value={isEdit ? updateForm?.marcaFabricaInyectorId : undefined}
                   onChange={(value) => setForm({ ...form, marcaFabricaInyectorId: value })}
@@ -636,7 +666,17 @@ export default function Maquinas() {
                   defaultValue={isEdit ? updateForm?.codigoOriginalTobera : undefined}
                   onChange={(e) => setForm({ ...form, codigoOriginalTobera: e.target.value })}
                 />
-
+                {/* <Select
+                  label={"Marca Tobera"}
+                  onChange={(value) => setForm({ ...form, marcaMotorId: value })}
+                  value={isEdit ? updateForm?.marcaMotorId : undefined}
+                >
+                  {marcaMotores?.map(({ id, marca }) => (
+                    <Option key={id} value={id}>
+                      {marca}
+                    </Option>
+                  ))}
+                </Select> */}
 
                 <Select label={"Marca Tobera"}
                   value={isEdit ? updateForm?.marcaToberaId : undefined}

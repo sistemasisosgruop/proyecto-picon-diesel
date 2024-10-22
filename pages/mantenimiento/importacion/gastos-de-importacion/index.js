@@ -102,7 +102,7 @@ export default function GastosImportacion() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      { Header: "Codigo", accessor: "codigo" },
+      // { Header: "Codigo", accessor: "codigo" },
       { Header: "Nombre", accessor: "nombre" },
       { Header: "Descripción", accessor: "descripcion" },
     ],

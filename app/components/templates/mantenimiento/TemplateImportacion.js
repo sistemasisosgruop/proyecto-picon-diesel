@@ -11,11 +11,11 @@ import LayoutSubSubMenu from "../../layouts/LayoutSubSubMenu";
 
 export default function TemplateImportacion({ children }) {
 	const items = [
-		{
-			icon: <SecurityUser />,
-			modulo: "Agente de Aduanas",
-			href: "/mantenimiento/importacion/agente-de-aduanas",
-		},
+		// {
+		// 	icon: <SecurityUser />,
+		// 	modulo: "Agente de Aduanas",
+		// 	href: "/mantenimiento/importacion/agente-de-aduanas",
+		// },
 		{
 			icon: <TaskSquare />,
 			modulo: "Incoterms",

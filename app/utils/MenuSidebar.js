@@ -27,7 +27,7 @@ export const menuSidebar = [
       },
       {
         subItem: "Importación",
-        href: "/mantenimiento/importacion/agente-de-aduanas",
+        href: "/mantenimiento/importacion/incoterms",
       },
       {
         subItem: "Inventario",
@@ -38,7 +38,7 @@ export const menuSidebar = [
         href: "/mantenimiento/comercial/tipo-de-cambio",
       },
       {
-        subItem: "Presupuesto",
+        subItem: "Servicio",
         href: "/mantenimiento/presupuesto/servicios",
       },
     ],

@@ -4,35 +4,30 @@ import { ButtonAdd, ButtonCancel, ButtonSave } from "../../../../app/components/
 import { Title } from "../../../../app/components/elements/Title";
 import { Modal, ModalConfirmDelete } from "../../../../app/components/modules/Modal";
 import TableComplete from "../../../../app/components/modules/TableComplete";
-import TemplateComercial from "../../../../app/components/templates/mantenimiento/TemplateComercial";
+import TemplatePresupuesto from "../../../../app/components/templates/mantenimiento/TemplatePresupuesto";
 import { useModal } from "../../../../app/hooks/useModal";
-import * as yup from "yup";
-import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { axiosRequest } from "../../../../app/utils/axios-request";
-import { errorProps, successProps } from "../../../../app/utils/alert-config";
-import { toast } from "react-toastify";
-import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
+import { useLocalStorage } from "../../../../app/hooks/useLocalStorage";
 import { useQuery } from "react-query";
+import * as yup from "yup";
+import { toast } from "react-toastify";
+import { errorProps, successProps } from "../../../../app/utils/alert-config";
+import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
-  // codigo: yup.string().nullable(),
-  numeroDeSerie: yup.string().required(),
-  nombre: yup.string().required(),
-  abreviatura: yup.string().required(),
+  codigo: yup.string().required(),
+  definicion: yup.string().required(),
+  precio: yup.number().required(),
 });
 
-export default function DocumentosContables() {
+export default function TiposReparacion() {
   const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
     useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [form, setForm] = useState({
-    codigo: null,
-    numeroDeSerie: null,
-    nombre: null,
-    abreviatura: null,
+    nombre: null
   });
-
   const { updateForm, elementId, resetInfo, changeData, setChangeData } = useContext(FormContext);
 
   useEffect(() => {
@@ -41,18 +36,14 @@ export default function DocumentosContables() {
 
   useEffect(() => {
     setForm({
-      codigo: null,
-      numeroDeSerie: null,
       nombre: null,
-      abreviatura: null,
     });
   }, [resetInfo]);
 
   const createRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
-    await axiosRequest("post", "/api/mantenimiento/documentos-contables", {
-      ...form,
-      empresaId: parseInt(empresaId),
+    await axiosRequest("post", "/api/mantenimiento/presupuesto/servicios", {
+      ...form
     });
 
     toast.success(`💾 Registro guardado exitosamente!`, successProps);
@@ -60,15 +51,16 @@ export default function DocumentosContables() {
 
   const updateRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
-    await axiosRequest("PUT", `/api/mantenimiento/documentos-contables/${elementId}`, {
-      ...form,
+    await axiosRequest("put", `/api/mantenimiento/presupuesto/servicios/${elementId}`, {
+      ...form
     });
 
     toast.success(`💾 Registro guardado exitosamente!`, successProps);
   };
+
   const deleteData = async () => {
     try {
-      await axiosRequest("delete", `/api/mantenimiento/documentos-contables/${elementId}`);
+      await axiosRequest("delete", `/api/mantenimiento/presupuesto/servicios/${elementId}`);
       toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
       closeModal();
     } catch (error) {
@@ -92,10 +84,8 @@ export default function DocumentosContables() {
 
   useEffect(() => {
     setForm({
-      codigo: null,
-      numeroDeSerie: null,
       nombre: null,
-      abreviatura: null,
+
     });
     refetch();
   }, [changeData]);
@@ -103,90 +93,65 @@ export default function DocumentosContables() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      // { Header: "Codigo", accessor: "codigo" },
-      { Header: "N° de serie", accessor: "numeroDeSerie" },
       { Header: "Nombre", accessor: "nombre" },
-      { Header: "Abreviatura", accessor: "abreviatura" },
     ],
     []
   );
-  const getDocumentosContables = async () => {
+
+  const getServicios = async () => {
     const { data } = await axiosRequest(
       "get",
-      `/api/mantenimiento/documentos-contables?empresaId=${empresaId}`
+      `/api/mantenimiento/presupuesto/servicios?empresaId=${empresaId}`
     );
-
     return data;
   };
-
-  const { data, refetch } = useQuery("getDocumentosContables", getDocumentosContables, {
+  const { data, refetch } = useQuery("getServicios", getServicios, {
     initialData: {
       data: [],
     },
   });
 
-  const documentosContables = useMemo(() => data?.data, [data?.data]);
+  const servicios = useMemo(() => data?.data, [data?.data]);
 
   return (
     <>
-      <TemplateComercial>
-        <Title text={"Lista Documentos Contables"}>
+      <TemplatePresupuesto>
+        <Title text={"Tipo de Reparación"}>
           <div className="flex gap-4">
-            <ButtonAdd text={"Nuevo documento"} onClick={() => openModal(false)} />
+            <ButtonAdd text={"Nuevo Tipo"} onClick={() => openModal(false)} />
           </div>
         </Title>
         {/* Table list */}
         <TableComplete
           columns={columns}
-          data={documentosContables}
+          data={servicios}
           openModal={openModal}
           setIsOpenModalDelete={setIsOpenModalDelete}
         />
-      </TemplateComercial>
+      </TemplatePresupuesto>
       {/* Modal agregar */}
       <Modal
-        title={isEdit ? "Editar Documento contable" : "Nuevo Documento contable"}
+        title={isEdit? "Editar Tipo" : "Nuevo Tipo"}
         isOpen={isOpenModal}
         closeModal={closeModal}
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          {/* <div className="flex gap-5"> */}
-            {/* <Input
-              label="Código"
-              disabled
-              onChange={(e) => setForm({ ...form, codigo: e.target.value })}
-              defaultValue={isEdit ? updateForm?.codigo : undefined}
-            /> */}
-            <Input
-              label="N° de serie"
-              onChange={(e) => setForm({ ...form, numeroDeSerie: e.target.value })}
-              defaultValue={isEdit ? updateForm?.numeroDeSerie : undefined}
-            />
-          {/* </div> */}
-          {/* <div className="flex gap-5"> */}
-            <Input
-              label="Nombre"
-              onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-              defaultValue={isEdit ? updateForm?.nombre : undefined}
-            />
-            <Input
-              label="Abreviatura"
-              onChange={(e) => setForm({ ...form, abreviatura: e.target.value })}
-              defaultValue={isEdit ? updateForm?.abreviatura : undefined}
-            />
-          {/* </div> */}
+          <Input
+            label="Nombre"
+            onChange={(e) => setForm({ ...form, precio: e.target.value })}
+            defaultValue={isEdit ? updateForm?.precio : undefined}
+          />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
             <ButtonSave onClick={saveData} />
           </div>
         </form>
       </Modal>
-
       {/* Modal Eliminar */}
       <ModalConfirmDelete
         onClick={deleteData}
-        title={"Eliminar Documento contable"}
+        title={"Eliminar Servicio"}
         isOpen={isOpenModalDelete}
         closeModal={() => setIsOpenModalDelete(false)}
       />

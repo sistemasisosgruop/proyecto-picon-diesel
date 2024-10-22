@@ -16,7 +16,7 @@ import { useQuery } from "react-query";
 import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
-  codigo: yup.string().required(),
+  // codigo: yup.string().required(),
   definicion: yup.string().required(),
   porcentaje: yup.number().required(),
 });
@@ -99,7 +99,7 @@ export default function Detracciones() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      { Header: "Codigo", accessor: "codigo" },
+      // { Header: "Codigo", accessor: "codigo" },
       { Header: "Definición", accessor: "definicion" },
       { Header: "Porcentaje", accessor: "porcentaje" },
     ],
@@ -146,12 +146,12 @@ export default function Detracciones() {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input
+          {/* <Input
             label="Código"
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
             defaultValue={isEdit ? updateForm?.codigo : undefined}
-          />
-          <div className="flex gap-5">
+          /> */}
+          {/* <div className="flex gap-5"> */}
             <Input
               label="Definición"
               onChange={(e) => setForm({ ...form, definicion: e.target.value })}
@@ -163,7 +163,7 @@ export default function Detracciones() {
               onChange={(e) => setForm({ ...form, porcentaje: e.target.value })}
               defaultValue={isEdit ? updateForm?.porcentaje : undefined}
             />
-          </div>
+          {/* </div> */}
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
             <ButtonSave onClick={saveData} />

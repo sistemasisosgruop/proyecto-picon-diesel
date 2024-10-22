@@ -46,8 +46,8 @@ export class TipoCambioService {
     const findUnique = await prisma.tipoDeCambio.findFirst({
       where: {
         fecha: fechaFormat,
-        monedaOrigenId: data.momonedaOrigenId,
-        monedaDestinoId: data.monedaOrigenId,
+        monedaOrigenId: data.monedaOrigenId,
+        monedaDestinoId: data.monedaDestinoId,
         id: { not: id },
       },
     });
