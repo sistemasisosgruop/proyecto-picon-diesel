@@ -82,6 +82,7 @@ model Empresa {
   guiaRemisionServicios        GuiaRemisionServicios[]
   facturaServicios             FacturaServicios[]
   // marca                         Marca[]
+  tipoReparacion               TipoReparacion[]
   @@map("empresa")
 }
 
@@ -1660,6 +1661,16 @@ model FacturaServicioToServicio {
   precio                  Decimal                @default(0) @db.Decimal(12, 2)
 
   @@map("factura_servicio_to_servicio")
+}
+
+model TipoReparacion {
+  id                      Int                    @id @default(autoincrement())
+  codigo                  String
+  nombre                  String
+  empresaId               Int
+  empresa                 Empresa                @relation(fields: [empresaId], references: [id])
+
+  @@map("tipo_reparacion")
 }
 
 enum EstadoEnum {
