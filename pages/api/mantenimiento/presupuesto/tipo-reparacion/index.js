@@ -1,5 +1,5 @@
 import { AuthService } from "../../../../../backend/services/auth/auth.service";
-import { ServicioService } from "../../../../../backend/services/mantenimiento/presupuesto/servicio.service";
+import { TipoReparacionService } from "../../../../../backend/services/mantenimiento/presupuesto/tipo-reparacion.service";
 
 export default async function handler(req, res) {
   try {
@@ -7,14 +7,13 @@ export default async function handler(req, res) {
     user && AuthService.AdministradorFeatures(user.roles);
 
     if (req.method === "POST") {
-      const result = await ServicioService.create(req.body);
+      const result = await TipoReparacionService.create(req.body);
       return res.status(200).json(result);
     }
 
     if (req.method === "GET") {
       const empresaId = Number(req.query.empresaId);
-      const filterName = req.query.filterName;
-      const result = await ServicioService.getAll(empresaId, filterName);
+      const result = await TipoReparacionService.getAll(empresaId);
       return res.status(200).json({ data: result });
     }
   } catch (error) {

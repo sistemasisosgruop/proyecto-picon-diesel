@@ -1,5 +1,5 @@
 import { AuthService } from "../../../../../backend/services/auth/auth.service";
-import { PresupuestoFamiliaService } from "../../../../../backend/services/mantenimiento/presupuesto-familia.service";
+import { PresupuestoFamiliaService } from "../../../../../backend/services/mantenimiento/presupuesto/presupuesto-familia.service";
 
 export default async function handler(req, res) {
   try {

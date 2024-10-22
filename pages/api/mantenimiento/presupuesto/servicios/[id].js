@@ -1,5 +1,5 @@
 import { AuthService } from "../../../../../backend/services/auth/auth.service";
-import { ServicioService } from "../../../../../backend/services/mantenimiento/servicio.service";
+import { ServicioService } from "../../../../../backend/services/mantenimiento/presupuesto/servicio.service";
 
 export default async function handler(req, res) {
   try {

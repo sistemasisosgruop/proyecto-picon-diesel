@@ -1,5 +1,5 @@
 import { AuthService } from "../../../../../../backend/services/auth/auth.service";
-import { PresupuestoSubFamiliaService } from "../../../../../../backend/services/mantenimiento/presupuesto-subfamilia.service";
+import { PresupuestoSubFamiliaService } from "../../../../../../backend/services/mantenimiento/presupuesto/presupuesto-subfamilia.service";
 
 export default async function handler(req, res) {
   try {
@@ -17,9 +17,8 @@ export default async function handler(req, res) {
       return res.status(200).json({ data: result });
     }
   } catch (error) {
-
     return res
-    .status(400)
-    .json({ error: error.message, code: error?.code, fields: error?.meta?.target ?? [] });
+      .status(400)
+      .json({ error: error.message, code: error?.code, fields: error?.meta?.target ?? [] });
   }
 }

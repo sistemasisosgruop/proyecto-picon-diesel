@@ -601,7 +601,7 @@ model MotivoTrasladoGuiaRemision {
 
 model FamiliaPresupuesto {
   id                     Int                     @id @default(autoincrement())
-  codigo                 String?                 @unique
+  codigo                 String?                 
   descripcion            String
   empresa                Empresa?                @relation(fields: [empresaId], references: [id])
   materialPresupuestos   MaterialPresupuesto[]
@@ -613,18 +613,18 @@ model FamiliaPresupuesto {
 
 model SubFamiliaPresupuesto {
   id                   Int                   @id @default(autoincrement())
-  codigo               String?               @unique
+  codigo               String?               
   descripcion          String
-  familia              FamiliaPresupuesto?   @relation(fields: [familiaId], references: [id])
+  familia              FamiliaPresupuesto   @relation(fields: [familiaId], references: [id])
   familiaId            Int
   materialPresupuestos MaterialPresupuesto[]
-
+  servicios             Servicio[]
   @@map("sub_familia_presupuesto")
 }
 
 model MaterialPresupuesto {
   id           Int                    @id @default(autoincrement())
-  codigo       String?                @unique
+  codigo       String?                
   familia      FamiliaPresupuesto?    @relation(fields: [familiaId], references: [id])
   familiaId    Int
   subFamilia   SubFamiliaPresupuesto? @relation(fields: [subFamiliaId], references: [id])
@@ -632,6 +632,8 @@ model MaterialPresupuesto {
   correlativo  String?
   nombre       String
   precio       Decimal                @default(0) @db.Decimal(12, 2)
+  valorVenta    Decimal
+  igv           Decimal
   empresa      Empresa?               @relation(fields: [empresaId], references: [id])
   empresaId    Int
 
@@ -642,8 +644,12 @@ model Servicio {
   id         Int      @id @default(autoincrement())
   codigo     String   @unique
   definicion String
-  precio     Decimal  @default(0) @db.Decimal(12, 2)
-  empresa    Empresa? @relation(fields: [empresaId], references: [id])
+  precioHora     Decimal  @default(0) @db.Decimal(12, 2)
+  tiempoHora    Decimal
+  precioTotal   Decimal
+  subFamilia   SubFamiliaPresupuesto @relation(fields: [subFamiliaId], references: [id])
+  subFamiliaId Int
+  empresa    Empresa @relation(fields: [empresaId], references: [id])
   empresaId  Int
   hojasRecepcion  HojaRecepcionToServicio[]
   presupuestos    PresupuestoToServicio[]

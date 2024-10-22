@@ -11,9 +11,8 @@ export class FamiliaService {
       select: {
         codigo: true,
       },
-      // where: { empresaId },
     });
-    console.log(lastFamilia, "lastFamilia");
+
     let codigo;
     if (lastFamilia) {
       const nextCodigo = parseInt(lastFamilia.codigo, 10) + 1;

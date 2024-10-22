@@ -1,5 +1,5 @@
 import { AuthService } from "../../../../../backend/services/auth/auth.service";
-import { MaterialPresupuestoService } from "../../../../../backend/services/mantenimiento/presupuesto-material.service";
+import { MaterialPresupuestoService } from "../../../../../backend/services/mantenimiento/presupuesto/presupuesto-material.service";
 
 export default async function handler(req, res) {
   try {
