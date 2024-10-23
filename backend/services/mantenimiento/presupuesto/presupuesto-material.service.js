@@ -128,11 +128,15 @@ export class MaterialPresupuestoService {
         familia: {
           select: {
             codigo: true,
+            descripcion: true,
+            id: true,
           },
         },
         subFamilia: {
           select: {
             codigo: true,
+            descripcion: true,
+            id: true,
           },
         },
       },
