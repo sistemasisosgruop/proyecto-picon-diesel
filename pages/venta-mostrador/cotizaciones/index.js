@@ -1,12 +1,13 @@
 import { useMemo, useEffect, useState, useContext } from "react";
 
+
 // Visual
 import { ButtonAdd, ButtonSave, ButtonCancel } from "../../../app/components/elements/Buttons";
 import { Container } from "../../../app/components/elements/Containers";
 import { Title } from "../../../app/components/elements/Title";
 import { Divider } from "../../../app/components/elements/Divider";
 import { ModalConfirmDelete, ModalLg } from "../../../app/components/modules/Modal";
-import { Group, GroupInputs } from "../../../app/components/elements/Form";
+import { Group, GroupInputs,GroupCustom, GroupCustom2, GroupInputsCustom } from "../../../app/components/elements/Form";
 import { Input, Option, Select, Textarea } from "@material-tailwind/react";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
@@ -630,40 +631,42 @@ export default function Cotizaciones() {
         closeModal={closeModal}
       >
         <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-5">
-        <div style={{ display: 'flex', gap: '3px', justifyContent: 'space-between', maxWidth:'100%',width:'100%',marginLeft:'0',backgroundColor:'red' }}>
-          <Group title={"Informacion General"} >
-            <GroupInputs>
-              <Input  style={{  width: '70%', margin:'0' }} label={"N° de cotizacion"}
+        <div style={{ display: 'flex', gap: '3px', justifyContent: 'space-between', maxWidth:'100%',width:'100%',marginLeft:'0' }}>
+          <GroupCustom   title={"Informacion General"} >
+            <div style={{backgroundColor:'red',width:'100%',margin:'0',padding:'0', display:'flex',gap:'0',justifyContent:'flex-end'}}>
+              <Input  style={{  width: '60%', margin:'0', padding:'0' }} label={"N° de cotizacion"}
                 value = {form.number}
                 onChange = { (e) => handleNroCotizacion(e)}
                 disabled
               />
               <Input label={"Fecha de cotizacion"} type={"date"}
-              style={{  width: '70%', margin:'0' }}
+              style={{  width: '60%', margin:'0' }}
                 value = {form.fechaCotizacion}
                 onChange = { (e) => handleFechaCotizacion(e)}
                 // disabled = {form.number === null}
               />
               <Input label={"Dias de validez"}
-              style={{  width: '70%', margin:'0' }}
+              style={{  width: '60%', margin:'0' }}
                 value = {form.diasValidez}
                 onChange = { (e) => handleDiasValidez(e)}
-                disabled = {form.fechaCotizacion === null}
+                disabled = {form.fechaCotizacion  === null}
               />
               <Input label={"Fecha de validez"} type={"date"}
-              style={{  width: '70%', margin:'0' }}
+              style={{  width: '60%', margin:'0' }}
                 value = {form.fechaValidez}
                 disabled
                />
-            </GroupInputs>
-            <GroupInputs>
-              <Select label="Moneda"
+            </div>
+            <GroupInputsCustom>
+              <Select  label="Moneda"
+              style={{minWidth: 20}}
                 onChange={(e) => handleMoneda(e)}
                 value={isEdit ? form?.moneda : undefined}
               >
                 <Option key={1} value={"Soles"}>Soles</Option>
                 <Option key={2} value={"Dolar"}>Dolares</Option>
               </Select>
+              
               <Select label="Moneda de cambio"
                 onChange={(e) => handleMoneda(e)}
                 value={isEdit ? form?.moneda : undefined}
@@ -692,7 +695,7 @@ export default function Cotizaciones() {
                 value = {"valor"}
                 disabled
                />
-            </GroupInputs>
+            </GroupInputsCustom>
             {/* <Select label="Forma de pago"
               onChange={ (e)=>handleFormaDePago(e) }
               value={isEdit ?  (form.formaPagoCreditoId || form.formaPagoContadoId ) : undefined }
@@ -707,22 +710,23 @@ export default function Cotizaciones() {
               })}
               
             </Select> */}
-            <GroupInputs>
+            <GroupInputsCustom>
             <Select label="Forma de pago"
+            className="w-[60%]  text-sm p-0 m-0"
                 onChange={(e) => setFormaDePago(String(e))}
                 value={isEdit ? (form.formaPagoContadoId !== null ? "contado" : "credito"): undefined}
               >
                 <Option value={"contado"}>contado</Option>
                 <Option value={"credito"}>crédito</Option>
-              </Select>
-              <Input label="Nommbre Vendedor" disabled value={selectedCliente?.telefono}/>
-              <Input label="Correo Vendedor" disabled value={selectedCliente?.telefono}/>
+            </Select>
+            <Input style={{  width: '60%', margin:'0' }} label="Nommbre Vendedor" disabled value={selectedCliente?.telefono}/>
+            <Input style={{  width: '60%', margin:'0' }} label="Correo Vendedor" disabled value={selectedCliente?.telefono}/>
 
 
-            </GroupInputs>
-          </Group>
-          <Group title={"Cliente"}>
-            <GroupInputs>
+            </GroupInputsCustom>
+          </GroupCustom >
+          <GroupCustom2   title={"Cliente"}>
+            <GroupInputsCustom>
               <Select label="RUC / DNI"
                 onChange={ (e) => handleSelectedCliente(e) }
                 // value = { isEdit ? selectedCliente?.numeroDocumento : undefined }
@@ -735,17 +739,18 @@ export default function Cotizaciones() {
                   )
                 })}
               </Select>
-              <Input label="Nombre del cliente" disabled value={selectedCliente?.nombre}/>
-            </GroupInputs>
-            <GroupInputs>
-              <Input label="Telefono" disabled value={selectedCliente?.telefono}/>
-              <Input label="Correo" disabled value={selectedCliente?.email}/>
-              <Input label="Direccion" disabled />
-            </GroupInputs>
+              <Input style={{  width: '60%', margin:'0' }} label="Nombre del cliente" disabled value={selectedCliente?.nombre}/>
+            </GroupInputsCustom>
+            <GroupInputsCustom>
+              <Input style={{  width: '60%', margin:'0' }} label="Telefono" disabled value={selectedCliente?.telefono}/>
+              <Input style={{  width: '60%', margin:'0' }} label="Correo" disabled value={selectedCliente?.email}/>
+              <Input style={{  width: '60%', margin:'0' }} label="Direccion" disabled />
+            </GroupInputsCustom>
 
-          </Group>
+          </GroupCustom2 >
 
-          <Group title={"Maquina"}>  {/* cambiar por select para idmaquina */}
+          </div>
+          <GroupCustom   title={"Maquina"}>  {/* cambiar por select para idmaquina */}
             {/* <Select label="Aplicación de la máquina"
                 onChange={ (e) => handleSelectedCliente(e) }
               >
@@ -781,9 +786,9 @@ export default function Cotizaciones() {
                 onChange={ (e)=> handleEstadoDelDocumento(e) }
               /> {/* onchage directo objeto */}
           
-          </Group>
+          </GroupCustom >
 
-          </div>
+          
 
 
           {/* <Group title={"Responsable"}>
