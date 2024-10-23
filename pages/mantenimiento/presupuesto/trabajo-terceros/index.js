@@ -1,4 +1,5 @@
 import { Input,Select,Option } from "@material-tailwind/react";
+import { GroupInputs } from "../../../../app/components/elements/Form";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { ButtonAdd, ButtonCancel, ButtonSave } from "../../../../app/components/elements/Buttons";
 import { Title } from "../../../../app/components/elements/Title";
@@ -25,6 +26,7 @@ export default function TrabajoTerceros() {
   const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
     useModal();
   const [empresaId] = useLocalStorage("empresaId");
+  let [subfamiliasList,setSubfamiliasList]=useState([]);
   const [subfamilias, setSubfamilias] = useState([]);
 
 
@@ -125,6 +127,8 @@ export default function TrabajoTerceros() {
       { Header: "Codigo", accessor: "codigo" },
       { Header: "Definición", accessor: "definicion" },
       { Header: "Precio Total", accessor: "precioTotal" },
+      { Header: "Familia", accessor: "subFamilia.familia.descripcion" },
+      { Header: "Subfamilia", accessor: "subFamilia.descripcion" },
     ],
     []
   );
@@ -134,8 +138,8 @@ export default function TrabajoTerceros() {
       "get",
       `/api/mantenimiento/presupuesto/trabajo-terceros?empresaId=${empresaId}`
     );
-
-    return data;
+      console.log('DAta',data);
+    return data;  
   };
   const { data, refetch } = useQuery("getServicios", getServicios, {
     initialData: {
@@ -159,6 +163,41 @@ export default function TrabajoTerceros() {
       data: [],
     },
   });
+  
+  const familias = useMemo(() => familiasResponse?.data, [familiasResponse?.data]);
+
+  const getSubfamiliasAll = async () => {
+    try {
+      // Verifica que 'familias' tenga datos
+      if (!familias || familias.length === 0) {
+        console.log('No hay familias disponibles');
+        return;
+      }
+  
+      // Mapea las solicitudes de subfamilias por cada familia
+      const promises = familias.map(async (familia) => {
+        const { data } = await axiosRequest(
+          "get", `/api/mantenimiento/presupuesto/familias/subfamilias?familiaId=${familia.id}`
+        );
+        return { familiaId: familia.id, subfamilias: data?.data || [] };
+      });
+  
+      // Ejecuta todas las solicitudes en paralelo
+      const subfamiliasResults = await Promise.all(promises);
+  
+      // Combina todas las subfamilias en un solo array
+      const subfamiliasAll = subfamiliasResults.flatMap(result => result.subfamilias);
+  
+      console.log('Todas las subfamilias:', subfamiliasAll);
+  
+      // Si necesitas almacenar el resultado en algún estado
+      setSubfamiliasList(subfamiliasAll);
+    } catch (error) {
+      console.error('Error obteniendo subfamilias:', error);
+    }
+  };
+  
+  
   const getSubfamilias = async (familiaId) => {
     const { data } = await axiosRequest(
       "get",
@@ -168,14 +207,29 @@ export default function TrabajoTerceros() {
     setSubfamilias(data?.data);
   };
 
-  const familias = useMemo(() => familiasResponse?.data, [familiasResponse?.data]);
-
+  useEffect(()=>{
+    getSubfamiliasAll();
+  },[])
+  
+  console.log('Familias:',familias)
   useEffect(()=>{
 
     console.log('Form cambiando',{form})
     
   },[form])
 
+
+
+  useEffect(() => {
+    let valorVenta = parseFloat(form?.tiempoHora) || 0;
+    let precioHora = parseFloat(form?.precioHora) || 0;
+    let precioTot = valorVenta * precioHora;
+  
+    // Evitar actualizaciones innecesarias
+    if (form?.precioTotal !== precioTot) {
+      setForm({ ...form, precioTotal: precioTot });
+    }
+  }, [form.tiempoHora, form.precioHora]);
 
   return (
     <>
@@ -203,7 +257,7 @@ export default function TrabajoTerceros() {
         <form className="flex flex-col gap-5">
           <Input
             label="Código"
-
+            disabled
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
             defaultValue={isEdit ? updateForm?.codigo : undefined}
           />
@@ -258,13 +312,17 @@ export default function TrabajoTerceros() {
             onChange={(e) => setForm({ ...form, precioHora: e.target.value })}
             defaultValue={isEdit ? updateForm?.precioHora : undefined}
           />
+          <GroupInputs>
+          Precio total:
           <Input
             label="Precio Total"
             disabled
             type={"number"}
-            onChange={(e) => setForm({ ...form, precioTotal: e.target.value })}
+            value={form.precioTotal}
             defaultValue={isEdit ? updateForm?.precioTotal : undefined}
           />
+          </GroupInputs>
+         
 
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />

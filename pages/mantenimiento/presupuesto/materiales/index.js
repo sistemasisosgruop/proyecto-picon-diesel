@@ -137,7 +137,7 @@ export default function Materiales() {
       { Header: "#", accessor: "id" },
       // { Header: "Codigo", accessor: "codigo" },
       { Header: "Familia", accessor: "familia" },
-      { Header: "SubFamilia", accessor: "subfamilia" },
+      { Header: "Subfamilia", accessor: "subFamilia.descripcion" },
       { Header: "Correlativo", accessor: "correlativo" },
       { Header: "Nombre", accessor: "nombre" },
       { Header: "Precio", accessor: "precio" },
