@@ -16,9 +16,8 @@ import { ToastAlert } from "../../../../app/components/elements/ToastAlert";
 import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
-  codigo: yup.string().required(),
-  definicion: yup.string().required(),
-  precio: yup.number().required(),
+  nombre: yup.string().required(),
+
 });
 
 export default function TiposReparacion() {
@@ -42,8 +41,9 @@ export default function TiposReparacion() {
 
   const createRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
-    await axiosRequest("post", "/api/mantenimiento/presupuesto/servicios", {
-      ...form
+    await axiosRequest("post", "/api/mantenimiento/presupuesto/tipo-reparacion", {
+      ...form,
+      empresaId:parseInt(empresaId)
     });
 
     toast.success(`💾 Registro guardado exitosamente!`, successProps);
@@ -51,7 +51,7 @@ export default function TiposReparacion() {
 
   const updateRegistro = async () => {
     await schema.validate(form, { abortEarly: false });
-    await axiosRequest("put", `/api/mantenimiento/presupuesto/servicios/${elementId}`, {
+    await axiosRequest("put", `/api/mantenimiento/presupuesto/tipo-reparacion/${elementId}`, {
       ...form
     });
 
@@ -60,7 +60,7 @@ export default function TiposReparacion() {
 
   const deleteData = async () => {
     try {
-      await axiosRequest("delete", `/api/mantenimiento/presupuesto/servicios/${elementId}`);
+      await axiosRequest("delete", `/api/mantenimiento/presupuesto/tipo-reparacion/${elementId}`);
       toast.success(`🗑️ Registro eliminado exitosamente!`, successProps);
       closeModal();
     } catch (error) {
@@ -101,7 +101,7 @@ export default function TiposReparacion() {
   const getServicios = async () => {
     const { data } = await axiosRequest(
       "get",
-      `/api/mantenimiento/presupuesto/servicios?empresaId=${empresaId}`
+      `/api/mantenimiento/presupuesto/tipo-reparacion?empresaId=${empresaId}`
     );
     return data;
   };
@@ -139,8 +139,8 @@ export default function TiposReparacion() {
         <form className="flex flex-col gap-5">
           <Input
             label="Nombre"
-            onChange={(e) => setForm({ ...form, precio: e.target.value })}
-            defaultValue={isEdit ? updateForm?.precio : undefined}
+            onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+            defaultValue={isEdit ? updateForm?.nombre : undefined}
           />
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />

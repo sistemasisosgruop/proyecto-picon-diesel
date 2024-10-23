@@ -198,7 +198,7 @@ function Table({ columns, data, openModal, setIsOpenModalDelete }) {
                 </TableDOptions>
                 <TableD>
                   <ButtonSubfamilia
-                    link={`/mantenimiento/presupuesto/familias/${row.original.codigo}/subfamilias`}
+                    link={`/mantenimiento/presupuesto/familias/${row.original.id}/subfamilias`}
                   />
                 </TableD>
               </tr>

@@ -51,7 +51,7 @@ export class PresupuestoFamiliaService {
   static async get(id) {
     const familia = await prisma.familiaPresupuesto.findUnique({
       where: {
-        id,
+        id:Number(id),
       },
     });
 

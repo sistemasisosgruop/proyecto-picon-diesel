@@ -18,15 +18,19 @@ import { MaterialesContext } from "../../../../contexts/materiales.context";
 import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
-  familiaId: yup.number().required(),
+  // familiaId: yup.number().required(),
   subFamiliaId: yup.number().required(),
   nombre: yup.string().required(),
+  valorVenta: yup.number().required(),
+  igv: yup.number().required(),
   precio: yup.number().required(),
 });
 
 const updateSchema = yup.object().shape({
-  familiaId: yup.number().nullable(),
-  subFamiliaId: yup.number().nullable(),
+  // familiaId: yup.number().nullable(),
+  subFamiliaId: yup.number().required(),
+  valorVenta: yup.number().required(),
+  igv: yup.number().required(),
   nombre: yup.string().required(),
   precio: yup.number().required(),
 });
@@ -36,9 +40,12 @@ export default function Materiales() {
     useModal();
   const [empresaId] = useLocalStorage("empresaId");
   const [selectedFamilia, setSelectedFamilia] = useState("");
+  const [precioTotal,setPrecioTotal] = useState(0)
   const [form, setForm] = useState({
     familiaId: null,
     subFamiliaId: null,
+    valorVenta:null,
+    igv:null,
     nombre: null,
     precio: null,
   });
@@ -47,6 +54,7 @@ export default function Materiales() {
   const { changeData, setChangeData, updateForm, elementId } = useContext(FormContext);
 
   useEffect(() => {
+    console.log('El update form es:',updateForm)
     if (isEdit) {
       setForm({
         ...form,
@@ -54,6 +62,8 @@ export default function Materiales() {
         subFamiliaId: updateForm?.subFamiliaId,
         nombre: updateForm?.nombre,
         precio: updateForm?.precio,
+        valorVenta:updateForm?.valor,
+        igv:updateForm?.igv,
       });
     }
   }, [updateForm]);
@@ -63,9 +73,11 @@ export default function Materiales() {
     await axiosRequest("post", "/api/mantenimiento/presupuesto/materiales", {
       nombre: form.nombre,
       precio: parseFloat(form.precio),
-      familiaId: parseInt(form.familiaId),
+      // familiaId: parseInt(form.familiaId),
       subFamiliaId: parseInt(form.subFamiliaId),
-      empresaId: parseInt(empresaId),
+      // empresaId: parseInt(empresaId),
+      valorVenta:parseFloat(form.valorVenta),
+      igv:parseFloat(form.igv),
     });
 
     toast.success(`💾 Registro guardado exitosamente!`, successProps);
@@ -76,9 +88,10 @@ export default function Materiales() {
     await axiosRequest("put", `/api/mantenimiento/presupuesto/materiales/${elementId}`, {
       nombre: form.nombre,
       precio: parseFloat(form.precio),
-      familiaId: parseInt(form.familiaId),
+      // familiaId: parseInt(form.familiaId),
       subFamiliaId: parseInt(form.subFamiliaId),
-      empresaId: parseInt(empresaId),
+      valorVenta:parseFloat(form.valorVenta),
+      igv:parseFloat(form.igv),
     });
 
     toast.success(`💾 Registro guardado exitosamente!`, successProps);
@@ -111,6 +124,8 @@ export default function Materiales() {
     setForm({
       familiaId: null,
       subFamiliaId: null,
+      igv: null,
+      valorVenta: null,
       nombre: null,
       precio: null,
     });
@@ -120,7 +135,7 @@ export default function Materiales() {
   const columns = useMemo(
     () => [
       { Header: "#", accessor: "id" },
-      { Header: "Codigo", accessor: "codigo" },
+      // { Header: "Codigo", accessor: "codigo" },
       { Header: "Familia", accessor: "familia" },
       { Header: "SubFamilia", accessor: "subfamilia" },
       { Header: "Correlativo", accessor: "correlativo" },
@@ -162,12 +177,13 @@ export default function Materiales() {
 
     return data;
   };
+  
   const { data, refetch } = useQuery("getMateriales", getMateriales, {
     initialData: {
       data: [],
     },
   });
-
+  console.log('Materiales list:',data)
   const materiales = useMemo(
     () =>
       data?.data.map(({ familia, subFamilia, ...info }) => ({
@@ -177,6 +193,36 @@ export default function Materiales() {
       })),
     [data?.data]
   );
+
+
+  useEffect(() => {
+    if (isEdit) {
+      const valorVenta = updateForm?.valorVenta || 0;
+      const igv = updateForm?.igv || 0;
+      const precioTotal = valorVenta + (valorVenta * igv / 100);
+      
+      setForm({
+        familiaId: updateForm?.familiaId,
+        subFamiliaId: updateForm?.subFamiliaId,
+        nombre: updateForm?.nombre,
+        precio: precioTotal,  // Actualiza el precio calculado
+        valorVenta: valorVenta,
+        igv: igv,
+      });
+    }
+  }, [updateForm, isEdit]);
+  
+  // Mantener el cálculo del precio al cambiar valorVenta o igv
+  useEffect(() => {
+    let valorVenta = parseFloat(form?.valorVenta) || 0;
+    let igv = parseFloat(form?.igv) || 0;
+    let precioTotal = valorVenta + (valorVenta * igv / 100);
+  
+    // Evitar actualizaciones innecesarias
+    if (form?.precio !== precioTotal) {
+      setForm({ ...form, precio: precioTotal });
+    }
+  }, [form.valorVenta, form.igv]);
 
   return (
     <>
@@ -205,6 +251,7 @@ export default function Materiales() {
           <GroupInputs>
             <Select
               label="Familia"
+              value={isEdit && updateForm?.familiaId !== undefined ? updateForm.familiaId : form?.familiaId || ''}
               onChange={(value) => {
                 const currentFamilia = familias?.find((item) => item.id === Number(value));
                 setSelectedFamilia(currentFamilia.codigo);
@@ -223,6 +270,7 @@ export default function Materiales() {
             </Select>
             <Select
               label="SubFamilia"
+              value={isEdit && updateForm?.subFamiliaId !== undefined ? updateForm.subFamiliaId : form?.subFamiliaId || ''}
               onChange={(value) => {
                 const currentSubFamilia = subfamilias?.find((item) => item.id === Number(value));
                 setForm({ ...form, subFamiliaId: value });
@@ -249,12 +297,28 @@ export default function Materiales() {
             onChange={(e) => setForm({ ...form, nombre: e.target.value })}
             defaultValue={isEdit ? updateForm?.nombre : undefined}
           />
+          <GroupInputs>
+            <Input
+            label="Valor de Venta"
+            type={"number"}
+            defaultValue={isEdit ? updateForm?.valorVenta : undefined}
+            onChange={(e) => setForm({ ...form, valorVenta: e.target.value })}
+          />
           <Input
-            label="Precio"
+            label="IGV"
             type={"number"}
             defaultValue={isEdit ? updateForm?.precio : undefined}
-            onChange={(e) => setForm({ ...form, precio: e.target.value })}
+            onChange={(e) => setForm({ ...form, igv: e.target.value })}
           />
+          <Input
+            label="Precio"
+            disabled
+            type={"number"}
+            value={form.precio}
+            defaultValue={isEdit ? updateForm?.precio : undefined}
+
+          />
+          </GroupInputs>
           <div className="w-full flex justify-end gap-5">
             <ButtonCancel onClick={closeModal} />
             <ButtonSave onClick={saveData} />

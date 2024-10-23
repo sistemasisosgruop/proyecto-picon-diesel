@@ -207,6 +207,7 @@ export const getServerSideProps = async (context) => {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzNTkyOTcsInVzZXJuYW1lIjoiYWRtaW5AYWRtaW4uY29tIiwiaWQiOjEsIm5hbWUiOiJWaWN0b3IgQmVuYXZlbnRlIiwiZW1wcmVzYXMiOlt7ImlkIjoxLCJub21icmUiOiJTaWVtZW5zIn0seyJpZCI6Miwibm9tYnJlIjoiRmFjZWJvb2sifSx7ImlkIjozLCJub21icmUiOiJNYXN0ZXJjYXJkIn1dLCJyb2xlcyI6WyJBZG1pbmlzdHJhZG9yIl0sImlhdCI6MTcyOTYzNDQ5N30.hYiP2uPsXLFhlxrP1JZD8Y0cXKCyaMZH0rg6qKvNPZs}`,
     },
   });
 

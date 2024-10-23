@@ -1,3 +1,5 @@
+"use client";
+import { useRouter } from "next/router";
 import { Input } from "@material-tailwind/react";
 import { Back } from "iconsax-react";
 import Link from "next/link";
@@ -21,14 +23,20 @@ import { errorProps, successProps } from "../../../../../../app/utils/alert-conf
 import { ToastAlert } from "../../../../../../app/components/elements/ToastAlert";
 import { toast } from "react-toastify";
 import { FormContext } from "../../../../../../contexts/form.context";
+import cookie from 'cookie';
 
 const schema = yup.object().shape({
-  codigo: yup.string().required(),
+  codigo: yup.string().nullable(),
   descripcion: yup.string().required(),
 });
 
 export default function SubFamilias({ familia }) {
-  const { codigo, id } = familia;
+  
+  const { codigo} = familia;
+  const router = useRouter();
+  const { idFamilia } = router.query; // Aquí 'idFamilia' viene del archivo [idFamilia].js en la ruta dinámica
+
+  console.log("El id de la familia es:", idFamilia);
 
   const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
     useModal();
@@ -55,7 +63,7 @@ export default function SubFamilias({ familia }) {
     await schema.validate(form, { abortEarly: false });
     await axiosRequest("post", "/api/mantenimiento/presupuesto/familias/subfamilias", {
       ...form,
-      familiaId: id,
+      familiaId: parseInt(idFamilia),
     });
 
     toast.success(`💾 Registro guardado exitosamente!`, successProps);
@@ -112,12 +120,16 @@ export default function SubFamilias({ familia }) {
   );
 
   const getSubFamilias = async () => {
-    const { data } = await axiosRequest(
-      "get",
-      `/api/mantenimiento/presupuesto/familias/subfamilias?familiaId=${id}`
-    );
-
-    return data;
+    try {
+      const { data } = await axiosRequest(
+        "get",
+        `/api/mantenimiento/presupuesto/familias/subfamilias?familiaId=${idFamilia}`
+      );
+      return data;
+    } catch (error) {
+      console.error("Error al obtener las subfamilias:", error);
+      throw error; // Si deseas que el error sea manejado más arriba en la cadena de llamadas
+    }
   };
 
   const { data, refetch } = useQuery("subfamilias", getSubFamilias, {
@@ -153,7 +165,7 @@ export default function SubFamilias({ familia }) {
         {/* Table list */}
         <div className="flex gap-5 shadow p-4 border border-primary-400 rounded-lg">
           <h1 className="font-semibold">Familia: </h1>
-          <p>{codigo}</p>
+          <p>{idFamilia}</p>
         </div>
         <TableComplete
           columns={columns}
@@ -170,11 +182,11 @@ export default function SubFamilias({ familia }) {
       >
         {/* Form */}
         <form className="flex flex-col gap-5">
-          <Input
+          {/* <Input
             label="Código"
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
             defaultValue={isEdit ? updateForm?.codigo : undefined}
-          />
+          /> */}
           <Input
             label="Descripción"
             onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
@@ -199,17 +211,33 @@ export default function SubFamilias({ familia }) {
 
 export const getServerSideProps = async (context) => {
   const { params, req } = context;
+  
   const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  const idFamilia = params.idFamilia;
+  // const token = req.headers.cookie; // Aquí obtienes el token almacenado en las cookies
+
+  const rawCookie = req.headers.cookie;
+  
+  // Separar todas las cookies por ';' y encontrar la que tiene el nombre 'myTokenName'
+  const tokenCookie = rawCookie
+    ?.split('; ')
+    .find(cookie => cookie.startsWith('myTokenName='));
+
+  // Extraer el valor del token si existe
+  const token = tokenCookie?.split('=')[1];
+
 
   const response = await axios({
+    
     method: "get",
-    url: `${protocol}://${req.headers.host}/api/mantenimiento/presupuesto/familias/${params.idFamilia}`,
+    url: `${protocol}://${req.headers.host}/api/mantenimiento/presupuesto/familias?empresaId=${params.idFamilia}`,
     headers: {
+        Authorization: `Bearer ${token}`,
       Accept: "application/json",
       "Content-Type": "application/json",
     },
   });
-
+  console.log(response.data)
   return {
     props: {
       familia: response.data,

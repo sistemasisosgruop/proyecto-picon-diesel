@@ -21,7 +21,7 @@ import { useQuery } from "react-query";
 import { FormContext } from "../../../../contexts/form.context";
 
 const schema = yup.object().shape({
-  codigo: yup.string().required(),
+  codigo: yup.string().nullable(),
   descripcion: yup.string().required(),
 });
 
@@ -31,7 +31,7 @@ export default function Familias() {
   const [empresaId] = useLocalStorage("empresaId");
 
   const [form, setForm] = useState({
-    codigo: null,
+    // codigo: null,
     descripcion: null,
   });
 
@@ -44,7 +44,7 @@ export default function Familias() {
 
   useEffect(() => {
     setForm({
-      codigo: null,
+      // codigo: null,
       descripcion: null,
     });
   }, [resetInfo]);
@@ -92,7 +92,7 @@ export default function Familias() {
 
   useEffect(() => {
     setForm({
-      codigo: null,
+      // codigo: null,
       descripcion: null,
     });
     refetch();
@@ -112,7 +112,7 @@ export default function Familias() {
       "get",
       `/api/mantenimiento/presupuesto/familias?empresaId=${empresaId}`
     );
-
+    console.log({data})
     return data;
   };
 
@@ -155,6 +155,7 @@ export default function Familias() {
         <form className="flex flex-col gap-5">
           <Input
             label="Código"
+            disabled
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
             defaultValue={isEdit ? updateForm?.codigo : undefined}
           />

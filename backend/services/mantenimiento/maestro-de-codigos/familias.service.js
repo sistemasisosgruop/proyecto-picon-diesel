@@ -50,7 +50,7 @@ export class FamiliaService {
   static async deleteFamilia(id) {
     const familia = prisma.familia.delete({
       where: {
-        id,
+        id: Number(id),
       },
     });
 
