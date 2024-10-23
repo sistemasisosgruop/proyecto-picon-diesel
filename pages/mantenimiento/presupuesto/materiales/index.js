@@ -136,8 +136,8 @@ export default function Materiales() {
     () => [
       { Header: "#", accessor: "id" },
       // { Header: "Codigo", accessor: "codigo" },
-      { Header: "Familia", accessor: "familia" },
-      { Header: "Subfamilia", accessor: "subFamilia.descripcion" },
+      { Header: "Familia", accessor: "familiaNombre" },
+      { Header: "Subfamilia", accessor: "subfamiliaNombre" },
       { Header: "Correlativo", accessor: "correlativo" },
       { Header: "Nombre", accessor: "nombre" },
       { Header: "Precio", accessor: "precio" },
@@ -184,12 +184,15 @@ export default function Materiales() {
     },
   });
   console.log('Materiales list:',data)
+
   const materiales = useMemo(
     () =>
       data?.data.map(({ familia, subFamilia, ...info }) => ({
         ...info,
         familia: familia.codigo,
+        familiaNombre: familia.descripcion,
         subfamilia: subFamilia.codigo,
+        subfamiliaNombre: subFamilia.descripcion,
       })),
     [data?.data]
   );

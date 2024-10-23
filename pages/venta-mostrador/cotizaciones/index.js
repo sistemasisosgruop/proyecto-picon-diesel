@@ -630,6 +630,7 @@ export default function Cotizaciones() {
         closeModal={closeModal}
       >
         <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-5">
+        <div style={{ display: 'flex', gap: '5px', justifyContent: 'space-between', maxWidth:'100%',width:'100%',marginLeft:'0' }}>
           <Group title={"Informacion General"}>
             <GroupInputs>
               <Input label={"N° de cotizacion"}
@@ -660,15 +661,36 @@ export default function Cotizaciones() {
                 <Option key={1} value={"Soles"}>Soles</Option>
                 <Option key={2} value={"Dolar"}>Dolares</Option>
               </Select>
-              <Select label="Forma de pago"
-                onChange={(e) => setFormaDePago(String(e))}
-                value={isEdit ? (form.formaPagoContadoId !== null ? "contado" : "credito"): undefined}
+              <Select label="Moneda de cambio"
+                onChange={(e) => handleMoneda(e)}
+                value={isEdit ? form?.moneda : undefined}
               >
-                <Option value={"contado"}>contado</Option>
-                <Option value={"credito"}>crédito</Option>
+                <Option key={1} value={"Soles"}>Soles</Option>
+                <Option key={2} value={"Dolar"}>Dolares</Option>
               </Select>
+             
+
+              <Select label="Tipo de Cambio" 
+                onChange={ (e) => handleTipoDeCambio(e) }
+                value = {isEdit ? form?.tipoDeCambioId : undefined}
+                // disabled={form.moneda === null || form.moneda === "Soles"}
+              >
+                {tiposCambio?.map( (tipoCambio) => {
+                  return (
+                    <Option key={tipoCambio.id} value={tipoCambio}>
+                      {`De ${tipoCambio.de} a ${tipoCambio.a}: ${tipoCambio.valor}`}
+                    </Option>
+                  )
+                })}
+                {/* <Option value={"sol-dolar"}>3.81</Option> */}
+              </Select>
+
+              <Input label={"Fecha de validez"} 
+                value = {"valor"}
+                disabled
+               />
             </GroupInputs>
-            <Select label="Forma de pago"
+            {/* <Select label="Forma de pago"
               onChange={ (e)=>handleFormaDePago(e) }
               value={isEdit ?  (form.formaPagoCreditoId || form.formaPagoContadoId ) : undefined }
               disabled = {formaDePago.length === 0}
@@ -680,23 +702,18 @@ export default function Cotizaciones() {
                   </Option>
                 );
               })}
-              {/* <Option value={"interbank"}>interbank</Option> */}
-            </Select>
+              
+            </Select> */}
             <GroupInputs>
-              <Select label="Tipo de Cambio" 
-                onChange={ (e) => handleTipoDeCambio(e) }
-                value = {isEdit ? form?.tipoDeCambioId : undefined}
-                disabled={form.moneda === null || form.moneda === "Soles"}
+            <Select label="Forma de pago"
+                onChange={(e) => setFormaDePago(String(e))}
+                value={isEdit ? (form.formaPagoContadoId !== null ? "contado" : "credito"): undefined}
               >
-                {tiposCambio?.map( (tipoCambio) => {
-                  return (
-                    <Option key={tipoCambio.id} value={tipoCambio}>
-                      {`De ${tipoCambio.de} a ${tipoCambio.a}: ${tipoCambio.valor}`}
-                    </Option>
-                  )
-                })}
-                {/* <Option value={"sol-dolar"}>3.81</Option> */}
+                <Option value={"contado"}>contado</Option>
+                <Option value={"credito"}>crédito</Option>
               </Select>
+
+
               <Input label="Estado del documento" 
                 value={form.estadoDelDocumento}
                 onChange={ (e)=> handleEstadoDelDocumento(e) }
@@ -758,7 +775,10 @@ export default function Cotizaciones() {
                       Modelo de maquina: ${selectedMaquina?.modeloMaquina.modelo} - COD. Motor: ${selectedMaquina?.codigoOriginal}`}/>
           </Group>
 
-          <Group title={"Responsable"}>
+          </div>
+
+
+          {/* <Group title={"Responsable"}>
             <GroupInputs>
               <Select label="Rol"
                 onChange={ (e) => setTipoResponsable(String(e)) }
@@ -781,7 +801,7 @@ export default function Cotizaciones() {
                 })}
               </Select>
             </GroupInputs>
-          </Group>
+          </Group> */}
           <Group title={"Otro"}>
             <Input label="Referencia"
             value={form.referencia}
