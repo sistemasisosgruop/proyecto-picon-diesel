@@ -630,25 +630,28 @@ export default function Cotizaciones() {
         closeModal={closeModal}
       >
         <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-5">
-        <div style={{ display: 'flex', gap: '5px', justifyContent: 'space-between', maxWidth:'100%',width:'100%',marginLeft:'0' }}>
-          <Group title={"Informacion General"}>
+        <div style={{ display: 'flex', gap: '3px', justifyContent: 'space-between', maxWidth:'100%',width:'100%',marginLeft:'0',backgroundColor:'red' }}>
+          <Group title={"Informacion General"} >
             <GroupInputs>
-              <Input label={"N° de cotizacion"}
+              <Input  style={{  width: '70%', margin:'0' }} label={"N° de cotizacion"}
                 value = {form.number}
                 onChange = { (e) => handleNroCotizacion(e)}
                 disabled
               />
               <Input label={"Fecha de cotizacion"} type={"date"}
+              style={{  width: '70%', margin:'0' }}
                 value = {form.fechaCotizacion}
                 onChange = { (e) => handleFechaCotizacion(e)}
                 // disabled = {form.number === null}
               />
               <Input label={"Dias de validez"}
+              style={{  width: '70%', margin:'0' }}
                 value = {form.diasValidez}
                 onChange = { (e) => handleDiasValidez(e)}
                 disabled = {form.fechaCotizacion === null}
               />
               <Input label={"Fecha de validez"} type={"date"}
+              style={{  width: '70%', margin:'0' }}
                 value = {form.fechaValidez}
                 disabled
                />
@@ -712,12 +715,10 @@ export default function Cotizaciones() {
                 <Option value={"contado"}>contado</Option>
                 <Option value={"credito"}>crédito</Option>
               </Select>
+              <Input label="Nommbre Vendedor" disabled value={selectedCliente?.telefono}/>
+              <Input label="Correo Vendedor" disabled value={selectedCliente?.telefono}/>
 
 
-              <Input label="Estado del documento" 
-                value={form.estadoDelDocumento}
-                onChange={ (e)=> handleEstadoDelDocumento(e) }
-              /> {/* onchage directo objeto */}
             </GroupInputs>
           </Group>
           <Group title={"Cliente"}>
@@ -741,6 +742,7 @@ export default function Cotizaciones() {
               <Input label="Correo" disabled value={selectedCliente?.email}/>
               <Input label="Direccion" disabled />
             </GroupInputs>
+
           </Group>
 
           <Group title={"Maquina"}>  {/* cambiar por select para idmaquina */}
@@ -773,6 +775,12 @@ export default function Cotizaciones() {
               </Dropdown>
               <Input label="Aplicación de la máquina" disabled value={`COD: ${selectedMaquina?.codigo} - COD. Fabrica: ${selectedMaquina?.fabricaMaquina.fabrica} - 
                       Modelo de maquina: ${selectedMaquina?.modeloMaquina.modelo} - COD. Motor: ${selectedMaquina?.codigoOriginal}`}/>
+          
+          <Input label="Estado del documento" 
+                value={form.estadoDelDocumento}
+                onChange={ (e)=> handleEstadoDelDocumento(e) }
+              /> {/* onchage directo objeto */}
+          
           </Group>
 
           </div>
