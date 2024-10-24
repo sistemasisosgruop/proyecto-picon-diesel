@@ -200,14 +200,25 @@ const getSubFamilias = async () => {
 export const getServerSideProps = async (context) => {
   const { params, req } = context;
   const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  const idFamilia = params.idFamilia;
+  // const token = req.headers.cookie; // Aquí obtienes el token almacenado en las cookies
 
+  const rawCookie = req.headers.cookie;
+  
+  // Separar todas las cookies por ';' y encontrar la que tiene el nombre 'myTokenName'
+  const tokenCookie = rawCookie
+    ?.split('; ')
+    .find(cookie => cookie.startsWith('myTokenName='));
+
+  // Extraer el valor del token si existe
+  const token = tokenCookie?.split('=')[1];
   const response = await axios({
     method: "get",
     url: `${protocol}://${req.headers.host}/api/mantenimiento/maestro-de-codigos/familias/${params.idFamilia}`,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: `Bearer ${eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUzNTkyOTcsInVzZXJuYW1lIjoiYWRtaW5AYWRtaW4uY29tIiwiaWQiOjEsIm5hbWUiOiJWaWN0b3IgQmVuYXZlbnRlIiwiZW1wcmVzYXMiOlt7ImlkIjoxLCJub21icmUiOiJTaWVtZW5zIn0seyJpZCI6Miwibm9tYnJlIjoiRmFjZWJvb2sifSx7ImlkIjozLCJub21icmUiOiJNYXN0ZXJjYXJkIn1dLCJyb2xlcyI6WyJBZG1pbmlzdHJhZG9yIl0sImlhdCI6MTcyOTYzNDQ5N30.hYiP2uPsXLFhlxrP1JZD8Y0cXKCyaMZH0rg6qKvNPZs}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 

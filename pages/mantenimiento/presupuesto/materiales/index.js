@@ -174,7 +174,6 @@ export default function Materiales() {
       "get",
       `/api/mantenimiento/presupuesto/materiales?empresaId=${empresaId}`
     );
-
     return data;
   };
   

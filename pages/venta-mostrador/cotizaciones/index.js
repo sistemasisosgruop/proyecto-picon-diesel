@@ -29,20 +29,25 @@ import { MaterialesContext } from "../../../contexts/materiales.context";
 import { dateFormato, dateRefetchShow } from "../../../app/utils/dateFormat";
 // import { DateTime } from "luxon";
 
+import { useAuthDispatch, useAuthState } from "../../../contexts/auth.context";   //Extraer data del user
+
+
 
 const schema = yup.object().shape({
   number: yup.string().nullable(),
   fechaCotizacion: yup.date().required(),
   diasValidez: yup.number().required(),
   fechaValidez: yup.date().required(),
-  moneda: yup.string().required(),
-  formaPagoContadoId: yup.number().nullable(),
-  formaPagoCreditoId: yup.number().nullable(),
-  tipoDeCambioId: yup.number().required(),
+  moneda: yup.number().required(),
+  monedaDestino: yup.number().required(),
+  formaPagoId: yup.number().nullable(),
+  // tipoDeCambioId: yup.string().required(),
   estadoDelDocumento: yup.string().required(),
   clienteId: yup.number().required(),
   maquinaId: yup.number().required(), // tiene q ir con required
   vendedorId: yup.number().nullable(),
+  nombreVendedor:yup.string(),
+  correoVendedor:yup.string(), 
   personalId: yup.number().nullable(),
   referencia: yup.string(),
   materiales: yup.array().nullable(),
@@ -59,14 +64,16 @@ const updateSchema = yup.object().shape({
   fechaCotizacion: yup.date().required(),
   diasValidez: yup.number().required(),
   fechaValidez: yup.date().required(),
-  moneda: yup.string().required(),
-  formaPagoContadoId: yup.number().nullable(),
-  formaPagoCreditoId: yup.number().nullable(),
-  tipoDeCambioId: yup.number().required(),
+  moneda: yup.number().required(),
+  monedaDestino: yup.number().required(),
+  formaPagoId: yup.number().nullable(),
+  // tipoDeCambioId: yup.string().required(),
   estadoDelDocumento: yup.string().required(),
   clienteId: yup.number().required(),
   maquinaId: yup.number().required(), // tiene q ir con required
   vendedorId: yup.number().nullable(),
+  nombreVendedor:yup.string(),
+  correoVendedor:yup.string(), 
   personalId: yup.number().nullable(),
   referencia: yup.string(),
   materiales: yup.array().nullable(),
@@ -82,19 +89,32 @@ const updateSchema = yup.object().shape({
 
 export default function Cotizaciones() {
 
+
+
+
+//* Obtener user logeado ///
+const [user, setUser] = useState({ nombre: "", email:"",id:"" });
+const auth = useAuthState();
+const authDispatch = useAuthDispatch();// auth
+// console.log('auth data:',auth);
+
+//* ////////////////////////  
+
+
   const { isOpenModal, isOpenModalDelete, isEdit, setIsOpenModalDelete, closeModal, openModal } =
     useModal();
 
   const [empresaId] = useLocalStorage("empresaId");
   const [formaDePago, setFormaDePago] = useState("");
-  const [formasDePago, setFormasDePago] = useState([])
+  const [formasDePagoList, setFormasDePagoList] = useState([])
   const [tiposCambio, setTiposCambio] = useState([]);
   const [valorTipoCambio, setValorTipoCambio] = useState(Number(1));
-  const [clientes, setClientes] = useState([])
+  const [clientesList, setClientesList] = useState([])
   const [selectedCliente, setSelectedCliente] = useState(null);
   const [aplicacionMaquinas, setAplicacionMaquinas] = useState([]);
   const [isOpenCodigos, setIsOpenCodigos] = useState({
     aplicacionMaquina: false,
+    aplicacionCliente:false,
     materiales: false
   });
   const [tipoResponsable, setTipoResponsable] = useState("");
@@ -102,9 +122,15 @@ export default function Cotizaciones() {
 
   const [descuentosLimites, setDescuentosLimites] = useState(null);
   const [igv, setIgv] = useState(null);
+  const [monedas,setMonedas] = useState([])   // Lista de monedas
+  const [monedaDestino,setMonedaDestino] = useState([])
+  const [tipoCambio,setTipoCambio] = useState('')
+
 
   const { changeData, elementId, updateForm } = useContext(FormContext);
   const { setCodigos, selectedMaquina, setSelectedMaquina, selectedMateriales, setSelectedMateriales} = useContext(MaterialesContext);
+
+
 
   const [form, setForm] = useState({
     number: null,
@@ -112,13 +138,17 @@ export default function Cotizaciones() {
     diasValidez: null,
     fechaValidez: null,
     moneda: null,
-    formaPagoContadoId: null,
-    formaPagoCreditoId: null,
+    monedaDestino: null,
+    // formaPagoContadoId: null,
+    // formaPagoCreditoId: null,
+    formaPagoId: null,    //! Cambio
     tipoDeCambioId: null,
     estadoDelDocumento: null,
     clienteId: null,
     maquinaId: null,
     vendedorId: null,
+    nombreVendedor:null,  //!Agregado
+    correoVendedor:null,  //!Agregado
     personalId: null,
     referencia: null,
     materiales: null,
@@ -137,13 +167,17 @@ export default function Cotizaciones() {
       diasValidez: null,
       fechaValidez: null,
       moneda: null,
-      formaPagoContadoId: null,
-      formaPagoCreditoId: null,
+      monedaDestino: null,
+      // formaPagoContadoId: null,
+      // formaPagoCreditoId: null,
+      formaPagoId: null,  //! Cambio
       tipoDeCambioId: null,
       estadoDelDocumento: null,
       clienteId: null,
       maquinaId: null,
       vendedorId: null,
+      nombreVendedor:null, //!Agregado
+      correoVendedor:null, //!Agregado
       personalId: null,
       referencia: null,
       materiales: null,
@@ -166,16 +200,18 @@ export default function Cotizaciones() {
       similitud: [],
       equivalencia: [],
       aplicacionMaquina: [],
-    });
+      aplicacionCliente:[]
+        });
     setSelectedMateriales({materiales:[]});
     getDescuentoApi();
     getIgvApi();
   }, []);
 
-  // const getCotizacionApi = (idCotizacion) => {
 
-  // }
-
+  useEffect(() => {
+    setUser({ nombre: auth.nombre, email: auth.email, id:auth.id });   //Busca el nombre y rol del usuario logeado actualmente.
+    
+  }, []);
   useEffect(() => {
 
     const currentTemp = cotizacionesResponse?.data.find((item) => item.id === updateForm?.id);
@@ -291,12 +327,16 @@ export default function Cotizaciones() {
         diasValidez: null,
         fechaValidez: null,
         moneda: null,
-        formaPagoContadoId: null,
-        formaPagoCreditoId: null,
+        monedaDestino:null,
+        // formaPagoContadoId: null,
+        // formaPagoCreditoId: null,
+        formaPagoId:null,
         tipoDeCambioId: null,
         estadoDelDocumento: null,
         clienteId: null,
         maquinaId: null,
+        nombreVendedor:null,
+        correoVendedor:null,
         vendedorId: null,
         personalId: null,
         referencia: null,
@@ -397,20 +437,28 @@ export default function Cotizaciones() {
     [selectedMateriales]
   );
 
+  //* Obtener lista de cotizaciones
   const getCotizaciones = async () => {
     const { data } = await axiosRequest(
-      "get",
-      `/api/venta-mostrador/cotizaciones?empresaId=${empresaId}`
+      "get", `/api/venta-mostrador/cotizaciones?empresaId=${empresaId}`
     );
     return data;
   }
-
   const { data: cotizacionesResponse, refetch } = useQuery("cotizaciones", getCotizaciones, {
     initialData: {
       data: []
     }
   })
 
+  const getMonedas = async ()=>{
+    const {data} =  await axiosRequest(
+      "get",
+      `/api/mantenimiento/comercial/moneda`
+    );
+      setMonedas(data.data);
+      console.log('Monedas: ',data.data)
+    return data;
+  }
 
   const cotizaciones = useMemo(
     () => cotizacionesResponse?.data.map( ({id, cliente, fechaCotizacion, diasValidez, formaPagoContadoId, formaPagoCreditoId, number }) => ({
@@ -427,7 +475,6 @@ export default function Cotizaciones() {
   )
 
   useEffect(() => {
-   
     if(selectedMateriales.materiales?.length > 0 && valorTipoCambio > 0){
       let subtotalTemp = 0;
       const materialesTemp = [];
@@ -474,16 +521,27 @@ export default function Cotizaciones() {
   }
 
   const handleDiasValidez = (e) => {
-    if ( !(/^\d+$/.test(e.target.value)) || e.target.value === "") return;
-    if(form.fechaCotizacion){
-      const fecha = new Date(form.fechaCotizacion);
-      fecha.setDate(fecha.getDate() + Number(e.target.value) )
-      const fechaFormat = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(fecha.getDate()).padStart(2, '0')}`;
-      setForm({...form, fechaValidez: fechaFormat, diasValidez: Number(e.target.value)})
+    const value = e.target.value; // Permitir que el valor sea un número o esté vacío
+  
+    if (value === "") {// Permitir vacíos
+      setForm({ ...form, diasValidez: "" });
       return;
     }
-    setForm({...form, diasValidez: e.target.value })
-  }
+    // Verificar si es un número (permitiendo "0")
+    if (!/^\d+$/.test(value)) return;
+  
+    if (form.fechaCotizacion) {
+      const fecha = new Date(form.fechaCotizacion);
+      fecha.setDate(fecha.getDate() + Number(value));
+      const fechaFormat = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(fecha.getDate()).padStart(2, '0')}`;
+      setForm({ ...form, fechaValidez: fechaFormat, diasValidez: Number(value) });
+      return;
+    }
+  
+    setForm({ ...form, diasValidez: Number(value) });
+  };
+
+
 
   const getTiposCambio = async (moneda) => {
     const { data } = await axiosRequest(
@@ -508,40 +566,49 @@ export default function Cotizaciones() {
     setForm({...form, tipoDeCambioId: e.id})
   }
 
-  const getFormasDePago = async () => {
+  
+  const getFormasPago = async () => {
     const { data } = await axiosRequest(
       "get",
-      `/api/mantenimiento/forma-de-pago/${formaDePago}?empresaId=${empresaId}`
+      `/api/mantenimiento/comercial/forma-de-pago?empresaId=${empresaId}`
     );
-    setFormasDePago(data?.data);
+    setFormasDePagoList(data.data)
+      console.log('Formas de pago list:',data)
+    return data;
   };
 
-  useEffect(() => {
-    if(formaDePago.length > 0)getFormasDePago();
-  }, [formaDePago])
+  const getMateriales = async () => {
+    const { data } = await axiosRequest(
+      "get",
+      `/api/mantenimiento/presupuesto/materiales?empresaId=${empresaId}`
+    );
+    return data;
+  };
+  
 
-  const handleFormaDePago = (e) => {
-    if(formaDePago === "contado"){
-      setForm({...form, formaPagoContadoId: e, formaPagoCreditoId: null})
-    } else {
-      setForm({...form, formaPagoCreditoId: e, formaPagoContadoId: null})
-    }
-  }  
+  // const handleFormaDePago = (e) => {
+  //   if(formaDePago === "contado"){
+  //     setForm({...form, formaPagoContadoId: e, formaPagoCreditoId: null})
+  //   } else {
+  //     setForm({...form, formaPagoCreditoId: e, formaPagoContadoId: null})
+  //   }
+  // }  
 
   const handleEstadoDelDocumento = (e)  => setForm({...form, estadoDelDocumento: String(e.target.value)})
 
 
   const getClientes = async () => {
-    const { data } = await axiosRequest(
-      "get",
-      `/api/mantenimiento/clientes?empresaId=${empresaId}`      
+    const { data } = await axiosRequest("get",`/api/mantenimiento/clientes?empresaId=${empresaId}`      
     )
-    setClientes(data?.data);
+    console.log('Clientes:',data.data)
+    // setClientes(data?.data);
   }
 
-  // llamar clientes
   useEffect(() => {
-    if(isOpenModal)getClientes();
+    if(isOpenModal){
+      // getClientes();
+    if (isEdit==false) setForm({...form, nombreVendedor:auth.nombre, vendedorId:auth.id,correoVendedor:auth.email })
+    }
   }, [isOpenModal])
 
   const handleSelectedCliente = (e) => {
@@ -549,13 +616,24 @@ export default function Cotizaciones() {
     setForm({...form, clienteId: e.id})
   }
 
-  // llamar máquinas
+// BUSCADOR DE CLIENTES
+  const handleSearchClient = async ({ target }) => {
+    const { data } = await axiosRequest("get",`/api/mantenimiento/clientes?empresaId=${empresaId}`)   //! CAMBIAR AQUI POR FILTRO DE BACK
+    console.log('Clientes:',data.data)
+    setClientesList(data?.data);
+  };
+
+  const handleSelectedClient = (aplicacionCliente) => {
+    setSelectedCliente(aplicacionCliente);
+    setForm({...form, clienteId: aplicacionCliente.id});
+    setIsOpenCodigos({ ...isOpenCodigos, aplicacionCliente: false });
+  }
+
+
+// BUSCADOR DE MAQUINAS
   const handleSearchMaquina = async ({ target }) => {
     const { data } = await axiosRequest(
-      "get",
-      `/api/mantenimiento/maestro-de-codigos/configuracion/maquinas?empresaId=${empresaId}&filter=${target.value}`
-    );
-
+      "get",`/api/mantenimiento/maestro-de-codigos/configuracion/maquinas?empresaId=${empresaId}&filter=${target.value}`);
     setAplicacionMaquinas(data?.data);
   };
 
@@ -565,28 +643,29 @@ export default function Cotizaciones() {
     setIsOpenCodigos({ ...isOpenCodigos, aplicacionMaquina: false });
   }
 
-  const getResponsables = async () => {
-    // console.log(tipoResponsable);
-    const { data } = await axiosRequest(
-      "get",
-      `/api/mantenimiento/${tipoResponsable}?empresaId=${empresaId}`
-    )
-    // console.log(data);
-    setResponsables(data?.data);
-  }
+
+  // const getResponsables = async () => {
+  //   // console.log(tipoResponsable);
+  //   const { data } = await axiosRequest(
+  //     "get",
+  //     `/api/mantenimiento/${tipoResponsable}?empresaId=${empresaId}`
+  //   )
+  //   // console.log(data);
+  //   setResponsables(data?.data);
+  // }
   
-  useEffect(() => {
-    if(tipoResponsable.length > 0) getResponsables();
-  }, [tipoResponsable])
+  // useEffect(() => {
+  //   if(tipoResponsable.length > 0) getResponsables();
+  // }, [tipoResponsable])
   
 
-  const handleResponsable = (e) => {
-    if(tipoResponsable === "vendedores"){
-      setForm({...form, vendedorId: e.id })
-    } else{
-      setForm({...form, personalId: e.id })
-    }
-  }
+  // const handleResponsable = (e) => {
+  //   if(tipoResponsable === "vendedores"){
+  //     setForm({...form, vendedorId: e.id })
+  //   } else{
+  //     setForm({...form, personalId: e.id })
+  //   }
+  // }
 
   const handleReferencia = (e) => setForm({...form, referencia: e.target.value})
   const handleNota = (e) => setForm({...form, nota: e.target.value})
@@ -603,12 +682,19 @@ export default function Cotizaciones() {
       // setDescuento(Number(descuentosLimites?.a));
     }
   }
-  
+
+  useEffect(() => {
+    console.log(formaDePago);
+  }, [formaDePago])
+
+  useEffect(()=>{
+    getMonedas();
+    getFormasPago();
+  },[])
   
   useEffect(() => {
     console.log(form);
   }, [form])
-  
 
   return (
     <>
@@ -640,55 +726,61 @@ export default function Cotizaciones() {
                 disabled
               />
               <Input label={"Fecha de cotizacion"} type={"date"}
-              // style={{  width: '60%', margin:'0' }}
                 value = {form.fechaCotizacion}
                 onChange = { (e) => handleFechaCotizacion(e)}
-                // disabled = {form.number === null}
               />
               <Input label={"Dias de validez"}
-              // style={{  width: '60%', margin:'0' }}
                 value = {form.diasValidez}
                 onChange = { (e) => handleDiasValidez(e)}
                 disabled = {form.fechaCotizacion  === null}
               />
               <Input label={"Fecha de validez"} type={"date"}
-              // style={{  width: '60%', margin:'0' }}
                 value = {form.fechaValidez}
                 disabled
                />
             </GroupInputsCustom>
             <GroupInputsCustom>
               <Select  label="Moneda"
-              style={{minWidth: 20}}
+              
                 onChange={(e) => handleMoneda(e)}
-                value={isEdit ? form?.moneda : undefined}
+                value={monedas.id}
               >
-                <Option key={1} value={"Soles"}>Soles</Option>
-                <Option key={2} value={"Dolar"}>Dolares</Option>
+                    {monedas && monedas.length > 0 ? (
+                    monedas?.map((item) => {
+                        return (
+                        <Option key={item.id} value={item.id}>
+                            {item?.nombre}
+                        </Option>
+                        );
+                    })
+                    ) : (
+                        <Option value="">No hay monedas disponibles</Option>
+                    )}
               </Select>
               
               <Select label="Moneda de cambio"
-                onChange={(e) => handleMoneda(e)}
+                onChange={(value)=>{setForm({...form,monedaDestino:value})}}
                 value={isEdit ? form?.moneda : undefined}
               >
-                <Option key={1} value={"Soles"}>Soles</Option>
-                <Option key={2} value={"Dolar"}>Dolares</Option>
+                  {monedas && monedas.length > 0 ? (
+                    monedas?.map((item) => {
+                        return (
+                        <Option key={item.id} value={item.id}>
+                            {item?.nombre}
+                        </Option>
+                        );
+                    })
+                    ) : (
+                        <Option value="">No hay monedas disponibles</Option>
+                    )}
               </Select>
              
 
               <Select label="Tipo de Cambio" 
-                onChange={ (e) => handleTipoDeCambio(e) }
-                value = {isEdit ? form?.tipoDeCambioId : undefined}
-                // disabled={form.moneda === null || form.moneda === "Soles"}
+                onChange={ (e) => setTipoCambio(e) }
               >
-                {tiposCambio?.map( (tipoCambio) => {
-                  return (
-                    <Option key={tipoCambio.id} value={tipoCambio}>
-                      {`De ${tipoCambio.de} a ${tipoCambio.a}: ${tipoCambio.valor}`}
-                    </Option>
-                  )
-                })}
-                {/* <Option value={"sol-dolar"}>3.81</Option> */}
+                <Option value={"compra"}>Compra</Option>
+                <Option value={"venta"}>Venta</Option>
               </Select>
 
               <Input label={"Fecha de validez"} 
@@ -696,50 +788,49 @@ export default function Cotizaciones() {
                 disabled
                />
             </GroupInputsCustom>
-            {/* <Select label="Forma de pago"
-              onChange={ (e)=>handleFormaDePago(e) }
-              value={isEdit ?  (form.formaPagoCreditoId || form.formaPagoContadoId ) : undefined }
-              disabled = {formaDePago.length === 0}
-            >
-              {formasDePago?.map((item)=> {
-                return (
-                  <Option key={item.id} value={item.id}>
-                    {item?.nombre}
-                  </Option>
-                );
-              })}
-              
-            </Select> */}
+
             <GroupInputsCustom>
             <Select label="Forma de pago"
            
-                onChange={(e) => setFormaDePago(String(e))}
-                value={isEdit ? (form.formaPagoContadoId !== null ? "contado" : "credito"): undefined}
+                // onChange={(e) => setFormaDePago(e)} 
+                onChange={(value)=>{setForm({...form,formaPagoId:value })}}
+                value={isEdit ? form?.formaPagoId : undefined}
               >
-                <Option value={"contado"}>contado</Option>
-                <Option value={"credito"}>crédito</Option>
+                {formasDePagoList && formasDePagoList.length > 0 ? (
+                    formasDePagoList?.map((item) => {
+                        return (
+                        <Option key={item.id} value={item.id}>
+                            {item?.nombre}
+                        </Option>
+                        );
+                    })
+                    ) : (
+                        <Option value="">No hay monedas disponibles</Option>
+                    )}
             </Select>
-            <Input  label="Nombre Vendedor" disabled value={selectedCliente?.telefono}/>
-            <Input  label="Correo Vendedor" disabled value={selectedCliente?.telefono}/>
+
+            <Input  label="Nombre Vendedor" disabled value={user.nombre}/>
+            <Input  label="Correo Vendedor" disabled value={user.email}/>
 
 
             </GroupInputsCustom>
           </GroupCustom >
 
+  {/* Bloque de clientes */}
+
           <GroupCustom2 title={"Cliente"}>
-            {/* Buscador de clientes */}
           <Search
-                onFocus={() => setIsOpenCodigos({ ...isOpenCodigos, aplicacionMaquina: true })}
-                onChange={handleSearchMaquina}
+                onFocus={() => setIsOpenCodigos({ ...isOpenCodigos, aplicacionCliente: true })}
+                onChange={handleSearchClient}
               />
-              <Dropdown isOpen={isOpenCodigos.aplicacionMaquina} elements={aplicacionMaquinas.length}>
-                {aplicacionMaquinas?.map((aplicacionMaquina) => {
+
+              <Dropdown isOpen={isOpenCodigos.aplicacionCliente} elements={clientesList.length}>
+                {clientesList?.map((aplicacionCliente) => {
                   return (
                     <DropdownItem
-                      handleClick={() => { handleSelectedMaquina(aplicacionMaquina) }}
-                      key={aplicacionMaquina.id}
-                      name={`COD: ${aplicacionMaquina?.codigo} - COD. Fabrica: ${aplicacionMaquina?.fabricaMaquina.fabrica} - 
-                      Modelo de maquina: ${aplicacionMaquina?.modeloMaquina.modelo} - COD. Motor: ${aplicacionMaquina?.codigoOriginal}`}
+                      handleClick={() => { handleSelectedClient(aplicacionCliente) }}
+                      key={aplicacionCliente.id}
+                      name={`COD: ${aplicacionCliente?.codigo}`}
                     />
                   );
                 })}
@@ -778,17 +869,7 @@ export default function Cotizaciones() {
           <GroupCustom   
                       
             title={"Maquina"}>  {/* cambiar por select para idmaquina */}
-            {/* <Select label="Aplicación de la máquina"
-                onChange={ (e) => handleSelectedCliente(e) }
-              >
-                {clientes?.map( (cliente)=>{
-                  return (
-                    <Option key={cliente.id} value={cliente}>
-                      {cliente?.numeroDocumento}
-                    </Option>
-                  )
-                })}
-              </Select> */}
+
               <Search
                 onFocus={() => setIsOpenCodigos({ ...isOpenCodigos, aplicacionMaquina: true })}
                 onChange={handleSearchMaquina}
@@ -831,30 +912,6 @@ export default function Cotizaciones() {
             </div>
           </div>
    
-          {/* <Group title={"Responsable"}>
-            <GroupInputs>
-              <Select label="Rol"
-                onChange={ (e) => setTipoResponsable(String(e)) }
-                value={isEdit ? (form?.personalId ? "personal" : "vendedores"): undefined}
-              >
-                <Option value={"vendedores"}>Vendedor</Option>
-                <Option value={"personal"}>Personal</Option>
-              </Select>
-              <Select label="Responsable"
-                onChange={ (e) => handleResponsable(e) }
-                value={isEdit ? (form?.personalId || form?.vendedorId) : undefined}
-                disabled = {tipoResponsable.length === 0}
-              >
-                {responsables?.map( (responsable) => {
-                  return (
-                    <Option key={responsable.id} value={responsable}>
-                      {responsable.nombre}
-                    </Option>
-                  )
-                })}
-              </Select>
-            </GroupInputs>
-          </Group> */}
 
           <Group title={"Materiales"}>
             <TableMaterialesForm columns={columnsMateriales} data={materialesShow || []} />{/* materialesShow */} 
