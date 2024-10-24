@@ -106,6 +106,7 @@ model Sucursal {
   guiaRemisionServicios GuiaRemisionServicios[]
   facturaServicios      FacturaServicios[]
 
+  almacenes         Almacen[]
   @@map("sucursal")
 }
 
@@ -282,7 +283,7 @@ model Vendedor {
   empresa              Empresa?         @relation(fields: [empresaId], references: [id])
   empresaId            Int?
   role                 Role[]
-  Cotizacion           Cotizacion[]
+  // Cotizacion           Cotizacion[]
   GuiaDeRemision       GuiaDeRemision[]
   Factura              Factura[]
   hojaRecepcion        HojaRecepcion[]
@@ -388,15 +389,28 @@ model Role {
 }
 
 model Almacen {
-  id        Int      @id @default(autoincrement())
-  codigo    String?  @unique
-  nombre    String
-  direccion String
-  telefono  String
-  empresa   Empresa? @relation(fields: [empresaId], references: [id])
-  empresaId Int?
+  id          Int      @id @default(autoincrement())
+  codigo      String
+  nombre      String
+  direccion   String
+  telefono    String
+  sucursal    Sucursal @relation(fields: [sucursalId], references: [id])
+  sucursalId  Int
+  empresa     Empresa @relation(fields: [empresaId], references: [id])
+  empresaId   Int
 
+  materialesAlmacen MaterialAlmacen[]
   @@map("almacen")
+}
+
+model MaterialAlmacen {
+  @@map("material_almacen")
+  id                        Int                    @id @default(autoincrement())
+  almacen                   Almacen @relation(fields: [almacenId], references: [id])
+  almacenId                 Int
+  material                  Material @relation(fields: [materialId], references: [id])
+  materialId                Int  
+  stock                     Decimal
 }
 
 model MotivoMovimientoAlmacen {
@@ -878,7 +892,7 @@ model Maquina {
   codigoOriginalTobera           String?
   // empresa                        Empresa?                      @relation(fields: [empresaId], references: [id])
   // empresaId                      Int
-  Cotizacion                     Cotizacion[]
+  cotizacion                     Cotizacion[]
   guiaRemisionServicios GuiaRemisionServicios[]
   facturaServicios      FacturaServicios[]
 
@@ -924,6 +938,7 @@ model Material {
   guiaRemisionServicio              GuiaRemisionServicioToMaterial[]
   facturaServicio                   FacturaServicioToMaterial[]
   
+  materialesAlmacen                 MaterialAlmacen[]
   @@map("material")
 }
 
@@ -943,39 +958,47 @@ model CaracteristicaToMaterial {
 
 model Cotizacion {
   id                     Int                   @id @default(autoincrement())
-  number                 String?               @unique
+  estado                 EstadosCotizacionEnum
+  numero                 String?               
   fechaCotizacion        DateTime              @default(now())
   fechaValidez           DateTime              @default(now())
   diasValidez            Int
+  monedaIdDe             Int
+  monedaDe               Moneda @relation( "MonedaDe", fields: [monedaIdDe], references: [id])
+  monedaIdA             Int
+  monedaA               Moneda @relation( "MonedaA", fields: [monedaIdA], references: [id])
+  valorCompra             Decimal
+  valorVenta              Decimal
+
   referencia             String?
   nota                   String?
-  maquina                String?
+  referenciaMaquina      String?
   estadoDelDocumento     String?
-  materiales             CotizacionToMaterial[]
-  moneda                 String?
-  subtotal               Decimal               @default(0) @db.Decimal(12, 2)
-  descuento              Decimal               @default(0) @db.Decimal(12, 2)
-  subtotalValorNeto      Decimal               @default(0) @db.Decimal(12, 2)
-  igv                    Decimal               @default(0) @db.Decimal(12, 2)
-  totalSoles             Decimal               @default(0) @db.Decimal(12, 2)
+
   formaDePago               FormaDePago           @relation(fields: [formaDePagoId], references: [id])
   formaDePagoId             Int
-  // formaPagoCredito       FormaDePagoCredito?   @relation(fields: [formaPagoCreditoId], references: [id])
-  // formaPagoCreditoId     Int?
   tipoDeCambio           TipoDeCambio?         @relation(fields: [tipoDeCambioId], references: [id])
   tipoDeCambioId         Int?
   cliente                Cliente?              @relation(fields: [clienteId], references: [id])
   clienteId              Int?
-  vendedor               Vendedor?             @relation(fields: [vendedorId], references: [id])
-  vendedorId             Int?
-  personal               Personal?             @relation(fields: [personalId], references: [id])
-  personalId             Int?
-  empresa                Empresa?              @relation(fields: [empresaId], references: [id])
+  contactoCliente         Json
+  personal               Personal              @relation(fields: [personalId], references: [id])
+  personalId             Int
+  empresa                Empresa              @relation(fields: [empresaId], references: [id])
   empresaId              Int
   sucursal               Sucursal?             @relation(fields: [sucursalId], references: [id])
-  sucursalId             Int
-  Maquina                Maquina?              @relation(fields: [maquinaId], references: [id])
-  maquinaId              Int?
+  sucursalId             Int?
+  maquina                Maquina              @relation(fields: [maquinaId], references: [id])
+  maquinaId              Int
+  // moneda                 String?
+  subtotal               Decimal               //@default(0) @db.Decimal(12, 2)
+  aplicacion             Decimal               //@default(0) @db.Decimal(12, 2)
+  descuento              Decimal               //@default(0) @db.Decimal(12, 2)
+  subtotalValorNeto      Decimal               //@default(0) @db.Decimal(12, 2)
+  igv                    Decimal               //@default(0) @db.Decimal(12, 2)
+  total                  Decimal               //@default(0) @db.Decimal(12, 2)
+
+  materiales             CotizacionToMaterial[]
   // aprovacionCotizacion   AprovacionCotizacion? @relation(fields: [aprovacionCotizacionId], references: [id])
   // aprovacionCotizacionId Int?
   // aprovacionCotizaciones AprovacionCotizacion[]
@@ -985,12 +1008,26 @@ model Cotizacion {
 }
 
 model CotizacionToMaterial {
-  id               Int             @id @default(autoincrement())
-  cantidadMateriales         Int
-  material         Material?       @relation(fields: [materialId], references: [id], onDelete: Cascade)
-  materialId       Int
-  cotizacion       Cotizacion?     @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
-  cotizacionId     Int
+  id                        Int             @id @default(autoincrement())
+  posicion                  Int
+  material                  Material       @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  materialId                Int
+  codigoMaterial            String
+  codigoFabricaMaterial     String
+  marcaMaterial             String
+  nombreMaterial            String
+  cotizacion                Cotizacion     @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+  comentario                String?
+  cotizacionId              Int
+  cantidadMaterial          Int
+  cantidadStock             Int
+  valorVentaUnd             Decimal
+  aplicacion                Decimal
+  montoAplicacionUnd        Decimal
+  valorVentaUndNeto         Decimal
+  igv                       Decimal
+  precioUnd                 Decimal
+  precioTotal               Decimal
 
   @@map("cotizacion_to_material")
 }
@@ -1685,6 +1722,8 @@ model TipoReparacion {
   @@map("tipo_reparacion")
 }
 
+
+
 enum EstadoEnum {
   Activo
   Inactivo
@@ -1706,7 +1745,10 @@ enum FormasDePagoEnum {
   Credito
 }
 
-
+enum EstadosCotizacionEnum {
+  PENDIENTE
+  APROBADO
+}
 
 model Moneda {
    @@map("moneda")
@@ -1716,4 +1758,6 @@ model Moneda {
   simbolo    String         // Símbolo de la moneda ($, €, etc.)
   tiposCambioOrigen  TipoDeCambio[] @relation("MonedaOrigen")  // Relación con tipos_cambio como origen
   tiposCambioDestino TipoDeCambio[] @relation("MonedaDestino") // Relación con tipos_cambio como destino
+  cotizacionMonedaDe       Cotizacion[] @relation("MonedaDe") 
+  cotizacionMonedaA       Cotizacion[] @relation("MonedaA") 
 }
