@@ -76,7 +76,7 @@ export const ModalLg = ({ title, isOpen, closeModal, children }) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-[91%] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all flex flex-col gap-5">
+              <Dialog.Panel className="w-[93%] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all flex flex-col gap-5">
                 <Dialog.Title
                   as="h3"
                   className="text-lg font-medium leading-6 flex justify-between items-center"

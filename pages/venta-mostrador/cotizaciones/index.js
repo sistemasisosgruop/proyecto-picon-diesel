@@ -631,32 +631,32 @@ export default function Cotizaciones() {
         closeModal={closeModal}
       >
         <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-5">
-        <div style={{ display: 'flex', gap: '3px', justifyContent: 'space-between', maxWidth:'100%',width:'100%',marginLeft:'0' }}>
+        <div style={{ display: 'flex', gap: '3px', justifyContent: 'space-evenly', maxWidth:'100%',width:'100%',marginLeft:'0' }}>
           <GroupCustom   title={"Informacion General"} >
-            <div style={{backgroundColor:'red',width:'100%',margin:'0',padding:'0', display:'flex',gap:'0',justifyContent:'flex-end'}}>
-              <Input  style={{  width: '60%', margin:'0', padding:'0' }} label={"N° de cotizacion"}
+            <GroupInputsCustom>
+              <Input  label={"N° de cotizacion"}
                 value = {form.number}
                 onChange = { (e) => handleNroCotizacion(e)}
                 disabled
               />
               <Input label={"Fecha de cotizacion"} type={"date"}
-              style={{  width: '60%', margin:'0' }}
+              // style={{  width: '60%', margin:'0' }}
                 value = {form.fechaCotizacion}
                 onChange = { (e) => handleFechaCotizacion(e)}
                 // disabled = {form.number === null}
               />
               <Input label={"Dias de validez"}
-              style={{  width: '60%', margin:'0' }}
+              // style={{  width: '60%', margin:'0' }}
                 value = {form.diasValidez}
                 onChange = { (e) => handleDiasValidez(e)}
                 disabled = {form.fechaCotizacion  === null}
               />
               <Input label={"Fecha de validez"} type={"date"}
-              style={{  width: '60%', margin:'0' }}
+              // style={{  width: '60%', margin:'0' }}
                 value = {form.fechaValidez}
                 disabled
                />
-            </div>
+            </GroupInputsCustom>
             <GroupInputsCustom>
               <Select  label="Moneda"
               style={{minWidth: 20}}
@@ -712,45 +712,72 @@ export default function Cotizaciones() {
             </Select> */}
             <GroupInputsCustom>
             <Select label="Forma de pago"
-            className="w-[60%]  text-sm p-0 m-0"
+           
                 onChange={(e) => setFormaDePago(String(e))}
                 value={isEdit ? (form.formaPagoContadoId !== null ? "contado" : "credito"): undefined}
               >
                 <Option value={"contado"}>contado</Option>
                 <Option value={"credito"}>crédito</Option>
             </Select>
-            <Input style={{  width: '60%', margin:'0' }} label="Nommbre Vendedor" disabled value={selectedCliente?.telefono}/>
-            <Input style={{  width: '60%', margin:'0' }} label="Correo Vendedor" disabled value={selectedCliente?.telefono}/>
+            <Input  label="Nombre Vendedor" disabled value={selectedCliente?.telefono}/>
+            <Input  label="Correo Vendedor" disabled value={selectedCliente?.telefono}/>
 
 
             </GroupInputsCustom>
           </GroupCustom >
-          <GroupCustom2   title={"Cliente"}>
+
+          <GroupCustom2 title={"Cliente"}>
+            {/* Buscador de clientes */}
+          <Search
+                onFocus={() => setIsOpenCodigos({ ...isOpenCodigos, aplicacionMaquina: true })}
+                onChange={handleSearchMaquina}
+              />
+              <Dropdown isOpen={isOpenCodigos.aplicacionMaquina} elements={aplicacionMaquinas.length}>
+                {aplicacionMaquinas?.map((aplicacionMaquina) => {
+                  return (
+                    <DropdownItem
+                      handleClick={() => { handleSelectedMaquina(aplicacionMaquina) }}
+                      key={aplicacionMaquina.id}
+                      name={`COD: ${aplicacionMaquina?.codigo} - COD. Fabrica: ${aplicacionMaquina?.fabricaMaquina.fabrica} - 
+                      Modelo de maquina: ${aplicacionMaquina?.modeloMaquina.modelo} - COD. Motor: ${aplicacionMaquina?.codigoOriginal}`}
+                    />
+                  );
+                })}
+              </Dropdown>
+
             <GroupInputsCustom>
-              <Select label="RUC / DNI"
+              <Input label="RUC / DNI"
+                disabled
                 onChange={ (e) => handleSelectedCliente(e) }
                 // value = { isEdit ? selectedCliente?.numeroDocumento : undefined }
               >
-                {clientes?.map( (cliente)=>{
+                {/* {clientes?.map( (cliente)=>{
                   return (
                     <Option key={cliente.id} value={cliente}>
                       {`${cliente?.numeroDocumento} - ${cliente?.nombre}`}
                     </Option>
                   )
-                })}
-              </Select>
-              <Input style={{  width: '60%', margin:'0' }} label="Nombre del cliente" disabled value={selectedCliente?.nombre}/>
+                })} */}
+              </Input>
+              <Input  label="Nombre del cliente" disabled value={selectedCliente?.nombre}/>
             </GroupInputsCustom>
+              <Input  label="Direccion" disabled value={selectedCliente?.telefono}/>
             <GroupInputsCustom>
-              <Input style={{  width: '60%', margin:'0' }} label="Telefono" disabled value={selectedCliente?.telefono}/>
-              <Input style={{  width: '60%', margin:'0' }} label="Correo" disabled value={selectedCliente?.email}/>
-              <Input style={{  width: '60%', margin:'0' }} label="Direccion" disabled />
+                <Select  label="Contacto"  value={selectedCliente?.telefono}>
+                  <Option key={1} value={"Soles"}>Contacto 1</Option>
+                  </Select>
+                <Input  label="Telefono contacto" disabled value={selectedCliente?.email}/>
+                
             </GroupInputsCustom>
-
+            <Input  label="Correo contacto" disabled />
           </GroupCustom2 >
 
-          </div>
-          <GroupCustom   title={"Maquina"}>  {/* cambiar por select para idmaquina */}
+      <div style={{display:'flex',flexDirection:'column',gap:'13px',minWidth:'25%'}}>
+
+      
+          <GroupCustom   
+                      
+            title={"Maquina"}>  {/* cambiar por select para idmaquina */}
             {/* <Select label="Aplicación de la máquina"
                 onChange={ (e) => handleSelectedCliente(e) }
               >
@@ -778,19 +805,32 @@ export default function Cotizaciones() {
                   );
                 })}
               </Dropdown>
-              <Input label="Aplicación de la máquina" disabled value={`COD: ${selectedMaquina?.codigo} - COD. Fabrica: ${selectedMaquina?.fabricaMaquina.fabrica} - 
-                      Modelo de maquina: ${selectedMaquina?.modeloMaquina.modelo} - COD. Motor: ${selectedMaquina?.codigoOriginal}`}/>
+              <Input label="Aplicación de la máquina" disabled 
+                value={
+                  selectedMaquina 
+                    ? `COD: ${selectedMaquina.codigo || 'N/A'} - COD. Fabrica: ${selectedMaquina.fabricaMaquina?.fabrica || 'N/A'} - Modelo de maquina: ${selectedMaquina.modeloMaquina?.modelo || 'N/A'} - COD. Motor: ${selectedMaquina.codigoOriginal || 'N/A'}`
+                    : 'No se ha seleccionado ninguna máquina'
+                }
+                />
           
-          <Input label="Estado del documento" 
+ 
+          </GroupCustom >
+            <GroupCustom title={"Otro"}>
+              <Input label="Referencia"
+              value={form.referencia}
+                onChange={ (e) => handleReferencia(e)}
+              ></Input>
+              <Input label="Estado" 
+            disabled
                 value={form.estadoDelDocumento}
                 onChange={ (e)=> handleEstadoDelDocumento(e) }
-              /> {/* onchage directo objeto */}
+              /> 
           
-          </GroupCustom >
+            </GroupCustom>
 
-          
-
-
+            </div>
+          </div>
+   
           {/* <Group title={"Responsable"}>
             <GroupInputs>
               <Select label="Rol"
@@ -815,94 +855,73 @@ export default function Cotizaciones() {
               </Select>
             </GroupInputs>
           </Group> */}
-          <Group title={"Otro"}>
-            <Input label="Referencia"
-            value={form.referencia}
-              onChange={ (e) => handleReferencia(e)}
-            ></Input>
-            <Textarea label="Nota"
-              value={form.nota}
-              onChange={ (e) => handleNota(e)}
-            ></Textarea>
-          </Group>
+
           <Group title={"Materiales"}>
             <TableMaterialesForm columns={columnsMateriales} data={materialesShow || []} />{/* materialesShow */} 
+            </Group>
+
+          <Group title={""}>
+          <GroupInputs>
             <GroupInputs>
-              <div className="flex flex-row justify-end items-center w-full gap-2">
-                <div className="flex justify-center items-center">
-                  <span className="font-semibold">Subtotal valor venta soles</span>
-                </div>
-                <div>
-                  <Input disabled value={form.subtotal}/>
-                </div>
+              <div style={{display:'flex',flexDirection:'column',alignItems:'start',width:'100%'}}>
+                  <span className="font-semibold">Subtotal valor venta </span>
+                  <Input label='Subtotal valor venta ' disabled value={form.subtotal}/>
               </div>
             </GroupInputs>
             <GroupInputs>
-              <div className="flex flex-row justify-end items-center w-full gap-2">
-                <div className="flex gap-2 justify-center items-center">
-                  <span className="font-semibold">Descuento</span>
-                  <span
-                    className="px-3 py-1"
-                    style={{ backgroundColor: "#f3f4f6", borderRadius: "4px" }}
-                  >
-                    {`${descuentosLimites?.de}%-${descuentosLimites?.a}%`}
+              {/* <div className="flex flex-row justify-center items-center w-full gap-2"> */}
+
+                <div style={{display:'flex',flexDirection:'column',alignItems:'start',width:'100%'}}>
+                  
+                  <span className="font-semibold">
+                    {`Aplicación (Rango:${descuentosLimites?.de}%-${descuentosLimites?.a}%)`}
                   </span>
-                </div>
-                <div>
+
+               
                   <Input label="descuento" value={form.descuento}
                     disabled = {selectedMateriales.materiales?.length === 0}
                     onChange = {e => handleDescuentoInput(e) }
                   />
+                  
                 </div>
-              </div>
+                {/* </div> */}
             </GroupInputs>
             <GroupInputs>
-              <div className="flex flex-row justify-end items-center w-full gap-2">
-                <div className="flex justify-center items-center">
-                  <span className="font-semibold">Subtotal valor venta neto soles</span>
-                </div>
-                <div>
+            <div style={{display:'flex',flexDirection:'column',alignItems:'start',width:'100%'}}>
+                  <span className="font-semibold">Subtotal valor venta neto </span>
                   <Input disabled value={form.subtotalValorNeto}/>
-                </div>
-              </div>
+            </div>
             </GroupInputs>
             <GroupInputs>
-              <div className="flex flex-row justify-end items-center w-full gap-2">
-                <div className="flex gap-2 justify-center items-center">
-                  <span className="font-semibold">IGV</span>
-                  <span
-                    style={{ backgroundColor: "#f3f4f6", borderRadius: "4px" }}
-                    className="px-3 py-1"
-                  >
-                    {`${igv?.valor}`}
-                  </span>
-                </div>
-                <div>
+            <div style={{display:'flex',flexDirection:'column',alignItems:'start',width:'100%'}}>
+              
+                  <span className="font-semibold">IGV ({`${igv?.valor}%`})</span>
+
+                
                   <Input label="IGV" 
                   value={form.igv}
                   onChange={e=>setForm({...form, igv: Number(e.target.value)})}
                   disabled
                   />
-                </div>
+                
               </div>
             </GroupInputs>
             <GroupInputs>
-              <div className="flex flex-row justify-end items-center w-full gap-2">
-                <div className="flex justify-center items-center">
-                  <span className="font-semibold">TOTAL DE COTIZACION SOLES</span>
-                </div>
-                <div>
+            <div style={{display:'flex',flexDirection:'column',alignItems:'start',width:'100%'}}>
+                  <span className="font-semibold">Total de Cotizacion </span>
+          
                   <Input disabled value={form.totalSoles}/>
                 </div>
-              </div>
+        
             </GroupInputs>
-            <Divider />
+            </GroupInputs>
           </Group>
 
           <div className="w-full flex justify-center gap-5">
             <ButtonCancel onClick={closeModal} />
             <ButtonSave label={"Guardar y enviar"} onClick={saveData} />
           </div>
+
         </form>
       </ModalLg>
 

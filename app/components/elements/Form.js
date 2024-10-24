@@ -10,7 +10,7 @@ export const Group = ({ title, children, onclick = undefined }) => {
 };
 export const GroupCustom = ({ title, children, onclick = undefined }) => {
   return (
-    <div onClick={onclick} className="relative border border-primary-300 rounded-md pt-2 pb-2 pl-1 pr-1 z-100 w-[60%] ">
+    <div onClick={onclick} className="relative border border-primary-300 rounded-md pt-2 pb-2 pl-1 pr-1 z-100 w-[100%] ">
       <div className="absolute -top-2 left-4 -mt-2 -ml-2 px-2 py-0.5 bg-white text-base font-medium text-primary-800 w-[auto]  ">
         {title}
       </div>
@@ -20,7 +20,7 @@ export const GroupCustom = ({ title, children, onclick = undefined }) => {
 };
 export const GroupCustom2 = ({ title, children, onclick = undefined }) => {
   return (
-    <div onClick={onclick} className="relative border border-primary-300 rounded-md pt-2 pb-2 pl-1 pr-1 z-100 w-[30%] ">
+    <div onClick={onclick} className="relative border border-primary-300 rounded-md pt-2 pb-2 pl-1 pr-1 z-100 w-[100%] ">
       <div className="absolute -top-2 left-4 -mt-2 -ml-2 px-2 py-0.5 bg-white text-base font-medium text-primary-800 w-[auto]  ">
         {title}
       </div>
@@ -30,10 +30,10 @@ export const GroupCustom2 = ({ title, children, onclick = undefined }) => {
 };
 
 export const GroupInputs = ({ children }) => {
-  return <div className="flex gap-3 w-full bg-red-500">{children}</div>;
+  return <div className="flex gap-3 w-full ">{children}</div>;
 };
 export const GroupInputsCustom = ({ children }) => {
-  return <div style={{margin:'0',padding:'0', display:'flex',gap:'1px',justifyContent:'space-evenly'}}>{children}</div>;
+  return <div style={{margin:'0',padding:'0', display:'flex',gap:'5px',justifyContent:'space-evenly'}}>{children}</div>;
 };
 
 export const GroupIntern = ({ title, children }) => {
