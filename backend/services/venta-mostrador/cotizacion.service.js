@@ -171,7 +171,9 @@ export class CotizacionService {
         const createMaterials = await prisma.cotizacionToMaterial.createMany({
           data: newMaterials,
         });
-        return { cotizacion, createMaterials };
+        // cotizacion.materiales = [...newMaterials]
+
+        return { ...cotizacion, materiales: newMaterials };
       });
       // console.log(transaction);
       return transaction;

@@ -60,10 +60,10 @@ export class MotivoMovimientoAlmacenService {
   }
 
   static async generarCodigo(empresaId) {
-    const prefijo = "MMA";
+    const prefijo = "";
     let codigo;
 
-    const lastRow = await prisma.almacen.findFirst({
+    const lastRow = await prisma.motivoMovimientoAlmacen.findFirst({
       orderBy: {
         codigo: "desc",
       },
@@ -78,7 +78,7 @@ export class MotivoMovimientoAlmacenService {
       const nextCodigo = parseInt(ultimosTresDigitos, 10) + 1;
       codigo = String(nextCodigo).padStart(3, "0");
     } else {
-      const totalRows = await prisma.almacen.count({
+      const totalRows = await prisma.motivoMovimientoAlmacen.count({
         where: { empresaId },
       });
       codigo = "00" + (totalRows + 1);

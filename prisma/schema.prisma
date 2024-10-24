@@ -415,7 +415,7 @@ model MaterialAlmacen {
 
 model MotivoMovimientoAlmacen {
   id        Int      @id @default(autoincrement())
-  codigo    String?  @unique
+  codigo    String?  
   nombre    String
   empresa   Empresa? @relation(fields: [empresaId], references: [id])
   empresaId Int?
